@@ -1,0 +1,37 @@
+application:
+  security:
+    jwt:
+      secret: v2f/qCL+wpzUeAgdqpeOCbs9X7vZi9wBUaGvEBOfDSmVrBAJ5vCHAmuXWyHAG5eN
+      token-validity-in-seconds: 86400 # 24 hour
+      token-validity-in-seconds-for-remember-me: 2592000
+    oauth2:
+        authorizedRedirectUris:
+            - http://localhost:3000/oauth2/redirect
+
+spring:
+  application:
+    name: Blog
+  profiles:
+    active: dev
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3307/blog
+    username: root
+    password: 123456
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    format_sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+#      hibernate.id.new_generator_mappings: true
+#      hibernate.cache.use_second_level_cache: false
+#      hibernate.cache.use_query_cache: false
+#      hibernate.generate_statistics: true
