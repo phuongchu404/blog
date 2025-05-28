@@ -4,18 +4,25 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.security.Key;
 import java.util.Date;
 
 @Service
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JwtUtil {
+
+    static final String AUTHORITIES_KEY = "authorities";
 
     @Value("${application.security.jwt.secret}")
     String secret;
@@ -39,38 +46,40 @@ public class JwtUtil {
             validity = new Date(now + tokenValidityInSeconds * 1000);
         }
 
-        JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
-        JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(username)
-                .issuer("me.phuongcm.blog")
-                .issueTime(new Date())
-                .expirationTime(validity)
-                .claim("authorities", "ROLE_USER")
-                .build();
-        Payload payload = new Payload(claimsSet.toJSONObject());
-        JWSObject jwsObject = new JWSObject(header, payload);
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date(now))
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.HS512, key())
+                .compact();
+    }
 
-        try {
-            jwsObject.sign(new MACSigner(secret.getBytes()));
-            return jwsObject.serialize();
-        } catch (JOSEException e) {
-            log.error("Error sign jwt: {}",e.getMessage());
-            throw new RuntimeException(e);
+    public boolean validateToken(String token) {
+        try{
+            Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJwt(token);
+            return true;
+        }catch (SignatureException e){
+            log.error("Invalid JWT signature: {}", e.getMessage());
+        }catch (MalformedJwtException e){
+            log.error("Invalid JWT token: {}", e.getMessage());
+        }catch (ExpiredJwtException e){
+            log.error("JWT token is expired: {}", e.getMessage());
+        }catch (UnsupportedJwtException e){
+            log.error("JWT token is unsupported: {}", e.getMessage());
+        }catch (IllegalArgumentException e){
+            log.error("JWT claims string is empty: {}", e.getMessage());
         }
+        return false;
     }
 
     public String getUsernameFromToken(String token) {
-        try {
-            JWSObject jwsObject = JWSObject.parse(token);
-            if (!jwsObject.verify(new MACVerifier(secret.getBytes()))) {
-                throw new RuntimeException("Invalid JWT signature");
-            }
-            JWTClaimsSet claimsSet = JWTClaimsSet.parse(jwsObject.getPayload().toJSONObject());
-            return claimsSet.getSubject();
-        } catch (Exception e) {
-            log.error("Error parsing jwt: {}", e.getMessage());
-            throw new RuntimeException("Invalid JWT token");
-        }
+        Claims claims = Jwts.parserBuilder().setSigningKey(key()).build().parseClaimsJws(token).getBody();
+        return claims.getSubject();
+    }
+
+    private Key key(){
+        byte[] keyBytes = Decoders.BASE64.decode(secret);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 
 }

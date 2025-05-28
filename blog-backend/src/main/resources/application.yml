@@ -1,5 +1,6 @@
 application:
   security:
+    token-prefix: "Bearer "
     jwt:
       secret: v2f/qCL+wpzUeAgdqpeOCbs9X7vZi9wBUaGvEBOfDSmVrBAJ5vCHAmuXWyHAG5eN
       token-validity-in-seconds: 86400 # 24 hour
