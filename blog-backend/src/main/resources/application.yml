@@ -6,8 +6,11 @@ application:
       token-validity-in-seconds: 86400 # 24 hour
       token-validity-in-seconds-for-remember-me: 2592000
     oauth2:
-        authorizedRedirectUris:
-            - http://localhost:3000/oauth2/redirect
+      authorizedRedirectUris:
+        - http://localhost:3000/oauth2/redirect
+        - myandroidapp://oauth2/redirect
+        - myiosapp://oauth2/redirect
+
 
 spring:
   application:
@@ -26,7 +29,7 @@ spring:
     password: 123456
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
     show-sql: true
     format_sql: true
     properties:
@@ -36,3 +39,33 @@ spring:
 #      hibernate.cache.use_second_level_cache: false
 #      hibernate.cache.use_query_cache: false
 #      hibernate.generate_statistics: true
+  security:
+    oauth2:
+      client:
+        registration:
+            google:
+              client-id:
+              client-secret:
+              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+              scope:
+                - email
+                - profile
+            facebook:
+              client-id:
+              client-secret:
+              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+              scope:
+                - email
+                - public_profile
+            github:
+              client-id:
+              client-secret:
+              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+              scope:
+                - user:email
+                - read:user
+        provider:
+          facebook:
+            authorization-uri: https://www.facebook.com/v3.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v3.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
