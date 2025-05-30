@@ -64,4 +64,7 @@ public class User extends AuditEntity{
     @Column(name = "provider")
     @Enumerated(EnumType.STRING)
     private AuthProvider provider; //chưa có
+
+    @Column(name = "provider_id")
+    private String providerId; //chưa có
 }
