@@ -37,6 +37,6 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .map(Role::getName)
                 .collect(Collectors.toSet());
 
-        return new CustomUserDetails(user.getId(), user.getUsername(), user.getEmail(), user.getPassword(), roleNames);
+        return new CustomUserDetails(user.getId(), user.getUsername(), user.getEmail(),roleNames, user.getPassword());
     }
 }

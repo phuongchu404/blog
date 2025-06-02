@@ -34,17 +34,21 @@ public class CustomUserDetails implements UserDetails, OAuth2User {
 
     Map<String, Object> attributes;
 
-    public CustomUserDetails(Long id, String username, String email, String password,
-                             Set<String> roles)  {
+    public CustomUserDetails(Long id, String username, String email, Set<String> roles) {
         this.id = id;
         this.username = username;
         this.email = email;
-        this.password = password;
         this.roles = roles;
     }
-    public CustomUserDetails(Long id, String username, String email, String password,
-                                           Set<String> roles, Map<String, Object> attributes) {
-        this(id, username, email, password, roles);
+
+    public CustomUserDetails(Long id, String username, String email,Set<String> roles, String password)  {
+        this(id, username, email, roles);
+        this.password = password;
+    }
+
+    public CustomUserDetails(Long id, String username, String email,Set<String> roles, String password,
+                                            Map<String, Object> attributes) {
+        this(id, username, email, roles, password);
         this.attributes = attributes;
     }
 

@@ -5,9 +5,10 @@ import me.phuongcm.blog.entity.UserRole;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.Set;
-
+@Repository
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
     @Query(value = "select r from UserRole ur " +
             "inner join ur.user u " +
@@ -20,4 +21,10 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
             "inner join ur.role r " +
             "where u.email = :email")
     Set<Role> findRoleByEmail(@Param("email") String email);
+
+    @Query(value = "select ur from UserRole ur " +
+            "inner join ur.user u " +
+            "inner join ur.role r " +
+            "where u.id = :userId")
+    Set<Role> findRoleByUserId(Long userId);
 }

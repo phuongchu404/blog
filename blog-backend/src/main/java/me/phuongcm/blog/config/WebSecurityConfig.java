@@ -25,13 +25,7 @@ public class WebSecurityConfig {
 
     @NonFinal
     private final String[] commonURLs = {
-        "/v3/api-docs/**",
-        "/swagger-ui/**",
-        "/swagger-ui.html",
-        "/webjars/**",
-        "/favicon.ico",
-        "/error",
-        "/actuator/**"
+        "/api/roles/**",
     };
 
     @Bean

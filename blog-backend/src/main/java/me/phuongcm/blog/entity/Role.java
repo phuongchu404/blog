@@ -27,12 +27,4 @@ public class Role extends AuditEntity{
     @Column(name = "description", length = 200)
     private String description;
 
-    @Column(name = "created_at")
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
 }
