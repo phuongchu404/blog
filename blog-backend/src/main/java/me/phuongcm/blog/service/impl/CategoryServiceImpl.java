@@ -14,11 +14,14 @@ import java.util.Optional;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+
     private final PostCategoryRepository postCategoryRepository;
+
     public CategoryServiceImpl(CategoryRepository categoryRepository, PostCategoryRepository postCategoryRepository) {
         this.categoryRepository = categoryRepository;
         this.postCategoryRepository = postCategoryRepository;
     }
+
     @Override
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
@@ -26,16 +29,19 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<Category> getRootCategories() {
+
         return categoryRepository.findRootCategories();
     }
 
     @Override
     public Optional<Category> getCategoryById(Long id) {
+
         return categoryRepository.findById(id);
     }
 
     @Override
     public Optional<Category> getCategoryBySlug(String slug) {
+
         return categoryRepository.findBySlug(slug);
     }
 
