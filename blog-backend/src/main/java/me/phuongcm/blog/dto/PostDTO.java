@@ -21,7 +21,7 @@ public class PostDTO {
     private String metaTitle;
     private String slug;
     private String summary;
-    private Integer published;
+    private Boolean published;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime publishedAt;

@@ -31,8 +31,8 @@ public class PostComment {
     @Column(name = "title", length = 100, nullable = false)
     private String title;
 
-    @Column(name = "published", length = 1, nullable = false)
-    private Integer published; // 0: pending, 1: approved, 2: rejected
+    @Column(name = "published")
+    private Boolean published;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

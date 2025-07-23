@@ -42,7 +42,7 @@ public class Post {
     private String summary;
 
     @Column(name = "published")
-    private Integer published; // 0: pending, 1: approved, 2: rejected
+    private Boolean published;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -68,4 +68,6 @@ public class Post {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostMeta> postMetas;
 
+    public Post(Long postId) {
+    }
 }
