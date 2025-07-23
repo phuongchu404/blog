@@ -19,7 +19,7 @@ public class PostMeta {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id", nullable = false)
+    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "id")
     private Post post;
 
     @Column(name = "key", length = 50, nullable = false)

@@ -14,14 +14,15 @@ import me.phuongcm.blog.entity.id.PostTagId;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostTag {
-    @EmbeddedId
-    private PostTagId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("postId")
+    @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "id")
     private Post post;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @MapsId("tagId")
+    @JoinColumn(name = "tag_id", nullable = false, referencedColumnName = "id")
     private Tag tag;
 }

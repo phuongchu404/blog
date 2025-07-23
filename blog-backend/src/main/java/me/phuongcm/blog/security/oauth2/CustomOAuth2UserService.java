@@ -79,15 +79,15 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userOAuth2Response = registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
         }
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(userOAuth2Response.getId(), userOAuth2Response.getUsername(),
+        return new CustomUserDetails(userOAuth2Response.getId(), userOAuth2Response.getUsername(),
                 userOAuth2Response.getEmail(), userOAuth2Response.getRoles(), userOAuth2Response.getPassword(), oAuth2User.getAttributes());
-        return customUserDetails;
     }
 
     private UserOAuth2Response registerNewUser(OAuth2UserRequest oAuth2UserRequest, OAuth2UserInfo oAuth2UserInfo) {
         User user = new User();
         user.setProvider(AuthProvider.valueOf(oAuth2UserRequest.getClientRegistration().getRegistrationId()));
 //        user.setUsername(oAuth2UserInfo.getName());
+        user.setFullName(oAuth2UserInfo.getName());
         user.setProviderId(oAuth2UserInfo.getId());
         user.setEmail(oAuth2UserInfo.getEmail());
         user.setImageUrl(oAuth2UserInfo.getImageUrl());
@@ -103,29 +103,27 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         userRole = userRoleRepository.save(userRole);
         Set<String> roles = Stream.of(userRole.getRole().getName()).collect(Collectors.toSet());
 
-        UserOAuth2Response response = UserOAuth2Response.builder()
+        return UserOAuth2Response.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .roles(roles)
                 .build();
-        return response;
     }
 
     private UserOAuth2Response updateExistingUser(User user, OAuth2UserInfo oAuth2UserInfo) {
-        user.setUsername(oAuth2UserInfo.getName());
+        user.setFullName(oAuth2UserInfo.getName());
         user.setImageUrl(oAuth2UserInfo.getImageUrl());
 
         Set<String> roles = userRoleRepository.findRoleByUserId(user.getId()).stream().map(Role::getName).collect(Collectors.toSet());
-        UserOAuth2Response response = UserOAuth2Response.builder()
+        return UserOAuth2Response.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .username(user.getUsername())
                 .password(user.getPassword())
                 .roles(roles)
                 .build();
-        return response;
     }
 
     private String generateRandomPassword(int length) {

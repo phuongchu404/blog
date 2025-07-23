@@ -45,7 +45,6 @@ public class JwtUtil {
         }else {
             validity = new Date(now + tokenValidityInSeconds * 1000);
         }
-
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date(now))

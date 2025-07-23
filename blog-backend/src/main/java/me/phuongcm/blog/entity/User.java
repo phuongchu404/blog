@@ -10,6 +10,7 @@ import lombok.Setter;
 import me.phuongcm.blog.common.utils.AuthProvider;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -28,8 +29,9 @@ public class User extends AuditEntity{
     @Column(name = "password", length = 100, nullable = true)
     private String password; //passwordHash
 
-//    @Column(name = "full_name", length = 100)
-//    private String fullName;
+    @Column(name = "full_name", length = 100)
+    private String fullName;
+
     @Column(name = "first_name", length = 50)
     private String firstName;
 
@@ -67,4 +69,10 @@ public class User extends AuditEntity{
 
     @Column(name = "provider_id")
     private String providerId; //chưa có
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> posts;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PostComment> comments;
 }

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "category")
 @Getter
@@ -18,7 +20,7 @@ public class Category {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent_id")
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Category parent;
 
     @Column(name = "title", length = 75, nullable = false)
@@ -32,4 +34,7 @@ public class Category {
 
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PostCategory> postCategories;
 }

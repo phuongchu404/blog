@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Table(name = "tag")
 @Getter
@@ -28,4 +30,8 @@ public class Tag {
 
     @Column(name = "content")
     private String content;
+
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PostTag> postTags;
+
 }
