@@ -2,7 +2,7 @@ application:
   security:
     token-prefix: "Bearer "
     jwt:
-      secret: v2f/qCL+wpzUeAgdqpeOCbs9X7vZi9wBUaGvEBOfDSmVrBAJ5vCHAmuXWyHAG5eN
+      secret:
       token-validity-in-seconds: 86400 # 24 hour
       token-validity-in-seconds-for-remember-me: 2592000
     oauth2:
@@ -21,12 +21,12 @@ spring:
       enabled: true
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3307/blog
+    url: jdbc:mysql://localhost:3306/blog
     username: root
-    password: 123456
+    password: phuong1580@
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
     show-sql: true
     format_sql: true
     properties:
