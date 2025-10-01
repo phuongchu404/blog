@@ -163,3 +163,64 @@ nav button {
   background: var(--color-red);
   color: var(--color-bg);
 }
+/* 
+ ======== category button =======
+*/
+.category__button {
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: var(--card-border-radius-2);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.category__button:hover {
+  color: var(--color-white);
+}
+
+/* general post */
+.post__thumbnail {
+  border-radius: var(--card-border-radius-5) 0;
+  border: 1rem solid var(--color-gray-900);
+  overflow: hidden;
+  margin-bottom: 1.6rem;
+}
+.post:hover .post__thumbnail img {
+  filter: saturate(0);
+  transition: filter 500ms ease;
+}
+.post__author {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.2rem;
+}
+.post__author-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--card-border-radius-3);
+  overflow: hidden;
+}
+
+/* featured */
+
+.featured {
+  margin-top: 8rem;
+}
+.featured__container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
+.featured .post__thumbail {
+  height: fit-content;
+}
+
+/* Posts */
+.posts__container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5rem;
+  margin-bottom: 4rem;
+}
