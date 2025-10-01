@@ -26,7 +26,7 @@ public class PostComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", referencedColumnName = "id")
-    private PostComment parentComment;
+    private PostComment parent;
 
     @Column(name = "title", length = 100, nullable = false)
     private String title;

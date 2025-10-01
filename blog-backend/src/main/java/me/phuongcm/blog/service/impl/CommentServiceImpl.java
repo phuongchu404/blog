@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         if (parentId != null) {
             PostComment parentComment = commentRepository.findById(parentId)
                     .orElseThrow(() -> new RuntimeException("Parent comment not found with id: " + parentId));
-            comment.setParentComment(parentComment);
+            comment.setParent(parentComment);
         }
         return commentRepository.save(comment);
     }
