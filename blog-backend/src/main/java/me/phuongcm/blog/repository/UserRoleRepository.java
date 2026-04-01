@@ -8,23 +8,29 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Set;
+
 @Repository
 public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
-    @Query(value = "select r from UserRole ur " +
-            "inner join ur.user u " +
-            "inner join ur.role r " +
-            "where u.username = :username")
+
+    @Query("SELECT r FROM UserRole ur " +
+            "INNER JOIN ur.user u " +
+            "INNER JOIN ur.role r " +
+            "WHERE u.username = :username")
     Set<Role> findRoleByUsername(@Param("username") String username);
 
-    @Query(value = "select ur from UserRole ur " +
-            "inner join ur.user u " +
-            "inner join ur.role r " +
-            "where u.email = :email")
+    @Query("SELECT r FROM UserRole ur " +
+            "INNER JOIN ur.user u " +
+            "INNER JOIN ur.role r " +
+            "WHERE u.email = :email")
     Set<Role> findRoleByEmail(@Param("email") String email);
 
-    @Query(value = "select ur from UserRole ur " +
-            "inner join ur.user u " +
-            "inner join ur.role r " +
-            "where u.id = :userId")
-    Set<Role> findRoleByUserId(Long userId);
+    /**
+     * Fix: "select ur" → "select r" để trả đúng kiểu dữ liệu Set<Role>
+     * Trước đây dùng "select ur" (UserRole) nhưng return type là Set<Role> → ClassCastException
+     */
+    @Query("SELECT r FROM UserRole ur " +
+            "INNER JOIN ur.user u " +
+            "INNER JOIN ur.role r " +
+            "WHERE u.id = :userId")
+    Set<Role> findRoleByUserId(@Param("userId") Long userId);
 }

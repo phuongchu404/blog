@@ -3,10 +3,12 @@ package me.phuongcm.blog.repository;
 import me.phuongcm.blog.entity.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+
 @Repository
 public interface PostRepository extends JpaRepository<Post, Long> {
 
@@ -18,4 +20,13 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> searchByKeyword(String keyword);
 
     Optional<Post> findBySlug(String slug);
+
+    @Query("SELECT p FROM Post p JOIN p.postCategories pc JOIN pc.category c WHERE c.slug = :categorySlug AND p.published = true")
+    List<Post> findPublishedByCategorySlug(@Param("categorySlug") String categorySlug);
+
+    @Query("SELECT p FROM Post p JOIN p.postTags pt JOIN pt.tag t WHERE t.slug = :tagSlug AND p.published = true")
+    List<Post> findPublishedByTagSlug(@Param("tagSlug") String tagSlug);
+
+    @Query("SELECT p FROM Post p WHERE p.author.id = :authorId AND p.published = true")
+    List<Post> findPublishedByAuthorId(@Param("authorId") Long authorId);
 }

@@ -2,11 +2,19 @@ application:
   security:
     token-prefix: "Bearer "
     jwt:
-      secret:
-      token-validity-in-seconds: 86400 # 24 hour
-      token-validity-in-seconds-for-remember-me: 2592000
+      # QUAN TRỌNG: Đặt secret là chuỗi Base64 ít nhất 32 bytes (256-bit) để dùng với HMAC-SHA256+
+      # Tạo bằng lệnh: openssl rand -base64 32
+      # Ví dụ: dGhpcyBpcyBhIHNlY3JldCBrZXkgZm9yIGJsb2cgYXBw
+      secret: dGhpcyBpcyBhIHNlY3JldCBrZXkgZm9yIGJsb2cgYXBwbGljYXRpb24h
+      token-validity-in-seconds: 3600         # Giảm xuống 1 giờ (trước đó là 24h)
+      token-validity-in-seconds-for-remember-me: 2592000  # 30 ngày
+      token-validity-in-seconds-for-refresh: 604800 # 7 days
     oauth2:
-      authorizedRedirectUris: http://localhost:3000/oauth2/redirect, myandroidapp://oauth2/redirect, myiosapp://oauth2/redirect
+      authorizedRedirectUris:
+        - http://localhost:3000/oauth2/redirect
+        - http://localhost:8080/oauth2/redirect
+        - myandroidapp://oauth2/redirect
+        - myiosapp://oauth2/redirect
 
 
 spring:
@@ -19,6 +27,32 @@ spring:
       enabled: true
     livereload:
       enabled: true
+
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # Kafka Configuration
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: blog-backend-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+  # Elasticsearch Configuration
+  elasticsearch:
+    uris: http://localhost:9200
+    connection-timeout: 3s
+    socket-timeout: 30s
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/blog

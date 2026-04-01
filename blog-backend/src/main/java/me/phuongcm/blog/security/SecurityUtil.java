@@ -16,4 +16,8 @@ public class SecurityUtil {
             return null;
         });
     }
+
+    public static Optional<String> getCurrentUsername() {
+        return getCurrentUser().map(CustomUserDetails::getUsername);
+    }
 }

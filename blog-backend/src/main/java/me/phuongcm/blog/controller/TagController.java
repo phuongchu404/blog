@@ -1,61 +1,83 @@
 package me.phuongcm.blog.controller;
 
+import jakarta.validation.Valid;
+import me.phuongcm.blog.dto.TagDTO;
 import me.phuongcm.blog.entity.Tag;
 import me.phuongcm.blog.service.TagService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tags")
 public class TagController {
+
     private final TagService tagService;
+
     public TagController(TagService tagService) {
         this.tagService = tagService;
     }
 
+    /** GET /api/tags — PUBLIC. */
     @GetMapping
     public ResponseEntity<List<Tag>> getAllTags() {
-        List<Tag> tags = tagService.getAllTags();
-        return ResponseEntity.ok(tags);
+        return ResponseEntity.ok(tagService.getAllTags());
     }
 
-    @GetMapping("{id}")
+    /** GET /api/tags/{id} — PUBLIC. */
+    @GetMapping("/{id}")
     public ResponseEntity<Tag> getTagById(@PathVariable Long id) {
-        Optional<Tag> tag = tagService.getTagById(id);
-        return tag.map(ResponseEntity::ok)
+        return tagService.getTagById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /** GET /api/tags/slug/{slug} — PUBLIC. */
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<Tag> getTagBySlug(@PathVariable String slug) {
+        return tagService.getTagBySlug(slug)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * POST /api/tags — Tạo tag mới.
+     * Yêu cầu permission "tag:create" (chỉ ROLE_ADMIN).
+     */
     @PostMapping
-    public ResponseEntity<Tag> createTag(@RequestParam String title, @RequestParam String content) {
-        try {
-            Tag createdTag = tagService.createTag(title, content != null ? content : "");
-            return ResponseEntity.status(201).body(createdTag);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    @PreAuthorize("hasAuthority('tag:create')")
+    public ResponseEntity<Tag> createTag(@Valid @RequestBody TagDTO tagDTO) {
+        Tag created = tagService.createTag(
+                tagDTO.getTitle(),
+                tagDTO.getContent() != null ? tagDTO.getContent() : "");
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Tag> updateTag(@PathVariable Long id, @RequestParam String title, @RequestParam(required = false) String content) {
-        try {
-            Tag updatedTag = tagService.updateTag(id, title, content != null ? content : "");
-            return ResponseEntity.ok(updatedTag);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
+    /**
+     * PUT /api/tags/{id} — Cập nhật tag.
+     * Yêu cầu permission "tag:update".
+     */
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('tag:update')")
+    public ResponseEntity<Tag> updateTag(@PathVariable Long id, @Valid @RequestBody TagDTO tagDTO) {
+        Tag updated = tagService.updateTag(
+                id,
+                tagDTO.getTitle(),
+                tagDTO.getContent() != null ? tagDTO.getContent() : "");
+        return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("{id}")
+    /**
+     * DELETE /api/tags/{id} — Xóa tag.
+     * Yêu cầu permission "tag:delete".
+     */
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('tag:delete')")
     public ResponseEntity<Void> deleteTag(@PathVariable Long id) {
-        try {
-            tagService.deleteTag(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
+        tagService.deleteTag(id);
+        return ResponseEntity.noContent().build();
     }
 }

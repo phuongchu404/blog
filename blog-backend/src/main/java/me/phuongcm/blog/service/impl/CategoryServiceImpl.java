@@ -91,7 +91,7 @@ public class CategoryServiceImpl implements CategoryService {
         // Check if the category has subcategories
         List<Category> subcategories = categoryRepository.findByParentId(id);
         if (!subcategories.isEmpty()) {
-            throw new RuntimeException("Cannot delete category with id: " + id + " because it has subcategories.");
+            throw new RuntimeException("Cannot delete category with subcategories. Please remove subcategories first.");
         }
 
         categoryRepository.delete(category);

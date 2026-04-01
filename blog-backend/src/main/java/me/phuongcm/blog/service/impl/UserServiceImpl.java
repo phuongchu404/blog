@@ -2,6 +2,7 @@ package me.phuongcm.blog.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import me.phuongcm.blog.common.exception.ServiceException;
+import me.phuongcm.blog.common.utils.AuthProvider;
 import me.phuongcm.blog.common.utils.ERole;
 import me.phuongcm.blog.common.utils.Error;
 import me.phuongcm.blog.common.utils.Status;
@@ -62,6 +63,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setStatus(Status.ACTIVE.getValue());
         user.setFullName(registerRequest.getFullName());
+        user.setProvider(AuthProvider.local);
         user = userRepository.save(user);
 
         Role role = roleRepository.findByName(ERole.ROLE_USER.getValue()).orElseThrow(()->new ServiceException(Error.ROLE_NOT_FOUND));
@@ -71,7 +73,7 @@ public class UserServiceImpl implements UserService {
         userRole.setUser(user);
         userRole = userRoleRepository.save(userRole);
 
-        return null;
+        return user;
     }
 
     @Override
@@ -101,6 +103,8 @@ public class UserServiceImpl implements UserService {
         user.setCreatedAt(LocalDateTime.now());
         user.setIntro(userDTO.getIntro());
         user.setProfile(userDTO.getProfile());
+        user.setProvider(AuthProvider.local);
+        user.setStatus(Status.ACTIVE.getValue());
 
         return userRepository.save(user);
     }

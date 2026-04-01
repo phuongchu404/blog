@@ -7,6 +7,7 @@ import me.phuongcm.blog.repository.PostCommentRepository;
 import me.phuongcm.blog.repository.PostRepository;
 import me.phuongcm.blog.repository.UserRepository;
 import me.phuongcm.blog.service.CommentService;
+import me.phuongcm.blog.service.KafkaProducerService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,10 +20,13 @@ public class CommentServiceImpl implements CommentService {
 
     private final UserRepository userRepository;
 
-    public CommentServiceImpl(PostCommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
+    private final KafkaProducerService kafkaProducerService;
+
+    public CommentServiceImpl(PostCommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository, KafkaProducerService kafkaProducerService) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     @Override
@@ -61,7 +65,26 @@ public class CommentServiceImpl implements CommentService {
                     .orElseThrow(() -> new RuntimeException("Parent comment not found with id: " + parentId));
             comment.setParent(parentComment);
         }
-        return commentRepository.save(comment);
+        
+        PostComment savedComment = commentRepository.save(comment);
+
+        // Async Notification via Kafka
+        try {
+            me.phuongcm.blog.dto.CommentEvent event = new me.phuongcm.blog.dto.CommentEvent(
+                    savedComment.getId(),
+                    post.getId(),
+                    post.getAuthor().getId(),
+                    user.getUsername(),
+                    content,
+                    post.getTitle()
+            );
+            kafkaProducerService.sendCommentNotificationEvent(event);
+        } catch (Exception e) {
+            // Log the error but don't fail the comment creation process
+            System.err.println("Failed to send Kafka comment event: " + e.getMessage());
+        }
+
+        return savedComment;
     }
 
     @Override

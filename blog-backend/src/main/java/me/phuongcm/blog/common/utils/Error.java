@@ -6,7 +6,13 @@ public enum Error {
     ROLE_NOT_FOUND("Role not found", HttpStatus.NOT_FOUND),
     USER_NOT_FOUND("User not found", HttpStatus.NOT_FOUND),
     USERNAME_ALREADY_EXIST("Username is already exists", HttpStatus.CONFLICT),
-    EMAIL_ALREADY_EXIST("Email is already in use", HttpStatus.CONFLICT);
+    EMAIL_ALREADY_EXIST("Email is already in use", HttpStatus.CONFLICT),
+    INVALID_CREDENTIALS("Invalid username or password", HttpStatus.UNAUTHORIZED),
+    POST_NOT_FOUND("Post not found", HttpStatus.NOT_FOUND),
+    CATEGORY_NOT_FOUND("Category not found", HttpStatus.NOT_FOUND),
+    TAG_NOT_FOUND("Tag not found", HttpStatus.NOT_FOUND),
+    COMMENT_NOT_FOUND("Comment not found", HttpStatus.NOT_FOUND),
+    CANNOT_DELETE_CATEGORY_WITH_SUBCATEGORIES("Cannot delete category with subcategories", HttpStatus.BAD_REQUEST);
 
     private String message;
 

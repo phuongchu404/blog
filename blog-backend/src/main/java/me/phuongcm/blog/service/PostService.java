@@ -17,6 +17,12 @@ public interface PostService {
 
     List<Post> getPostsByAuthor(Long authorId);
 
+    List<Post> getPublishedPostsByAuthor(Long authorId);
+
+    List<Post> getPostsByCategorySlug(String categorySlug);
+
+    List<Post> getPostsByTagSlug(String tagSlug);
+
     Post createPost(PostDTO postDTO);
 
     Post updatePost(Long id, PostDTO postDTO);
@@ -29,3 +35,4 @@ public interface PostService {
 
     Post unpublishPost(Long id);
 }
+

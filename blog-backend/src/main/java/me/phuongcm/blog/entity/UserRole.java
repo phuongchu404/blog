@@ -24,7 +24,7 @@ public class UserRole {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "user_íd", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)  // Fix: "user_íd" → "user_id"
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

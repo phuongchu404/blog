@@ -56,6 +56,9 @@ public class Post {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "view_count", nullable = false)
+    private Long viewCount = 0L;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostComment> comments;
 

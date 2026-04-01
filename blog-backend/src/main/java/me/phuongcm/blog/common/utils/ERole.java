@@ -1,9 +1,14 @@
 package me.phuongcm.blog.common.utils;
 
+/**
+ * Enum định nghĩa các role trong hệ thống RBAC.
+ * Value phải có prefix "ROLE_" để Spring Security's hasRole() hoạt động đúng.
+ * hasRole("ADMIN") → tìm kiếm GrantedAuthority "ROLE_ADMIN"
+ */
 public enum ERole {
-    ROLE_USER("USER"),
-    ROLE_ADMIN("ADMIN"),
-    ROLE_MODERATOR("MODERATOR");
+    ROLE_USER("ROLE_USER"),
+    ROLE_ADMIN("ROLE_ADMIN"),
+    ROLE_MODERATOR("ROLE_MODERATOR");
 
     private final String value;
 
