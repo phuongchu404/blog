@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bài viết</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/blog-public/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="container nav-inner">
+    <a href="/blog-public/index.html" class="nav-logo">My<span>Blog</span></a>
+    <div class="nav-links" id="nav-links">
+      <a href="/blog-public/index.html">Trang chủ</a>
+      <a href="/blog-public/blog.html">Bài viết</a>
+    </div>
+    <form class="nav-search" onsubmit="handleNavSearch(event)">
+      <svg class="search-icon" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+      </svg>
+      <input type="search" placeholder="Tìm kiếm..." id="nav-search-input">
+    </form>
+    <div id="nav-auth" class="nav-auth"></div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<!-- Post hero / meta area -->
+<div class="post-hero" id="post-hero">
+  <div class="container">
+    <div class="post-hero-inner">
+      <nav class="post-breadcrumb" id="post-breadcrumb">
+        <a href="/blog-public/index.html">Trang chủ</a>
+        <span class="sep">›</span>
+        <a href="/blog-public/blog.html">Bài viết</a>
+        <span class="sep">›</span>
+        <span id="breadcrumb-title">...</span>
+      </nav>
+
+      <div id="post-header-content">
+        <div class="loading-spinner"><div class="spinner"></div><span>Đang tải bài viết...</span></div>
+      </div>
+    </div>
+
+    <!-- Cover image (rendered below the meta) -->
+    <div id="post-cover"></div>
+  </div>
+</div>
+
+<!-- Main content -->
+<main class="container layout" style="padding-top:2rem">
+  <div>
+    <!-- Post body -->
+    <div id="post-content-wrap">
+      <div class="loading-spinner"><div class="spinner"></div></div>
+    </div>
+
+    <!-- Comments -->
+    <div id="comments-section-wrap"></div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Danh mục</div>
+      <div class="sidebar-widget-body" id="sidebar-categories"></div>
+    </div>
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Bài viết khác</div>
+      <div class="sidebar-widget-body" id="sidebar-recent"></div>
+    </div>
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Tags</div>
+      <div class="sidebar-widget-body" id="sidebar-tags"></div>
+    </div>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2024 MyBlog. All rights reserved.</span>
+      <a href="/blog-public/blog.html" style="color:#94a3b8">← Về danh sách bài viết</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/blog-public/js/http.js"></script>
+<script src="/blog-public/js/auth.js"></script>
+<script src="/blog-public/js/ui.js"></script>
+<script src="/blog-public/js/post.service.js"></script>
+<script src="/blog-public/js/category.service.js"></script>
+<script src="/blog-public/js/tag.service.js"></script>
+<script src="/blog-public/js/comment.service.js"></script>
+<script src="/blog-public/js/post.js"></script>
+</body>
+</html>

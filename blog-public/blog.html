@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Tất cả bài viết</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/blog-public/css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="container nav-inner">
+    <a href="/blog-public/index.html" class="nav-logo">My<span>Blog</span></a>
+    <div class="nav-links" id="nav-links">
+      <a href="/blog-public/index.html">Trang chủ</a>
+      <a href="/blog-public/blog.html" class="active">Bài viết</a>
+    </div>
+    <form class="nav-search" onsubmit="handleNavSearch(event)">
+      <svg class="search-icon" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+      </svg>
+      <input type="search" placeholder="Tìm kiếm bài viết..." id="nav-search-input">
+    </form>
+    <div id="nav-auth" class="nav-auth"></div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<div class="page-header">
+  <div class="container">
+    <h1>Tất cả bài viết</h1>
+    <p>Khám phá tất cả nội dung được chia sẻ trên blog</p>
+  </div>
+</div>
+
+<main class="container layout">
+  <div>
+    <!-- Filter bar -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem">
+      <p id="post-count" style="color:var(--text-muted);font-size:.9rem"></p>
+      <div style="display:flex;gap:.5rem;align-items:center">
+        <label style="font-size:.875rem;color:var(--text-muted)">Sắp xếp:</label>
+        <select id="sort-select" onchange="handleSort()" style="padding:.4rem .75rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.875rem;outline:none;background:var(--bg-card)">
+          <option value="newest">Mới nhất</option>
+          <option value="oldest">Cũ nhất</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="posts-grid" class="post-grid"></div>
+    <div id="pagination"></div>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Danh mục</div>
+      <div class="sidebar-widget-body" id="sidebar-categories"></div>
+    </div>
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Bài viết nổi bật</div>
+      <div class="sidebar-widget-body" id="sidebar-recent"></div>
+    </div>
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Tags</div>
+      <div class="sidebar-widget-body" id="sidebar-tags"></div>
+    </div>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2024 MyBlog. All rights reserved.</span>
+      <a href="/blog-public/index.html" style="color:#94a3b8">← Về trang chủ</a>
+    </div>
+  </div>
+</footer>
+
+<script src="/blog-public/js/http.js"></script>
+<script src="/blog-public/js/auth.js"></script>
+<script src="/blog-public/js/ui.js"></script>
+<script src="/blog-public/js/post.service.js"></script>
+<script src="/blog-public/js/category.service.js"></script>
+<script src="/blog-public/js/tag.service.js"></script>
+<script src="/blog-public/js/blog.js"></script>
+</body>
+</html>
