@@ -105,4 +105,15 @@ public class UserController {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
+
+    /**
+     * POST /api/users/{id}/roles — Phân quyền Role cho user.
+     * Yêu cầu permission "user:assign-role".
+     */
+    @PostMapping("/{id}/roles")
+    @PreAuthorize("hasAuthority('user:assign-role')")
+    public ResponseEntity<Void> assignRolesToUser(@PathVariable Long id, @RequestBody List<Long> roleIds) {
+        userService.assignRolesToUser(id, roleIds);
+        return ResponseEntity.ok().build();
+    }
 }

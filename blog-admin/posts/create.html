@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Blog Admin | Create Post</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+  </head>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+
+      <!-- ======= Header ======= -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+            </li>
+            <li class="nav-item d-none d-md-block">
+              <a href="../index.html" class="nav-link">Dashboard</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+                <span class="d-none d-md-inline">Admin</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <li class="user-header text-bg-primary">
+                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <p>Admin <small>Blog Administrator</small></p>
+                </li>
+                <li class="user-footer">
+                  <a href="#" class="btn btn-outline-secondary">Profile</a>
+                  <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- ======= Sidebar ======= -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="../index.html" class="brand-link">
+            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <span class="brand-text fw-light">Blog Admin</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+              <li class="nav-header">MAIN MENU</li>
+              <li class="nav-item">
+                <a href="../index.html" class="nav-link">
+                  <i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p>
+                </a>
+              </li>
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link active">
+                  <i class="nav-icon bi bi-file-earmark-text"></i>
+                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i><p>All Posts</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="create.html" class="nav-link active">
+                      <i class="nav-icon bi bi-circle"></i><p>Create Post</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="../categories/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-tags"></i><p>Categories</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../tags/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-hash"></i><p>Tags</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../comments/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-chat-dots"></i><p>Comments</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../users/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-people"></i><p>Users</p>
+                </a>
+              </li>
+              <li class="nav-header">ACCESS CONTROL</li>
+              <li class="nav-item">
+                <a href="../roles/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-shield-check"></i><p>Roles</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../permissions/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-key"></i><p>Permissions</p>
+                </a>
+              </li>
+              <li class="nav-header">SETTINGS</li>
+              <li class="nav-item">
+                <a href="../settings.html" class="nav-link">
+                  <i class="nav-icon bi bi-gear"></i><p>Settings</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../login.html" class="nav-link">
+                  <i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- ======= Main Content ======= -->
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">Create Post</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                  <li class="breadcrumb-item"><a href="index.html">Posts</a></li>
+                  <li class="breadcrumb-item active">Create</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+            <form id="postForm">
+              <div class="row">
+                <!-- Left Column: Main Content -->
+                <div class="col-md-8">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title"><i class="bi bi-pencil-square me-2"></i>Post Content</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="postTitle" class="form-label">Title <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control form-control-lg" id="postTitle" placeholder="Enter post title..." required />
+                      </div>
+                      <div class="mb-3">
+                        <label for="postSlug" class="form-label">Slug</label>
+                        <div class="input-group">
+                          <span class="input-group-text text-muted">/blog/</span>
+                          <input type="text" class="form-control" id="postSlug" placeholder="post-slug-here" />
+                        </div>
+                        <small class="text-muted">Leave blank to auto-generate from title.</small>
+                      </div>
+                      <div class="mb-3">
+                        <label for="postExcerpt" class="form-label">Excerpt</label>
+                        <textarea class="form-control" id="postExcerpt" rows="2" placeholder="Short description of the post..."></textarea>
+                      </div>
+                      <div class="mb-3">
+                        <label for="postContent" class="form-label">Content <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="postContent" rows="16" placeholder="Write your post content here..." required></textarea>
+                        <small class="text-muted">Supports Markdown formatting.</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SEO Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title"><i class="bi bi-search me-2"></i>SEO Settings</h3>
+                      <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                          <i class="bi bi-dash-lg"></i>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="metaTitle" class="form-label">Meta Title</label>
+                        <input type="text" class="form-control" id="metaTitle" placeholder="SEO title (leave blank to use post title)" />
+                      </div>
+                      <div class="mb-3">
+                        <label for="metaDescription" class="form-label">Meta Description</label>
+                        <textarea class="form-control" id="metaDescription" rows="2" placeholder="SEO description (max 160 characters)"></textarea>
+                      </div>
+                      <div class="mb-0">
+                        <label for="metaKeywords" class="form-label">Keywords</label>
+                        <input type="text" class="form-control" id="metaKeywords" placeholder="keyword1, keyword2, keyword3" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Column: Settings -->
+                <div class="col-md-4">
+                  <!-- Publish Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title"><i class="bi bi-send me-2"></i>Publish</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="postStatus" class="form-label">Status</label>
+                        <select class="form-select" id="postStatus">
+                          <option value="draft">Draft</option>
+                          <option value="published">Published</option>
+                          <option value="archived">Archived</option>
+                        </select>
+                      </div>
+                      <div class="mb-3">
+                        <label for="publishDate" class="form-label">Publish Date</label>
+                        <input type="datetime-local" class="form-control" id="publishDate" />
+                      </div>
+                    </div>
+                    <div class="card-footer d-grid gap-2">
+                      <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-circle me-1"></i> Publish Post
+                      </button>
+                      <button type="button" class="btn btn-outline-secondary">
+                        <i class="bi bi-save me-1"></i> Save as Draft
+                      </button>
+                      <a href="index.html" class="btn btn-outline-danger">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Category Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title"><i class="bi bi-tags me-2"></i>Category</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="postCategory" class="form-label">Select Category <span class="text-danger">*</span></label>
+                        <select class="form-select" id="postCategory" required>
+                          <option value="">-- Choose Category --</option>
+                          <option>Java</option>
+                          <option>JavaScript</option>
+                          <option>DevOps</option>
+                          <option>Database</option>
+                          <option>Frontend</option>
+                          <option>Backend</option>
+                        </select>
+                      </div>
+                      <div class="mb-0">
+                        <label for="postTags" class="form-label">Tags</label>
+                        <input type="text" class="form-control" id="postTags" placeholder="spring, java, backend" />
+                        <small class="text-muted">Separate tags with commas.</small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Featured Image Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title"><i class="bi bi-image me-2"></i>Featured Image</h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <div class="border rounded p-3 text-center bg-body-secondary" style="min-height:120px; cursor:pointer;">
+                          <i class="bi bi-cloud-upload fs-2 text-muted d-block mb-2"></i>
+                          <span class="text-muted">Click to upload or drag & drop</span>
+                          <br><small class="text-muted">PNG, JPG, GIF up to 5MB</small>
+                        </div>
+                        <input type="file" class="form-control mt-2" accept="image/*" />
+                      </div>
+                      <div class="mb-0">
+                        <label for="imageAlt" class="form-label">Alt Text</label>
+                        <input type="text" class="form-control" id="imageAlt" placeholder="Image description for SEO" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Author Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title"><i class="bi bi-person me-2"></i>Author</h3>
+                    </div>
+                    <div class="card-body">
+                      <select class="form-select">
+                        <option selected>Admin</option>
+                        <option>Editor 1</option>
+                        <option>Editor 2</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script src="../js/http.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/post.service.js"></script>
+    <script src="../js/category.service.js"></script>
+    <script src="../js/tag.service.js"></script>
+    <script>
+      Auth.guard();
+
+      // Lấy postId từ URL nếu đang edit: posts/create.html?id=123
+      const urlParams = new URLSearchParams(window.location.search);
+      const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
+          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
+          });
+        }
+
+        // Auto slug từ title
+        document.getElementById('postTitle').addEventListener('input', function () {
+          document.getElementById('postSlug').value = UI.toSlug(this.value);
+        });
+
+        // Load categories vào dropdown
+        try {
+          const cats = await CategoryService.getAll();
+          const sel = document.getElementById('postCategory');
+          sel.innerHTML = '<option value="">-- Choose Category --</option>' +
+            (Array.isArray(cats) ? cats : []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+        } catch (_) {}
+
+        // Load tags gợi ý
+        try {
+          const tags = await TagService.getAll();
+          const tagNames = (Array.isArray(tags) ? tags : []).map(t => t.name).join(', ');
+          document.getElementById('postTags').placeholder = tagNames ? `e.g. ${tagNames.split(', ').slice(0, 3).join(', ')}` : 'spring, java, backend';
+        } catch (_) {}
+
+        // Nếu là edit mode: load dữ liệu bài viết
+        if (editPostId) {
+          document.querySelector('.col-sm-6 h3').textContent = 'Edit Post';
+          document.querySelector('.breadcrumb-item.active').textContent = 'Edit';
+          try {
+            const post = await PostService.getById(editPostId);
+            document.getElementById('postTitle').value   = post.title || '';
+            document.getElementById('postSlug').value    = post.slug || '';
+            document.getElementById('postExcerpt').value = post.excerpt || '';
+            document.getElementById('postContent').value = post.content || '';
+            document.getElementById('postStatus').value  = post.status || 'DRAFT';
+            if (post.categoryId) document.getElementById('postCategory').value = post.categoryId;
+            if (post.tags) document.getElementById('postTags').value = post.tags.map(t => t.name).join(', ');
+            // SEO meta
+            try {
+              const meta = await PostService.getMeta(editPostId);
+              const metaMap = {};
+              (Array.isArray(meta) ? meta : []).forEach(m => metaMap[m.key] = m.value);
+              if (metaMap.metaTitle)       document.getElementById('metaTitle').value       = metaMap.metaTitle;
+              if (metaMap.metaDescription) document.getElementById('metaDescription').value = metaMap.metaDescription;
+              if (metaMap.metaKeywords)    document.getElementById('metaKeywords').value    = metaMap.metaKeywords;
+            } catch (_) {}
+          } catch (err) { UI.toast('Failed to load post: ' + err.message, 'danger'); }
+        }
+
+        // Publish button (submit form)
+        document.getElementById('postForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          await savePost('PUBLISHED');
+        });
+
+        // Save as Draft button
+        document.querySelector('.btn-outline-secondary').addEventListener('click', async function () {
+          await savePost('DRAFT');
+        });
+
+        await UI.renderCurrentUser();
+      });
+
+      async function savePost(status) {
+        const title   = document.getElementById('postTitle').value.trim();
+        const content = document.getElementById('postContent').value.trim();
+        if (!title || !content) { UI.toast('Title and content are required.', 'warning'); return; }
+
+        const tagInput = document.getElementById('postTags').value.trim();
+        const payload = {
+          title,
+          slug:       document.getElementById('postSlug').value.trim() || UI.toSlug(title),
+          excerpt:    document.getElementById('postExcerpt').value.trim(),
+          content,
+          status,
+          categoryId: document.getElementById('postCategory').value || null,
+          tagNames:   tagInput ? tagInput.split(',').map(t => t.trim()).filter(Boolean) : [],
+        };
+
+        try {
+          let post;
+          if (editPostId) {
+            post = await PostService.update(editPostId, payload);
+            UI.toast('Post updated successfully.');
+          } else {
+            post = await PostService.create(payload);
+            UI.toast('Post created successfully.');
+            // Redirect to edit mode
+            if (post?.id) window.location.href = `create.html?id=${post.id}`;
+          }
+
+          // Lưu SEO meta
+          const metaTitle = document.getElementById('metaTitle').value.trim();
+          const metaDesc  = document.getElementById('metaDescription').value.trim();
+          const metaKw    = document.getElementById('metaKeywords').value.trim();
+          const pid = post?.id || editPostId;
+          if (pid) {
+            await Promise.allSettled([
+              metaTitle && PostService.setMeta(pid, 'metaTitle', metaTitle),
+              metaDesc  && PostService.setMeta(pid, 'metaDescription', metaDesc),
+              metaKw    && PostService.setMeta(pid, 'metaKeywords', metaKw),
+            ]);
+          }
+        } catch (err) { UI.toast(err.message, 'danger'); }
+      }
+    </script>
+  </body>
+</html>

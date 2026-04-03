@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Blog Admin | Settings</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+  </head>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+
+      <!-- ======= Header ======= -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+            </li>
+            <li class="nav-item d-none d-md-block">
+              <a href="index.html" class="nav-link">Dashboard</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+                <span class="d-none d-md-inline">Admin</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <li class="user-header text-bg-primary">
+                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <p>Admin <small>Blog Administrator</small></p>
+                </li>
+                <li class="user-footer">
+                  <a href="profile.html" class="btn btn-outline-secondary">Profile</a>
+                  <a href="login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- ======= Sidebar ======= -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="index.html" class="brand-link">
+            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <span class="brand-text fw-light">Blog Admin</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+              <li class="nav-header">MAIN MENU</li>
+              <li class="nav-item">
+                <a href="index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-file-earmark-text"></i>
+                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item"><a href="posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>All Posts</p></a></li>
+                  <li class="nav-item"><a href="posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>Create Post</p></a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categories</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i><p>Tags</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i><p>Comments</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Users</p></a>
+              </li>
+              <li class="nav-header">ACCESS CONTROL</li>
+              <li class="nav-item">
+                <a href="roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i><p>Roles</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="permissions/index.html" class="nav-link"><i class="nav-icon bi bi-key"></i><p>Permissions</p></a>
+              </li>
+              <li class="nav-header">SETTINGS</li>
+              <li class="nav-item">
+                <a href="settings.html" class="nav-link active"><i class="nav-icon bi bi-gear"></i><p>Settings</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- ======= Main Content ======= -->
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">Settings</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                  <li class="breadcrumb-item active">Settings</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+            <div class="row">
+
+              <!-- Settings Nav -->
+              <div class="col-md-3">
+                <div class="card">
+                  <div class="card-body p-0">
+                    <nav class="nav flex-column nav-pills nav-sidebar p-2" id="settingsNav">
+                      <a class="nav-link active" href="#general" data-bs-toggle="pill">
+                        <i class="bi bi-globe me-2"></i>General
+                      </a>
+                      <a class="nav-link" href="#content" data-bs-toggle="pill">
+                        <i class="bi bi-file-earmark-text me-2"></i>Content
+                      </a>
+                      <a class="nav-link" href="#comments-settings" data-bs-toggle="pill">
+                        <i class="bi bi-chat-dots me-2"></i>Comments
+                      </a>
+                      <a class="nav-link" href="#seo" data-bs-toggle="pill">
+                        <i class="bi bi-search me-2"></i>SEO
+                      </a>
+                      <a class="nav-link" href="#api" data-bs-toggle="pill">
+                        <i class="bi bi-plug me-2"></i>API
+                      </a>
+                    </nav>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Settings Panels -->
+              <div class="col-md-9">
+                <div class="tab-content">
+
+                  <!-- General -->
+                  <div class="tab-pane fade show active" id="general">
+                    <div class="card">
+                      <div class="card-header">
+                        <h3 class="card-title"><i class="bi bi-globe me-2"></i>General Settings</h3>
+                      </div>
+                      <div class="card-body">
+                        <form id="generalForm">
+                          <div class="mb-3">
+                            <label for="siteName" class="form-label">Site Name</label>
+                            <input type="text" class="form-control" id="siteName" value="My Tech Blog" />
+                          </div>
+                          <div class="mb-3">
+                            <label for="siteTagline" class="form-label">Tagline</label>
+                            <input type="text" class="form-control" id="siteTagline" value="Sharing knowledge, one post at a time" />
+                          </div>
+                          <div class="mb-3">
+                            <label for="siteUrl" class="form-label">Site URL</label>
+                            <div class="input-group">
+                              <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                              <input type="url" class="form-control" id="siteUrl" value="https://myblog.example.com" />
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="adminEmail" class="form-label">Admin Email</label>
+                            <div class="input-group">
+                              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                              <input type="email" class="form-control" id="adminEmail" value="admin@myblog.example.com" />
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="timezone" class="form-label">Timezone</label>
+                            <select class="form-select" id="timezone">
+                              <option selected>Asia/Ho_Chi_Minh (GMT+7)</option>
+                              <option>UTC</option>
+                              <option>America/New_York (GMT-5)</option>
+                              <option>Europe/London (GMT+0)</option>
+                              <option>Asia/Tokyo (GMT+9)</option>
+                            </select>
+                          </div>
+                          <div class="mb-4">
+                            <label for="language" class="form-label">Default Language</label>
+                            <select class="form-select" id="language">
+                              <option selected>English</option>
+                              <option>Vietnamese</option>
+                              <option>Japanese</option>
+                            </select>
+                          </div>
+                          <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Save General Settings
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Content -->
+                  <div class="tab-pane fade" id="content">
+                    <div class="card">
+                      <div class="card-header">
+                        <h3 class="card-title"><i class="bi bi-file-earmark-text me-2"></i>Content Settings</h3>
+                      </div>
+                      <div class="card-body">
+                        <form id="contentForm">
+                          <div class="mb-3">
+                            <label for="postsPerPage" class="form-label">Posts Per Page</label>
+                            <input type="number" class="form-control" id="postsPerPage" value="10" min="1" max="100" />
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Default Post Status</label>
+                            <div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="defaultStatus" id="statusDraft" value="draft" checked />
+                                <label class="form-check-label" for="statusDraft">Draft</label>
+                              </div>
+                              <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="defaultStatus" id="statusPublished" value="published" />
+                                <label class="form-check-label" for="statusPublished">Published</label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="allowGuestRead" checked />
+                              <label class="form-check-label" for="allowGuestRead">Allow guests to read posts</label>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="showAuthor" checked />
+                              <label class="form-check-label" for="showAuthor">Show author on posts</label>
+                            </div>
+                          </div>
+                          <div class="mb-4">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="showReadTime" checked />
+                              <label class="form-check-label" for="showReadTime">Show estimated read time</label>
+                            </div>
+                          </div>
+                          <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Save Content Settings
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Comments Settings -->
+                  <div class="tab-pane fade" id="comments-settings">
+                    <div class="card">
+                      <div class="card-header">
+                        <h3 class="card-title"><i class="bi bi-chat-dots me-2"></i>Comment Settings</h3>
+                      </div>
+                      <div class="card-body">
+                        <form id="commentsForm">
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="enableComments" checked />
+                              <label class="form-check-label" for="enableComments">Enable comments globally</label>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="requireApproval" checked />
+                              <label class="form-check-label" for="requireApproval">Require admin approval before publishing</label>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="requireLogin" />
+                              <label class="form-check-label" for="requireLogin">Require login to comment</label>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="allowNested" checked />
+                              <label class="form-check-label" for="allowNested">Allow nested replies</label>
+                            </div>
+                          </div>
+                          <div class="mb-4">
+                            <label for="maxNestDepth" class="form-label">Max Nesting Depth</label>
+                            <input type="number" class="form-control" id="maxNestDepth" value="3" min="1" max="10" style="max-width:120px" />
+                          </div>
+                          <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Save Comment Settings
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SEO -->
+                  <div class="tab-pane fade" id="seo">
+                    <div class="card">
+                      <div class="card-header">
+                        <h3 class="card-title"><i class="bi bi-search me-2"></i>SEO Settings</h3>
+                      </div>
+                      <div class="card-body">
+                        <form id="seoForm">
+                          <div class="mb-3">
+                            <label for="metaTitle" class="form-label">Default Meta Title</label>
+                            <input type="text" class="form-control" id="metaTitle" value="My Tech Blog — Sharing Knowledge" />
+                            <small class="text-muted">Recommended: 50–60 characters. <span id="metaTitleCount">0</span>/60</small>
+                          </div>
+                          <div class="mb-3">
+                            <label for="metaDescription" class="form-label">Default Meta Description</label>
+                            <textarea class="form-control" id="metaDescription" rows="3">A blog about Java, Spring Boot, DevOps, and modern web development.</textarea>
+                            <small class="text-muted">Recommended: 150–160 characters. <span id="metaDescCount">0</span>/160</small>
+                          </div>
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="enableSitemap" checked />
+                              <label class="form-check-label" for="enableSitemap">Generate XML Sitemap</label>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <div class="form-check form-switch">
+                              <input class="form-check-input" type="checkbox" id="enableRobots" checked />
+                              <label class="form-check-label" for="enableRobots">Enable robots.txt</label>
+                            </div>
+                          </div>
+                          <div class="mb-4">
+                            <label for="googleAnalytics" class="form-label">Google Analytics ID</label>
+                            <input type="text" class="form-control" id="googleAnalytics" placeholder="G-XXXXXXXXXX" />
+                          </div>
+                          <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Save SEO Settings
+                          </button>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- API -->
+                  <div class="tab-pane fade" id="api">
+                    <div class="card">
+                      <div class="card-header">
+                        <h3 class="card-title"><i class="bi bi-plug me-2"></i>API Settings</h3>
+                      </div>
+                      <div class="card-body">
+                        <div class="mb-3">
+                          <label class="form-label">Backend API URL</label>
+                          <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-server"></i></span>
+                            <input type="url" class="form-control" value="http://localhost:8080" id="apiBaseUrl" />
+                            <button class="btn btn-outline-secondary" type="button" id="testApiBtn">
+                              <i class="bi bi-activity me-1"></i>Test
+                            </button>
+                          </div>
+                          <div class="mt-2 d-none" id="apiTestResult">
+                            <span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Connected</span>
+                          </div>
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">JWT Token Lifetime (seconds)</label>
+                          <input type="number" class="form-control" value="3600" min="60" style="max-width:200px" />
+                          <small class="text-muted">Default: 3600 (1 hour)</small>
+                        </div>
+                        <div class="mb-3">
+                          <label class="form-label">Refresh Token Lifetime (days)</label>
+                          <input type="number" class="form-control" value="30" min="1" style="max-width:200px" />
+                        </div>
+                        <div class="mb-4">
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="enableCors" checked />
+                            <label class="form-check-label" for="enableCors">Enable CORS for this origin</label>
+                          </div>
+                        </div>
+                        <button type="button" class="btn btn-primary">
+                          <i class="bi bi-check-circle me-1"></i> Save API Settings
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script src="js/http.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script>
+      Auth.guard();
+      document.addEventListener('DOMContentLoaded', function () {
+        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
+          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
+          });
+        }
+
+        // Character counters for SEO fields
+        const metaTitle = document.getElementById('metaTitle');
+        const metaDesc = document.getElementById('metaDescription');
+        const updateCount = (el, countId, max) => {
+          const count = el.value.length;
+          const span = document.getElementById(countId);
+          span.textContent = count;
+          span.className = count > max ? 'text-danger fw-bold' : '';
+        };
+        if (metaTitle) {
+          metaTitle.addEventListener('input', () => updateCount(metaTitle, 'metaTitleCount', 60));
+          updateCount(metaTitle, 'metaTitleCount', 60);
+        }
+        if (metaDesc) {
+          metaDesc.addEventListener('input', () => updateCount(metaDesc, 'metaDescCount', 160));
+          updateCount(metaDesc, 'metaDescCount', 160);
+        }
+
+        // Test API connection
+        document.getElementById('testApiBtn').addEventListener('click', function () {
+          const result = document.getElementById('apiTestResult');
+          result.classList.remove('d-none');
+          result.innerHTML = '<span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Connected</span>';
+        });
+
+        // Activate tab from hash
+        const hash = window.location.hash;
+        if (hash) {
+          const tab = document.querySelector(`[href="${hash}"]`);
+          if (tab) new bootstrap.Tab(tab).show();
+        }
+      });
+    </script>
+  </body>
+</html>

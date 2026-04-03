@@ -35,17 +35,18 @@ public class RefreshTokenService {
         if (userId == null) {
             throw new ServiceException(Error.USER_NOT_FOUND);
         }
-        RefreshToken refreshToken = new RefreshToken();
 
-        refreshToken.setUser(userRepository.findById(userId).orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND)));
+        // Tìm token cũ hoặc tạo mới thay vì xoá để tránh lỗi Duplicate Key của Hibernate
+        RefreshToken refreshToken = refreshTokenRepository.findByUserId(userId).orElseGet(RefreshToken::new);
+
+        if (refreshToken.getUser() == null) {
+            refreshToken.setUser(userRepository.findById(userId).orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND)));
+        }
+        
         refreshToken.setExpiryDate(Instant.now().plusSeconds(refreshTokenDurationSecs));
         refreshToken.setToken(UUID.randomUUID().toString());
 
-        // We could delete older tokens for user here if we want only 1 concurrent session
-        refreshTokenRepository.deleteByUser(refreshToken.getUser());
-        
-        refreshToken = refreshTokenRepository.save(refreshToken);
-        return refreshToken;
+        return refreshTokenRepository.save(refreshToken);
     }
 
     public RefreshToken verifyExpiration(RefreshToken token) {

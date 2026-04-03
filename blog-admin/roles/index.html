@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Blog Admin | Roles</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+  </head>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+
+      <!-- ======= Header ======= -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+            </li>
+            <li class="nav-item d-none d-md-block">
+              <a href="../index.html" class="nav-link">Dashboard</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+                <span class="d-none d-md-inline">Admin</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <li class="user-header text-bg-primary">
+                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <p>Admin <small>Blog Administrator</small></p>
+                </li>
+                <li class="user-footer">
+                  <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
+                  <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- ======= Sidebar ======= -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="../index.html" class="brand-link">
+            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <span class="brand-text fw-light">Blog Admin</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+              <li class="nav-header">MAIN MENU</li>
+              <li class="nav-item">
+                <a href="../index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-file-earmark-text"></i>
+                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item"><a href="../posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>All Posts</p></a></li>
+                  <li class="nav-item"><a href="../posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>Create Post</p></a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="../categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categories</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i><p>Tags</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i><p>Comments</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Users</p></a>
+              </li>
+              <li class="nav-header">ACCESS CONTROL</li>
+              <li class="nav-item">
+                <a href="index.html" class="nav-link active"><i class="nav-icon bi bi-shield-check"></i><p>Roles</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../permissions/index.html" class="nav-link"><i class="nav-icon bi bi-key"></i><p>Permissions</p></a>
+              </li>
+              <li class="nav-header">SETTINGS</li>
+              <li class="nav-item">
+                <a href="../settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i><p>Settings</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- ======= Main Content ======= -->
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">Roles</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                  <li class="breadcrumb-item active">Roles</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+
+            <!-- Action Bar -->
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Search roles..." />
+                  <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+                </div>
+              </div>
+              <div class="col-md-6 text-end">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                  <i class="bi bi-plus-circle me-1"></i> Add Role
+                </button>
+              </div>
+            </div>
+
+            <!-- Roles Table -->
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title"><i class="bi bi-shield-check me-2"></i>All Roles</h3>
+                <div class="card-tools">
+                  <span class="badge text-bg-primary">4 total</span>
+                </div>
+              </div>
+              <div class="card-body p-0">
+                <table class="table table-striped table-hover align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Role Name</th>
+                      <th>Description</th>
+                      <th>Permissions</th>
+                      <th>Users</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="roles-tbody">
+                    <tr>
+                      <td>1</td>
+                      <td>
+                        <span class="badge text-bg-danger fs-6">ADMIN</span>
+                      </td>
+                      <td>Full system access, all permissions granted</td>
+                      <td>
+                        <span class="badge text-bg-secondary">All</span>
+                      </td>
+                      <td><span class="badge text-bg-primary">3</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
+                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" title="Delete" disabled><i class="bi bi-trash"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>
+                        <span class="badge text-bg-primary fs-6">MODERATOR</span>
+                      </td>
+                      <td>Can moderate comments and manage content</td>
+                      <td>
+                        <span class="badge text-bg-secondary">12</span>
+                      </td>
+                      <td><span class="badge text-bg-primary">5</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
+                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td>
+                        <span class="badge text-bg-success fs-6">AUTHOR</span>
+                      </td>
+                      <td>Can create and manage own posts</td>
+                      <td>
+                        <span class="badge text-bg-secondary">8</span>
+                      </td>
+                      <td><span class="badge text-bg-primary">14</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
+                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td>
+                        <span class="badge text-bg-secondary fs-6">USER</span>
+                      </td>
+                      <td>Default role, can read and comment on posts</td>
+                      <td>
+                        <span class="badge text-bg-secondary">3</span>
+                      </td>
+                      <td><span class="badge text-bg-primary">13</span></td>
+                      <td>
+                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
+                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </main>
+
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+      </footer>
+    </div>
+
+    <!-- Add Role Modal -->
+    <div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addRoleModalLabel"><i class="bi bi-plus-circle me-2"></i>Add New Role</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addRoleForm">
+              <div class="mb-3">
+                <label for="roleName" class="form-label">Role Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="roleName" placeholder="e.g. EDITOR" required />
+                <small class="text-muted">Use uppercase letters, e.g. EDITOR, REVIEWER</small>
+              </div>
+              <div class="mb-3">
+                <label for="roleDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="roleDescription" rows="3" placeholder="Describe this role's purpose..."></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" form="addRoleForm" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i> Create Role
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Role Modal -->
+    <div class="modal fade" id="editRoleModal" tabindex="-1" aria-labelledby="editRoleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editRoleModalLabel"><i class="bi bi-pencil me-2"></i>Edit Role</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editRoleForm">
+              <div class="mb-3">
+                <label for="editRoleName" class="form-label">Role Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="editRoleName" value="MODERATOR" required />
+              </div>
+              <div class="mb-3">
+                <label for="editRoleDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="editRoleDescription" rows="3">Can moderate comments and manage content</textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" form="editRoleForm" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Manage Permissions Modal -->
+    <div class="modal fade" id="managePermissionsModal" tabindex="-1" aria-labelledby="managePermissionsModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="managePermissionsModalLabel"><i class="bi bi-key me-2"></i>Manage Permissions — <span class="badge text-bg-primary">MODERATOR</span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p class="text-muted mb-3">Select the permissions to assign to this role.</p>
+            <!-- Posts -->
+            <h6 class="text-uppercase text-muted fw-bold mb-2">Posts</h6>
+            <div class="row mb-3">
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostRead" checked /><label class="form-check-label" for="pPostRead">post:read:all</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostCreate" /><label class="form-check-label" for="pPostCreate">post:create</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostUpdate" checked /><label class="form-check-label" for="pPostUpdate">post:update:any</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostDelete" /><label class="form-check-label" for="pPostDelete">post:delete:any</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostPublish" checked /><label class="form-check-label" for="pPostPublish">post:publish</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostMeta" /><label class="form-check-label" for="pPostMeta">post:meta:manage</label></div></div>
+            </div>
+            <hr />
+            <!-- Comments -->
+            <h6 class="text-uppercase text-muted fw-bold mb-2">Comments</h6>
+            <div class="row mb-3">
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentRead" checked /><label class="form-check-label" for="pCommentRead">comment:read:all</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentCreate" checked /><label class="form-check-label" for="pCommentCreate">comment:create</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentUpdate" checked /><label class="form-check-label" for="pCommentUpdate">comment:update:any</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentDelete" checked /><label class="form-check-label" for="pCommentDelete">comment:delete:any</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentModerate" checked /><label class="form-check-label" for="pCommentModerate">comment:moderate</label></div></div>
+            </div>
+            <hr />
+            <!-- Categories & Tags -->
+            <h6 class="text-uppercase text-muted fw-bold mb-2">Categories & Tags</h6>
+            <div class="row mb-3">
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCatCreate" /><label class="form-check-label" for="pCatCreate">category:create</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCatUpdate" /><label class="form-check-label" for="pCatUpdate">category:update</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCatDelete" /><label class="form-check-label" for="pCatDelete">category:delete</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pTagCreate" /><label class="form-check-label" for="pTagCreate">tag:create</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pTagUpdate" /><label class="form-check-label" for="pTagUpdate">tag:update</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pTagDelete" /><label class="form-check-label" for="pTagDelete">tag:delete</label></div></div>
+            </div>
+            <hr />
+            <!-- Users -->
+            <h6 class="text-uppercase text-muted fw-bold mb-2">Users</h6>
+            <div class="row mb-3">
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pUserRead" /><label class="form-check-label" for="pUserRead">user:read:all</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pUserDelete" /><label class="form-check-label" for="pUserDelete">user:delete</label></div></div>
+              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pUserAssignRole" /><label class="form-check-label" for="pUserAssignRole">user:assign-role</label></div></div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i> Save Permissions
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script src="../js/http.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/role.service.js"></script>
+    <script src="../js/permission.service.js"></script>
+    <script>
+      Auth.guard();
+      let allRoles = [];
+      let allPermissions = [];
+      let editingRoleId = null;
+      let managingRoleId = null;
+
+      const roleBadgeClass = { ADMIN: 'text-bg-danger', MODERATOR: 'text-bg-primary', AUTHOR: 'text-bg-success', USER: 'text-bg-secondary' };
+
+      function renderRoles(list) {
+        const tbody = document.getElementById('roles-tbody');
+        document.querySelector('.card-tools .badge').textContent = list.length + ' total';
+        if (!list.length) {
+          tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No roles found.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = list.map((r, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td><span class="badge ${roleBadgeClass[r.name] || 'text-bg-secondary'} fs-6">${r.name}</span></td>
+            <td>${r.description || '—'}</td>
+            <td><span class="badge text-bg-secondary">${(r.permissions || []).length || r.permissionCount || 0}</span></td>
+            <td><span class="badge text-bg-primary">${r.userCount ?? 0}</span></td>
+            <td>
+              <button class="btn btn-sm btn-info" onclick="openManagePermissions(${r.id},'${r.name}')" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
+              <button class="btn btn-sm btn-warning" onclick="openEditRole(${r.id},'${r.name}','${r.description||''}')" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-sm btn-danger" onclick="deleteRole(${r.id})" ${r.name === 'ADMIN' ? 'disabled' : ''}><i class="bi bi-trash"></i></button>
+            </td>
+          </tr>`).join('');
+      }
+
+      function openEditRole(id, name, description) {
+        editingRoleId = id;
+        document.getElementById('editRoleName').value = name;
+        document.getElementById('editRoleDescription').value = description;
+      }
+
+      function openManagePermissions(roleId, roleName) {
+        managingRoleId = roleId;
+        document.getElementById('managePermissionsModalLabel').innerHTML =
+          `<i class="bi bi-key me-2"></i>Manage Permissions — <span class="badge text-bg-primary">${roleName}</span>`;
+        const role = allRoles.find(r => r.id === roleId);
+        const assignedIds = new Set((role?.permissions || []).map(p => p.id));
+        // Render dynamic permission checkboxes from loaded permissions
+        renderPermissionCheckboxes(assignedIds);
+      }
+
+      function renderPermissionCheckboxes(assignedIds = new Set()) {
+        const groups = {};
+        allPermissions.forEach(p => {
+          const group = p.name.split(':')[0];
+          if (!groups[group]) groups[group] = [];
+          groups[group].push(p);
+        });
+        const container = document.querySelector('#managePermissionsModal .modal-body');
+        const html = Object.entries(groups).map(([group, perms]) => `
+          <h6 class="text-uppercase text-muted fw-bold mb-2 mt-3">${group}</h6>
+          <div class="row mb-2">
+            ${perms.map(p => `
+              <div class="col-md-4">
+                <div class="form-check">
+                  <input class="form-check-input perm-check" type="checkbox" id="pm_${p.id}" value="${p.id}" ${assignedIds.has(p.id) ? 'checked' : ''} />
+                  <label class="form-check-label" for="pm_${p.id}"><code>${p.name}</code></label>
+                </div>
+              </div>`).join('')}
+          </div><hr/>`).join('');
+        container.innerHTML = `<p class="text-muted mb-2">Select permissions for this role.</p>${html}`;
+      }
+
+      async function deleteRole(id) {
+        if (!UI.confirm('Delete this role?')) return;
+        try { await RoleService.delete(id); UI.toast('Role deleted.'); loadRoles(); }
+        catch (err) { UI.toast(err.message, 'danger'); }
+      }
+
+      async function loadRoles() {
+        try {
+          allRoles = await RoleService.getAll() || [];
+          renderRoles(Array.isArray(allRoles) ? allRoles : []);
+        } catch (err) { UI.toast('Failed to load roles: ' + err.message, 'danger'); }
+      }
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
+          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
+          });
+        }
+
+        // Add role
+        document.getElementById('addRoleForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          try {
+            await RoleService.create({ name: document.getElementById('roleName').value.trim().toUpperCase(), description: document.getElementById('roleDescription').value.trim() });
+            UI.toast('Role created.');
+            bootstrap.Modal.getInstance(document.getElementById('addRoleModal'))?.hide();
+            this.reset();
+            loadRoles();
+          } catch (err) { UI.toast(err.message, 'danger'); }
+        });
+
+        // Edit role
+        document.getElementById('editRoleForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          try {
+            await RoleService.update(editingRoleId, { name: document.getElementById('editRoleName').value.trim().toUpperCase(), description: document.getElementById('editRoleDescription').value.trim() });
+            UI.toast('Role updated.');
+            bootstrap.Modal.getInstance(document.getElementById('editRoleModal'))?.hide();
+            loadRoles();
+          } catch (err) { UI.toast(err.message, 'danger'); }
+        });
+
+        // Save permissions
+        document.querySelector('#managePermissionsModal .btn-primary').addEventListener('click', async function () {
+          const selected = [...document.querySelectorAll('.perm-check:checked')].map(cb => Number(cb.value));
+          try {
+            await RoleService.assignPermissions(managingRoleId, selected);
+            UI.toast('Permissions saved.');
+            bootstrap.Modal.getInstance(document.getElementById('managePermissionsModal'))?.hide();
+            loadRoles();
+          } catch (err) { UI.toast(err.message, 'danger'); }
+        });
+
+        try { allPermissions = await PermissionService.getAll() || []; } catch (_) {}
+        await loadRoles();
+        await UI.renderCurrentUser();
+      });
+    </script>
+  </body>
+</html>

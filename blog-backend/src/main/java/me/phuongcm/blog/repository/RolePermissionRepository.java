@@ -15,4 +15,8 @@ public interface RolePermissionRepository extends JpaRepository<RolePermission, 
     Set<RolePermission> findByRoleId(@Param("roleId") Long roleId);
 
     boolean existsByRoleIdAndPermissionId(Long roleId, Long permissionId);
+
+    @org.springframework.data.jpa.repository.Modifying
+    @Query("DELETE FROM RolePermission rp WHERE rp.role.id = :roleId")
+    void deleteByRoleId(@Param("roleId") Long roleId);
 }

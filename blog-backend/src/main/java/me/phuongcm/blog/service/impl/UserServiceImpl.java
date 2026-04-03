@@ -136,4 +136,25 @@ public class UserServiceImpl implements UserService {
     public List<User> searchUsers(String name) {
         return userRepository.findByNameContaining(name);
     }
+
+    @Override
+    @org.springframework.transaction.annotation.Transactional
+    public void assignRolesToUser(Long userId, List<Long> roleIds) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
+
+        userRoleRepository.deleteByUserId(userId);
+
+        if (roleIds != null && !roleIds.isEmpty()) {
+            List<Role> roles = roleRepository.findAllById(roleIds);
+            List<UserRole> urs = roles.stream().map(r -> {
+                UserRole ur = new UserRole();
+                ur.setUser(user);
+                ur.setRole(r);
+                return ur;
+            }).collect(java.util.stream.Collectors.toList());
+
+            userRoleRepository.saveAll(urs);
+        }
+    }
 }

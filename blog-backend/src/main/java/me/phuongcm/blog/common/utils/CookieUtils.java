@@ -50,29 +50,10 @@ public class CookieUtils {
     }
 
     public static String serialize(Object object) {
-//        return Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(object));
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            String json = objectMapper.writeValueAsString(object);
-            return Base64.getUrlEncoder().encodeToString(json.getBytes(StandardCharsets.UTF_8));
-        } catch (JsonProcessingException e) {
-            log.error("Failed to serialize object: {}", e.getMessage());
-            throw new IllegalArgumentException("Failed to serialize object: " + e.getMessage());
-        }
+        return Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(object));
     }
 
     public static <T> T deserialize(Cookie cookie, Class<T> clazz) {
-//       return clazz.cast(SerializationUtils.deserialize(Base64.getUrlDecoder().decode(cookie.getValue())));
-        try {
-            String json = new String(Base64.getUrlDecoder().decode(cookie.getValue()), StandardCharsets.UTF_8);
-            ObjectMapper objectMapper = new ObjectMapper();
-            return objectMapper.readValue(json, clazz);
-        } catch (JsonMappingException e) {
-            log.error("Failed to deserialize cookie (json mapping): {}", e.getMessage());
-            throw new IllegalArgumentException("Failed to deserialize cookie (json mapping): " + e.getMessage());
-        } catch (JsonProcessingException e) {
-            log.error("Failed to deserialize cookie (json processing): {}", e.getMessage());
-            throw new IllegalArgumentException("Failed to deserialize cookie (json processing): " + e.getMessage());
-        }
+        return clazz.cast(SerializationUtils.deserialize(Base64.getUrlDecoder().decode(cookie.getValue())));
     }
 }

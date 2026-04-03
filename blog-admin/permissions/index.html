@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Blog Admin | Permissions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+  </head>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+
+      <!-- ======= Header ======= -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+            </li>
+            <li class="nav-item d-none d-md-block">
+              <a href="../index.html" class="nav-link">Dashboard</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+                <span class="d-none d-md-inline">Admin</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <li class="user-header text-bg-primary">
+                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <p>Admin <small>Blog Administrator</small></p>
+                </li>
+                <li class="user-footer">
+                  <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
+                  <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- ======= Sidebar ======= -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="../index.html" class="brand-link">
+            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <span class="brand-text fw-light">Blog Admin</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+              <li class="nav-header">MAIN MENU</li>
+              <li class="nav-item">
+                <a href="../index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-file-earmark-text"></i>
+                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item"><a href="../posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>All Posts</p></a></li>
+                  <li class="nav-item"><a href="../posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>Create Post</p></a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="../categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categories</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i><p>Tags</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i><p>Comments</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Users</p></a>
+              </li>
+              <li class="nav-header">ACCESS CONTROL</li>
+              <li class="nav-item">
+                <a href="../roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i><p>Roles</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="index.html" class="nav-link active"><i class="nav-icon bi bi-key"></i><p>Permissions</p></a>
+              </li>
+              <li class="nav-header">SETTINGS</li>
+              <li class="nav-item">
+                <a href="../settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i><p>Settings</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="../login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- ======= Main Content ======= -->
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">Permissions</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                  <li class="breadcrumb-item active">Permissions</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+
+            <!-- Action Bar -->
+            <div class="row mb-3">
+              <div class="col-md-5">
+                <div class="input-group">
+                  <input type="text" class="form-control" placeholder="Search permissions..." />
+                  <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" id="filterGroup">
+                  <option value="">All Groups</option>
+                  <option>post</option>
+                  <option>comment</option>
+                  <option>category</option>
+                  <option>tag</option>
+                  <option>user</option>
+                  <option>role</option>
+                  <option>permission</option>
+                </select>
+              </div>
+              <div class="col-md-3 text-end">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPermissionModal">
+                  <i class="bi bi-plus-circle me-1"></i> Add Permission
+                </button>
+              </div>
+            </div>
+
+            <!-- Permissions grouped by resource -->
+            <div class="row">
+
+              <!-- Posts -->
+              <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                  <div class="card-header bg-primary text-white">
+                    <h3 class="card-title"><i class="bi bi-file-earmark-text me-2"></i>Post Permissions</h3>
+                    <div class="card-tools"><span class="badge bg-white text-primary">6</span></div>
+                  </div>
+                  <div class="card-body p-0">
+                    <table class="table table-sm table-hover mb-0">
+                      <thead><tr><th>Permission</th><th>Description</th><th></th></tr></thead>
+                      <tbody>
+                        <tr>
+                          <td><code>post:read:all</code></td>
+                          <td><small>Read all posts including drafts</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>post:create</code></td>
+                          <td><small>Create new posts</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>post:update:any</code></td>
+                          <td><small>Update any post</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>post:delete:any</code></td>
+                          <td><small>Delete any post</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>post:publish</code></td>
+                          <td><small>Publish / unpublish posts</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>post:meta:manage</code></td>
+                          <td><small>Manage post metadata</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Comments -->
+              <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                  <div class="card-header bg-warning text-dark">
+                    <h3 class="card-title"><i class="bi bi-chat-dots me-2"></i>Comment Permissions</h3>
+                    <div class="card-tools"><span class="badge bg-white text-warning">5</span></div>
+                  </div>
+                  <div class="card-body p-0">
+                    <table class="table table-sm table-hover mb-0">
+                      <thead><tr><th>Permission</th><th>Description</th><th></th></tr></thead>
+                      <tbody>
+                        <tr>
+                          <td><code>comment:read:all</code></td>
+                          <td><small>Read all comments</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>comment:create</code></td>
+                          <td><small>Post new comments</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>comment:update:any</code></td>
+                          <td><small>Edit any comment</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>comment:delete:any</code></td>
+                          <td><small>Delete any comment</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td><code>comment:moderate</code></td>
+                          <td><small>Approve / reject comments</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Categories & Tags -->
+              <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                  <div class="card-header bg-success text-white">
+                    <h3 class="card-title"><i class="bi bi-tags me-2"></i>Category & Tag Permissions</h3>
+                    <div class="card-tools"><span class="badge bg-white text-success">6</span></div>
+                  </div>
+                  <div class="card-body p-0">
+                    <table class="table table-sm table-hover mb-0">
+                      <thead><tr><th>Permission</th><th>Description</th><th></th></tr></thead>
+                      <tbody>
+                        <tr><td><code>category:create</code></td><td><small>Create categories</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>category:update</code></td><td><small>Update categories</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>category:delete</code></td><td><small>Delete categories</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>tag:create</code></td><td><small>Create tags</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>tag:update</code></td><td><small>Update tags</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>tag:delete</code></td><td><small>Delete tags</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Users / Roles -->
+              <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                  <div class="card-header bg-danger text-white">
+                    <h3 class="card-title"><i class="bi bi-people me-2"></i>User & Role Permissions</h3>
+                    <div class="card-tools"><span class="badge bg-white text-danger">8</span></div>
+                  </div>
+                  <div class="card-body p-0">
+                    <table class="table table-sm table-hover mb-0">
+                      <thead><tr><th>Permission</th><th>Description</th><th></th></tr></thead>
+                      <tbody>
+                        <tr><td><code>user:read:all</code></td><td><small>List all users</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>user:delete</code></td><td><small>Delete users</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>user:assign-role</code></td><td><small>Assign roles to users</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>role:read</code></td><td><small>View roles</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>role:create</code></td><td><small>Create roles</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>role:update</code></td><td><small>Update roles</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>role:delete</code></td><td><small>Delete roles</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                        <tr><td><code>role:assign</code></td><td><small>Assign permissions to roles</small></td><td><button class="btn btn-xs btn-warning" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button> <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button></td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+      </footer>
+    </div>
+
+    <!-- Add Permission Modal -->
+    <div class="modal fade" id="addPermissionModal" tabindex="-1" aria-labelledby="addPermissionModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addPermissionModalLabel"><i class="bi bi-plus-circle me-2"></i>Add New Permission</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addPermissionForm">
+              <div class="mb-3">
+                <label for="permName" class="form-label">Permission Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="permName" placeholder="e.g. post:create" required />
+                <small class="text-muted">Format: <code>resource:action</code> or <code>resource:action:scope</code></small>
+              </div>
+              <div class="mb-3">
+                <label for="permDescription" class="form-label">Description</label>
+                <input type="text" class="form-control" id="permDescription" placeholder="What does this permission allow?" />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" form="addPermissionForm" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i> Create Permission
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Permission Modal -->
+    <div class="modal fade" id="editPermissionModal" tabindex="-1" aria-labelledby="editPermissionModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editPermissionModalLabel"><i class="bi bi-pencil me-2"></i>Edit Permission</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="editPermissionForm">
+              <div class="mb-3">
+                <label for="editPermName" class="form-label">Permission Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="editPermName" value="post:create" required />
+              </div>
+              <div class="mb-3">
+                <label for="editPermDescription" class="form-label">Description</label>
+                <input type="text" class="form-control" id="editPermDescription" value="Create new posts" />
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" form="editPermissionForm" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i> Save Changes
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script src="../js/http.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/permission.service.js"></script>
+    <script>
+      Auth.guard();
+      let allPermissions = [];
+      let editingPermId = null;
+
+      const groupColors = {
+        post: 'bg-primary', comment: 'bg-warning text-dark',
+        category: 'bg-success', tag: 'bg-success',
+        user: 'bg-danger', role: 'bg-danger', permission: 'bg-secondary',
+      };
+      const groupIcons = {
+        post: 'bi-file-earmark-text', comment: 'bi-chat-dots',
+        category: 'bi-tags', tag: 'bi-hash',
+        user: 'bi-people', role: 'bi-shield-check', permission: 'bi-key',
+      };
+
+      function renderPermissions(list) {
+        const groups = {};
+        list.forEach(p => {
+          const g = p.name.split(':')[0];
+          if (!groups[g]) groups[g] = [];
+          groups[g].push(p);
+        });
+
+        const container = document.querySelector('.app-content .container-fluid .row');
+        container.innerHTML = Object.entries(groups).map(([group, perms]) => {
+          const colorClass = groupColors[group] || 'bg-secondary';
+          const icon = groupIcons[group] || 'bi-key';
+          return `
+            <div class="col-md-6 mb-4">
+              <div class="card h-100">
+                <div class="card-header ${colorClass} text-${colorClass.includes('text-dark') ? 'dark' : 'white'}">
+                  <h3 class="card-title"><i class="bi ${icon} me-2"></i>${group.charAt(0).toUpperCase() + group.slice(1)} Permissions</h3>
+                  <div class="card-tools"><span class="badge bg-white text-dark">${perms.length}</span></div>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table table-sm table-hover mb-0">
+                    <thead><tr><th>Permission</th><th>Description</th><th></th></tr></thead>
+                    <tbody>
+                      ${perms.map(p => `
+                        <tr>
+                          <td><code>${p.name}</code></td>
+                          <td><small>${p.description || '—'}</small></td>
+                          <td>
+                            <button class="btn btn-xs btn-warning" onclick="openEditPerm(${p.id},'${p.name}','${p.description||''}')" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-xs btn-danger" onclick="deletePerm(${p.id})"><i class="bi bi-trash"></i></button>
+                          </td>
+                        </tr>`).join('')}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>`;
+        }).join('');
+      }
+
+      function openEditPerm(id, name, description) {
+        editingPermId = id;
+        document.getElementById('editPermName').value = name;
+        document.getElementById('editPermDescription').value = description;
+      }
+
+      async function deletePerm(id) {
+        if (!UI.confirm('Delete this permission?')) return;
+        try {
+          await PermissionService.delete(id);
+          UI.toast('Permission deleted.');
+          allPermissions = allPermissions.filter(p => p.id !== id);
+          renderPermissions(allPermissions);
+        } catch (err) { UI.toast(err.message, 'danger'); }
+      }
+
+      async function loadPermissions() {
+        try {
+          const data = await PermissionService.getAll();
+          allPermissions = Array.isArray(data) ? data : [];
+          renderPermissions(allPermissions);
+        } catch (err) { UI.toast('Failed to load permissions: ' + err.message, 'danger'); }
+      }
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
+          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
+          });
+        }
+
+        // Filter by group
+        document.getElementById('filterGroup').addEventListener('change', function () {
+          const g = this.value;
+          renderPermissions(g ? allPermissions.filter(p => p.name.startsWith(g + ':')) : allPermissions);
+        });
+
+        // Search
+        document.querySelector('.input-group input').addEventListener('input', function () {
+          const kw = this.value.toLowerCase();
+          renderPermissions(kw ? allPermissions.filter(p => p.name.includes(kw)) : allPermissions);
+        });
+
+        // Add permission
+        document.getElementById('addPermissionForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          try {
+            await PermissionService.create({
+              name: document.getElementById('permName').value.trim(),
+              description: document.getElementById('permDescription').value.trim(),
+            });
+            UI.toast('Permission created.');
+            bootstrap.Modal.getInstance(document.getElementById('addPermissionModal'))?.hide();
+            this.reset();
+            loadPermissions();
+          } catch (err) { UI.toast(err.message, 'danger'); }
+        });
+
+        // Edit permission
+        document.getElementById('editPermissionForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          try {
+            await PermissionService.update(editingPermId, {
+              name: document.getElementById('editPermName').value.trim(),
+              description: document.getElementById('editPermDescription').value.trim(),
+            });
+            UI.toast('Permission updated.');
+            bootstrap.Modal.getInstance(document.getElementById('editPermissionModal'))?.hide();
+            loadPermissions();
+          } catch (err) { UI.toast(err.message, 'danger'); }
+        });
+
+        await loadPermissions();
+        await UI.renderCurrentUser();
+      });
+    </script>
+  </body>
+</html>

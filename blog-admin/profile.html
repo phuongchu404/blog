@@ -1,0 +1,410 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Blog Admin | Profile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+  </head>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+
+      <!-- ======= Header ======= -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+            </li>
+            <li class="nav-item d-none d-md-block">
+              <a href="index.html" class="nav-link">Dashboard</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              </a>
+            </li>
+            <li class="nav-item dropdown user-menu">
+              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+                <span class="d-none d-md-inline">Admin</span>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <li class="user-header text-bg-primary">
+                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <p>Admin <small>Blog Administrator</small></p>
+                </li>
+                <li class="user-footer">
+                  <a href="profile.html" class="btn btn-outline-secondary">Profile</a>
+                  <a href="login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <!-- ======= Sidebar ======= -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="index.html" class="brand-link">
+            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <span class="brand-text fw-light">Blog Admin</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+              <li class="nav-header">MAIN MENU</li>
+              <li class="nav-item">
+                <a href="index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-file-earmark-text"></i>
+                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item"><a href="posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>All Posts</p></a></li>
+                  <li class="nav-item"><a href="posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>Create Post</p></a></li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categories</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i><p>Tags</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i><p>Comments</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Users</p></a>
+              </li>
+              <li class="nav-header">ACCESS CONTROL</li>
+              <li class="nav-item">
+                <a href="roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i><p>Roles</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="permissions/index.html" class="nav-link"><i class="nav-icon bi bi-key"></i><p>Permissions</p></a>
+              </li>
+              <li class="nav-header">SETTINGS</li>
+              <li class="nav-item">
+                <a href="settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i><p>Settings</p></a>
+              </li>
+              <li class="nav-item">
+                <a href="login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p></a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- ======= Main Content ======= -->
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6"><h3 class="mb-0">My Profile</h3></div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                  <li class="breadcrumb-item active">Profile</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="app-content">
+          <div class="container-fluid">
+            <div class="row">
+
+              <!-- Profile Card -->
+              <div class="col-md-4">
+                <div class="card card-primary card-outline">
+                  <div class="card-body text-center pt-4">
+                    <div class="position-relative d-inline-block mb-3">
+                      <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" width="120" height="120" alt="Profile Photo" id="profilePhotoPreview" />
+                      <label for="photoUpload" class="position-absolute bottom-0 end-0 btn btn-sm btn-primary rounded-circle p-1" style="cursor:pointer" title="Change photo">
+                        <i class="bi bi-camera"></i>
+                      </label>
+                      <input type="file" id="photoUpload" accept="image/*" class="d-none" />
+                    </div>
+                    <h4 class="mb-0">Admin</h4>
+                    <p class="text-muted mb-1">admin@blog.com</p>
+                    <span class="badge text-bg-danger mb-3">ADMIN</span>
+                    <div class="row text-center border-top pt-3">
+                      <div class="col-4">
+                        <strong>48</strong>
+                        <p class="text-muted small mb-0">Posts</p>
+                      </div>
+                      <div class="col-4">
+                        <strong>35</strong>
+                        <p class="text-muted small mb-0">Users</p>
+                      </div>
+                      <div class="col-4">
+                        <strong>128</strong>
+                        <p class="text-muted small mb-0">Comments</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-footer text-center">
+                    <small class="text-muted">Member since January 2024</small>
+                  </div>
+                </div>
+
+                <!-- Roles & Permissions Summary -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-shield-check me-2"></i>My Roles</h3>
+                  </div>
+                  <div class="card-body">
+                    <span class="badge text-bg-danger me-1 mb-1">ADMIN</span>
+                    <p class="text-muted small mt-2 mb-0">Full access to all system features.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Edit Forms -->
+              <div class="col-md-8">
+                <!-- Nav Tabs -->
+                <div class="card">
+                  <div class="card-header p-0">
+                    <ul class="nav nav-tabs" id="profileTabs" role="tablist">
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                          <i class="bi bi-person me-1"></i>Personal Info
+                        </button>
+                      </li>
+                      <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
+                          <i class="bi bi-lock me-1"></i>Change Password
+                        </button>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-body">
+                    <div class="tab-content" id="profileTabContent">
+
+                      <!-- Personal Info Tab -->
+                      <div class="tab-pane fade show active" id="info" role="tabpanel">
+                        <form id="profileInfoForm">
+                          <div class="row">
+                            <div class="col-md-6 mb-3">
+                              <label for="firstName" class="form-label">First Name</label>
+                              <input type="text" class="form-control" id="firstName" value="Admin" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                              <label for="lastName" class="form-label">Last Name</label>
+                              <input type="text" class="form-control" id="lastName" value="" placeholder="Last name" />
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <div class="input-group">
+                              <span class="input-group-text"><i class="bi bi-at"></i></span>
+                              <input type="text" class="form-control" id="username" value="admin" />
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                              <input type="email" class="form-control" id="email" value="admin@blog.com" />
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="bio" class="form-label">Bio</label>
+                            <textarea class="form-control" id="bio" rows="3" placeholder="Tell something about yourself..."></textarea>
+                          </div>
+                          <div class="mb-4">
+                            <label for="website" class="form-label">Website</label>
+                            <div class="input-group">
+                              <span class="input-group-text"><i class="bi bi-globe"></i></span>
+                              <input type="url" class="form-control" id="website" placeholder="https://your-website.com" />
+                            </div>
+                          </div>
+                          <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Save Changes
+                          </button>
+                        </form>
+                      </div>
+
+                      <!-- Change Password Tab -->
+                      <div class="tab-pane fade" id="password" role="tabpanel">
+                        <form id="changePasswordForm">
+                          <div class="mb-3">
+                            <label for="currentPassword" class="form-label">Current Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                              <input type="password" class="form-control" id="currentPassword" placeholder="Current password" required />
+                              <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="currentPassword">
+                                <i class="bi bi-eye"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label for="newPassword" class="form-label">New Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                              <input type="password" class="form-control" id="newPassword" placeholder="New password (min 8 chars)" required minlength="8" />
+                              <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="newPassword">
+                                <i class="bi bi-eye"></i>
+                              </button>
+                            </div>
+                            <div class="mt-2">
+                              <div class="progress" style="height:6px">
+                                <div class="progress-bar" id="pwStrengthBar" role="progressbar" style="width:0%"></div>
+                              </div>
+                              <small class="text-muted" id="pwStrengthLabel">Enter a password</small>
+                            </div>
+                          </div>
+                          <div class="mb-4">
+                            <label for="confirmPassword" class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                              <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat new password" required />
+                              <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="confirmPassword">
+                                <i class="bi bi-eye"></i>
+                              </button>
+                            </div>
+                          </div>
+                          <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-lock me-1"></i> Change Password
+                          </button>
+                        </form>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+      </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script src="js/http.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/user.service.js"></script>
+    <script>
+      Auth.guard();
+      let currentUser = null;
+
+      document.addEventListener('DOMContentLoaded', async function () {
+        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
+          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
+          });
+        }
+
+        // Load current user info
+        try {
+          currentUser = await Auth.me();
+          document.getElementById('firstName').value  = currentUser.firstName || currentUser.username || '';
+          document.getElementById('lastName').value   = currentUser.lastName || '';
+          document.getElementById('username').value   = currentUser.username || '';
+          document.getElementById('email').value      = currentUser.email || '';
+          document.getElementById('bio').value        = currentUser.bio || '';
+          document.getElementById('website').value    = currentUser.website || '';
+          if (currentUser.avatarUrl) document.getElementById('profilePhotoPreview').src = currentUser.avatarUrl;
+          // Roles
+          const roleBadges = (currentUser.roles || []).map(r => `<span class="badge text-bg-danger me-1">${r}</span>`).join('');
+          document.querySelector('.card .card-body span.badge')?.replaceWith(...(new DOMParser().parseFromString(roleBadges || '<span class="badge text-bg-secondary">USER</span>', 'text/html').body.childNodes));
+          // Member since
+          if (currentUser.createdAt) document.querySelector('.card-footer small').textContent = 'Member since ' + UI.formatDate(currentUser.createdAt);
+        } catch (err) { UI.toast('Failed to load profile: ' + err.message, 'danger'); }
+
+        // Save profile info
+        document.getElementById('profileInfoForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          if (!currentUser) return;
+          const payload = {
+            firstName:  document.getElementById('firstName').value.trim(),
+            lastName:   document.getElementById('lastName').value.trim(),
+            username:   document.getElementById('username').value.trim(),
+            email:      document.getElementById('email').value.trim(),
+            bio:        document.getElementById('bio').value.trim(),
+            website:    document.getElementById('website').value.trim(),
+          };
+          try {
+            await UserService.update(currentUser.id, payload);
+            UI.toast('Profile updated successfully.');
+          } catch (err) { UI.toast(err.message, 'danger'); }
+        });
+
+        // Change password
+        document.getElementById('changePasswordForm').addEventListener('submit', async function (e) {
+          e.preventDefault();
+          const newPw  = document.getElementById('newPassword').value;
+          const confPw = document.getElementById('confirmPassword').value;
+          if (newPw !== confPw) { UI.toast('Passwords do not match.', 'warning'); return; }
+          try {
+            await UserService.update(currentUser.id, { password: newPw, currentPassword: document.getElementById('currentPassword').value });
+            UI.toast('Password changed successfully.');
+            this.reset();
+          } catch (err) { UI.toast(err.message, 'danger'); }
+        });
+
+        // Toggle password visibility
+        document.querySelectorAll('.toggle-pw').forEach(btn => {
+          btn.addEventListener('click', function () {
+            const target = document.getElementById(this.dataset.target);
+            const icon   = this.querySelector('i');
+            target.type  = target.type === 'password' ? 'text' : 'password';
+            icon.className = target.type === 'text' ? 'bi bi-eye-slash' : 'bi bi-eye';
+          });
+        });
+
+        // Password strength meter
+        document.getElementById('newPassword').addEventListener('input', function () {
+          const val = this.value;
+          let strength = 0;
+          if (val.length >= 8) strength++;
+          if (/[A-Z]/.test(val)) strength++;
+          if (/[0-9]/.test(val)) strength++;
+          if (/[^A-Za-z0-9]/.test(val)) strength++;
+          const levels = [
+            { pct: 0, cls: '', text: 'Enter a password' },
+            { pct: 25, cls: 'bg-danger', text: 'Weak' },
+            { pct: 50, cls: 'bg-warning', text: 'Fair' },
+            { pct: 75, cls: 'bg-info', text: 'Good' },
+            { pct: 100, cls: 'bg-success', text: 'Strong' },
+          ];
+          const l = levels[strength];
+          const bar = document.getElementById('pwStrengthBar');
+          bar.style.width = l.pct + '%';
+          bar.className   = 'progress-bar ' + l.cls;
+          document.getElementById('pwStrengthLabel').textContent = l.text;
+        });
+
+        // Photo upload preview
+        document.getElementById('photoUpload').addEventListener('change', function () {
+          if (this.files && this.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => document.getElementById('profilePhotoPreview').src = e.target.result;
+            reader.readAsDataURL(this.files[0]);
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -21,6 +21,9 @@ import me.phuongcm.blog.service.AuthService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import me.phuongcm.blog.entity.RefreshToken;
+import me.phuongcm.blog.security.service.RefreshTokenService;
+
 @Service
 @Slf4j
 public class AuthServiceImpl implements AuthService {
@@ -30,17 +33,20 @@ public class AuthServiceImpl implements AuthService {
     private final UserRoleRepository userRoleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final RefreshTokenService refreshTokenService;
 
     public AuthServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            UserRoleRepository userRoleRepository,
                            PasswordEncoder passwordEncoder,
-                           JwtUtil jwtUtil) {
+                           JwtUtil jwtUtil,
+                           RefreshTokenService refreshTokenService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -53,9 +59,11 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String token = jwtUtil.createToken(user.getUsername(), loginRequest.isRememberMe());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
 
         return LoginResponse.builder()
                 .accessToken(token)
+                .refreshToken(refreshToken.getToken())
                 .tokenType("Bearer")
                 .userId(user.getId())
                 .username(user.getUsername())
