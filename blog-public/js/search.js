@@ -10,14 +10,14 @@ let currentKeyword = '';
 function handleNavSearch(e) {
   e.preventDefault();
   const kw = document.getElementById('nav-search-input').value.trim();
-  if (kw) window.location.href = `/blog-public/search.html?q=${encodeURIComponent(kw)}`;
+  if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
 }
 
 function handleSearchForm(e) {
   e.preventDefault();
   const kw = document.getElementById('search-input').value.trim();
   if (!kw) return;
-  window.history.replaceState({}, '', `/blog-public/search.html?q=${encodeURIComponent(kw)}`);
+  window.history.replaceState({}, '', `search.html?q=${encodeURIComponent(kw)}`);
   doSearch(kw);
 }
 

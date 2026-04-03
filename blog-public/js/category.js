@@ -9,7 +9,7 @@ let currentPage = 0;
 function handleNavSearch(e) {
   e.preventDefault();
   const kw = document.getElementById('nav-search-input').value.trim();
-  if (kw) window.location.href = `/blog-public/search.html?q=${encodeURIComponent(kw)}`;
+  if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
 }
 
 document.getElementById('nav-toggle')?.addEventListener('click', () => {

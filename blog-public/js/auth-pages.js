@@ -44,13 +44,13 @@ function togglePassword(inputId, btn) {
 }
 
 function loginOAuth(provider) {
-  window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}?redirect_uri=${encodeURIComponent(window.location.origin + '/blog-public/index.html')}`;
+  window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}?redirect_uri=${encodeURIComponent(window.location.origin + 'index.html')}`;
 }
 
 function handleNavSearch(e) {
   e.preventDefault();
   const kw = document.getElementById('nav-search-input')?.value.trim();
-  if (kw) window.location.href = `/blog-public/search.html?q=${encodeURIComponent(kw)}`;
+  if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
 }
 
 /* ══════════════════════════════════════════════════════
@@ -81,7 +81,7 @@ async function handleLogin(e) {
   try {
     await Auth.login(username, password);
     UI.toast('Đăng nhập thành công!', 'success');
-    setTimeout(() => { window.location.href = '/blog-public/index.html'; }, 600);
+    setTimeout(() => { window.location.href = 'index.html'; }, 600);
   } catch (err) {
     showFormError('login-error', err.message || 'Tên đăng nhập hoặc mật khẩu không đúng.');
   } finally {
@@ -131,7 +131,7 @@ async function handleRegister(e) {
     await Auth.register({ username, email, password, fullName: fullName || undefined });
     UI.toast('Đăng ký thành công! Đang đăng nhập...', 'success');
     await Auth.login(username, password);
-    setTimeout(() => { window.location.href = '/blog-public/index.html'; }, 800);
+    setTimeout(() => { window.location.href = 'index.html'; }, 800);
   } catch (err) {
     showFormError('register-error', err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
   } finally {
@@ -272,14 +272,14 @@ async function handleChangePassword(e) {
 
   // Nếu đã đăng nhập và vào login/register → redirect về trang chủ
   if ((isLogin || isRegister) && Auth.isLoggedIn()) {
-    window.location.href = '/blog-public/index.html';
+    window.location.href = 'index.html';
     return;
   }
 
   // Profile page — yêu cầu đăng nhập
   if (isProfile) {
     if (!Auth.isLoggedIn()) {
-      window.location.href = '/blog-public/login.html';
+      window.location.href = 'login.html';
       return;
     }
 

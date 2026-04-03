@@ -94,7 +94,7 @@ const UI = {
             <svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
           </button>
           <div class="user-dropdown" id="user-dropdown">
-            <a href="/blog-public/profile.html">
+            <a href="profile.html">
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/></svg>
               Trang cá nhân
             </a>
@@ -116,8 +116,8 @@ const UI = {
       });
     } else {
       navAuth.innerHTML = `
-        <a href="/blog-public/login.html" class="btn btn-ghost btn-sm">Đăng nhập</a>
-        <a href="/blog-public/register.html" class="btn btn-primary btn-sm">Đăng ký</a>`;
+        <a href="login.html" class="btn btn-ghost btn-sm">Đăng nhập</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Đăng ký</a>`;
     }
   },
 
@@ -126,7 +126,7 @@ const UI = {
     const path = window.location.pathname;
     document.querySelectorAll('.nav-links a').forEach(link => {
       const href = link.getAttribute('href') || '';
-      if (path.endsWith(href) || (href !== '/blog-public/index.html' && path.includes(href.split('.')[0]))) {
+      if (path.endsWith(href) || (href !== 'index.html' && path.includes(href.split('.')[0]))) {
         link.classList.add('active');
       }
     });
@@ -135,7 +135,7 @@ const UI = {
   /* ── Post card HTML ─────────────────────────────────────── */
   postCard(post) {
     const categories = (post.categories || []).map(c =>
-      `<a href="/blog-public/category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
+      `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
     ).join('');
 
     const thumb = post.thumbnailUrl
@@ -147,11 +147,11 @@ const UI = {
 
     return `
       <article class="post-card">
-        <a href="/blog-public/post.html?slug=${post.slug}">${thumb}</a>
+        <a href="post.html?slug=${post.slug}">${thumb}</a>
         <div class="post-card-body">
           ${categories ? `<div class="post-card-cats">${categories}</div>` : ''}
           <h2 class="post-card-title">
-            <a href="/blog-public/post.html?slug=${post.slug}">${post.title}</a>
+            <a href="post.html?slug=${post.slug}">${post.title}</a>
           </h2>
           ${post.summary ? `<p class="post-card-excerpt">${post.summary}</p>` : ''}
           <div class="post-card-meta">
@@ -187,7 +187,7 @@ const UI = {
       if (!roots.length) { el.innerHTML = '<p class="text-muted" style="font-size:.875rem">Chưa có danh mục</p>'; return; }
       el.innerHTML = `<ul class="cat-list">
         ${roots.map(c => `
-          <li><a href="/blog-public/category.html?slug=${c.slug}">
+          <li><a href="category.html?slug=${c.slug}">
             <span>${c.title}</span>
           </a></li>`).join('')}
       </ul>`;
@@ -203,7 +203,7 @@ const UI = {
       if (!tags?.length) { el.innerHTML = '<p class="text-muted" style="font-size:.875rem">Chưa có tag</p>'; return; }
       el.innerHTML = `<div class="tag-cloud">
         ${tags.slice(0, 20).map(t =>
-          `<a href="/blog-public/tag.html?slug=${t.slug}" class="tag-chip tag">${t.title}</a>`
+          `<a href="tag.html?slug=${t.slug}" class="tag-chip tag">${t.title}</a>`
         ).join('')}
       </div>`;
     } catch (_) {}
@@ -227,7 +227,7 @@ const UI = {
               }
             </div>
             <div class="recent-info">
-              <a href="/blog-public/post.html?slug=${p.slug}">${p.title}</a>
+              <a href="post.html?slug=${p.slug}">${p.title}</a>
               <div class="recent-date">${this.formatDateShort(p.publishedAt || p.createdAt)}</div>
             </div>
           </li>`).join('')}

@@ -6,7 +6,7 @@
 function handleNavSearch(e) {
   e.preventDefault();
   const kw = document.getElementById('nav-search-input').value.trim();
-  if (kw) window.location.href = `/blog-public/search.html?q=${encodeURIComponent(kw)}`;
+  if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
 }
 
 document.getElementById('nav-toggle')?.addEventListener('click', () => {
@@ -20,7 +20,7 @@ function renderPostHeader(post) {
   const authorName = post.author?.fullName || post.author?.username || 'Ẩn danh';
   const authorAvatar = UI.avatarUrl(post.author);
   const categories = (post.categories || []).map(c =>
-    `<a href="/blog-public/category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
+    `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
   ).join('');
 
   document.getElementById('breadcrumb-title').textContent = post.title;
@@ -37,7 +37,7 @@ function renderPostHeader(post) {
            onerror="this.src='https://ui-avatars.com/api/?name=U&background=3b82f6&color=fff'">
       <div class="author-info">
         <div class="author-name">
-          <a href="/blog-public/author.html?id=${post.author?.id}">${authorName}</a>
+          <a href="author.html?id=${post.author?.id}">${authorName}</a>
         </div>
         <div class="post-meta-row">
           <span>${UI.formatDate(post.publishedAt || post.createdAt)}</span>
@@ -55,7 +55,7 @@ function renderPostHeader(post) {
 /* ── Render post content ─────────────────────────────────── */
 function renderPostContent(post) {
   const tags = (post.tags || []).map(t =>
-    `<a href="/blog-public/tag.html?slug=${t.slug}" class="tag-chip tag">${t.title}</a>`
+    `<a href="tag.html?slug=${t.slug}" class="tag-chip tag">${t.title}</a>`
   ).join('');
 
   document.getElementById('post-content-wrap').innerHTML = `
@@ -89,7 +89,7 @@ async function loadComments(postId) {
           </div>
         </div>` : `
         <div style="background:var(--primary-light);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:2rem;font-size:.9rem;color:var(--primary)">
-          <a href="/blog-public/login.html" style="font-weight:600">Đăng nhập</a> để bình luận bài viết này.
+          <a href="login.html" style="font-weight:600">Đăng nhập</a> để bình luận bài viết này.
         </div>`}
 
       <div class="comment-list" id="comment-list">

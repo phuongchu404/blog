@@ -53,7 +53,7 @@ const Auth = {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
-    window.location.href = '/blog-public/login.html';
+    window.location.href = 'login.html';
   },
 
   /** Yêu cầu đăng nhập để thực hiện hành động (không redirect, trả về false) */

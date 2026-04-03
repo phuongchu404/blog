@@ -7,13 +7,13 @@
 function handleNavSearch(e) {
   e.preventDefault();
   const kw = document.getElementById('nav-search-input').value.trim();
-  if (kw) window.location.href = `/blog-public/search.html?q=${encodeURIComponent(kw)}`;
+  if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
 }
 
 function handleHeroSearch(e) {
   e.preventDefault();
   const kw = document.getElementById('hero-search-input').value.trim();
-  if (kw) window.location.href = `/blog-public/search.html?q=${encodeURIComponent(kw)}`;
+  if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
 }
 
 /* ── Featured post ───────────────────────────────────────── */
@@ -23,12 +23,12 @@ function renderFeatured(post) {
   const authorName = post.author?.fullName || post.author?.username || 'Ẩn danh';
   const authorAvatar = UI.avatarUrl(post.author);
   const categories = (post.categories || []).map(c =>
-    `<a href="/blog-public/category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
+    `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
   ).join('');
 
   el.innerHTML = `
     <article class="featured-post">
-      <a href="/blog-public/post.html?slug=${post.slug}" class="featured-post-thumb">
+      <a href="post.html?slug=${post.slug}" class="featured-post-thumb">
         ${post.thumbnailUrl
           ? `<img src="${post.thumbnailUrl}" alt="${post.title}" loading="eager">`
           : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--primary-light),#dbeafe);display:flex;align-items:center;justify-content:center;font-size:4rem">📝</div>`
@@ -38,7 +38,7 @@ function renderFeatured(post) {
         <div class="featured-label">⭐ Nổi bật</div>
         ${categories ? `<div class="post-card-cats">${categories}</div>` : ''}
         <h2 class="post-card-title">
-          <a href="/blog-public/post.html?slug=${post.slug}">${post.title}</a>
+          <a href="post.html?slug=${post.slug}">${post.title}</a>
         </h2>
         ${post.summary ? `<p class="post-card-excerpt">${post.summary}</p>` : ''}
         <div class="post-card-meta">
@@ -47,7 +47,7 @@ function renderFeatured(post) {
           <span>·</span>
           <span>${UI.formatDate(post.publishedAt || post.createdAt)}</span>
         </div>
-        <a href="/blog-public/post.html?slug=${post.slug}" class="btn btn-primary btn-sm" style="margin-top:.5rem;align-self:flex-start">Đọc bài →</a>
+        <a href="post.html?slug=${post.slug}" class="btn btn-primary btn-sm" style="margin-top:.5rem;align-self:flex-start">Đọc bài →</a>
       </div>
     </article>`;
 }
