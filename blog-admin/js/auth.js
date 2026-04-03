@@ -5,7 +5,9 @@
 
 const Auth = {
   _loginPath() {
+    console.log("pathname", window.location.pathname);
     const depth = window.location.pathname.split('/').filter(Boolean).length;
+    console.log("depth", depth);
     const prefix = depth > 1 ? '../'.repeat(depth - 1) : '';
     return prefix + 'login.html';
   },

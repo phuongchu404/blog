@@ -135,12 +135,8 @@
                 </div>
               </div>
               <div class="col-md-3">
-                <select class="form-select">
+                <select class="form-select" id="filterRole">
                   <option value="">All Roles</option>
-                  <option>Admin</option>
-                  <option>Editor</option>
-                  <option>Author</option>
-                  <option>Subscriber</option>
                 </select>
               </div>
               <div class="col-md-3 text-end">
@@ -155,7 +151,7 @@
               <div class="card-header">
                 <h3 class="card-title"><i class="bi bi-people me-2"></i>All Users</h3>
                 <div class="card-tools">
-                  <span class="badge text-bg-primary">35 total</span>
+                  <span class="badge text-bg-primary" id="users-count-badge">...</span>
                 </div>
               </div>
               <div class="card-body p-0">
@@ -173,78 +169,7 @@
                     </tr>
                   </thead>
                   <tbody id="users-tbody">
-                    <tr>
-                      <td><input type="checkbox" class="form-check-input" /></td>
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user1-128x128.jpg" class="rounded-circle me-2" width="36" height="36" alt="User" />
-                          <strong>Admin</strong>
-                        </div>
-                      </td>
-                      <td>admin@blog.com</td>
-                      <td><span class="badge text-bg-danger">Admin</span></td>
-                      <td>48</td>
-                      <td><span class="badge text-bg-success">Active</span></td>
-                      <td>2024-01-01</td>
-                      <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete" disabled><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="form-check-input" /></td>
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user3-128x128.jpg" class="rounded-circle me-2" width="36" height="36" alt="User" />
-                          <strong>Jane Editor</strong>
-                        </div>
-                      </td>
-                      <td>jane@blog.com</td>
-                      <td><span class="badge text-bg-primary">Editor</span></td>
-                      <td>12</td>
-                      <td><span class="badge text-bg-success">Active</span></td>
-                      <td>2024-03-15</td>
-                      <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="form-check-input" /></td>
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user5-128x128.jpg" class="rounded-circle me-2" width="36" height="36" alt="User" />
-                          <strong>Bob Author</strong>
-                        </div>
-                      </td>
-                      <td>bob@blog.com</td>
-                      <td><span class="badge text-bg-info">Author</span></td>
-                      <td>7</td>
-                      <td><span class="badge text-bg-success">Active</span></td>
-                      <td>2024-06-20</td>
-                      <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td><input type="checkbox" class="form-check-input" /></td>
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user7-128x128.jpg" class="rounded-circle me-2" width="36" height="36" alt="User" />
-                          <strong>Alice Reader</strong>
-                        </div>
-                      </td>
-                      <td>alice@example.com</td>
-                      <td><span class="badge text-bg-secondary">Subscriber</span></td>
-                      <td>0</td>
-                      <td><span class="badge text-bg-warning text-dark">Inactive</span></td>
-                      <td>2025-01-10</td>
-                      <td>
-                        <button class="btn btn-sm btn-warning" title="Edit"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
+                    <tr><td colspan="8" class="text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading users...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -289,10 +214,7 @@
               <div class="mb-3">
                 <label for="newUserRole" class="form-label">Role</label>
                 <select class="form-select" id="newUserRole">
-                  <option value="subscriber">Subscriber</option>
-                  <option value="author">Author</option>
-                  <option value="editor">Editor</option>
-                  <option value="admin">Admin</option>
+                  <option value="">-- Select Role --</option>
                 </select>
               </div>
               <div class="mb-3">
@@ -327,7 +249,7 @@
 
       function renderUsers(list) {
         const tbody = document.getElementById('users-tbody');
-        document.querySelector('.card-tools .badge').textContent = list.length + ' total';
+        document.getElementById('users-count-badge').textContent = list.length + ' total';
         if (!list.length) {
           tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>';
           return;
@@ -392,15 +314,23 @@
           });
         }
 
+        // Filter by role
+        document.getElementById('filterRole').addEventListener('change', function () {
+          const role = this.value.toUpperCase();
+          const filtered = role
+            ? allUsers.filter(u => (u.roles || []).some(r => r.toUpperCase() === role))
+            : allUsers;
+          renderUsers(filtered);
+        });
+
         // Search
-        document.querySelector('.input-group input').addEventListener('keydown', async function (e) {
-          if (e.key !== 'Enter') return;
-          const kw = this.value.trim();
+        document.querySelector('.input-group input').addEventListener('input', function () {
+          const kw = this.value.trim().toLowerCase();
           if (!kw) { renderUsers(allUsers); return; }
-          try {
-            const data = await UserService.search(kw);
-            renderUsers(Array.isArray(data) ? data : (data.content ?? []));
-          } catch (err) { UI.toast(err.message, 'danger'); }
+          renderUsers(allUsers.filter(u =>
+            (u.username || '').toLowerCase().includes(kw) ||
+            (u.email || '').toLowerCase().includes(kw)
+          ));
         });
 
         // Create / update user form
@@ -427,6 +357,17 @@
             loadUsers();
           } catch (err) { UI.toast(err.message, 'danger'); }
         });
+
+        // Load roles into filter + modal dropdown
+        try {
+          const roles = await Http.get('/api/roles') || [];
+          const filterSel = document.getElementById('filterRole');
+          const modalSel  = document.getElementById('newUserRole');
+          roles.forEach(r => {
+            filterSel.insertAdjacentHTML('beforeend', `<option value="${r.name}">${r.name}</option>`);
+            modalSel.insertAdjacentHTML('beforeend',  `<option value="${r.name}">${r.name}</option>`);
+          });
+        } catch (_) { /* roles optional */ }
 
         await loadUsers();
         await UI.renderCurrentUser();

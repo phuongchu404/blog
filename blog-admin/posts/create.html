@@ -9,6 +9,19 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+    <!-- Tom Select (multi-select, vanilla JS) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
+    <style>
+      /* CKEditor chiều cao tối thiểu */
+      .ck-editor__editable_inline { min-height: 400px !important; font-size: 1rem; }
+      .ck.ck-editor { border-radius: 0.375rem; overflow: hidden; }
+      /* Tom Select tag multi-select */
+      .ts-wrapper.form-control, .ts-wrapper.form-select { padding: 0; }
+      /* Char counter */
+      #metaDescCount { font-size: 0.75rem; }
+      /* Image preview */
+      #imgPreview { max-height: 180px; object-fit: cover; border-radius: 0.375rem; }
+    </style>
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
@@ -33,16 +46,16 @@
             </li>
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
-                <span class="d-none d-md-inline">Admin</span>
+                <img id="headerUserAvatar" src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+                <span class="d-none d-md-inline" id="headerUserName">Admin</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <li class="user-header text-bg-primary">
-                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
-                  <p>Admin <small>Blog Administrator</small></p>
+                  <img id="menuUserAvatar" src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <p id="menuUserName">Admin <small>Blog Administrator</small></p>
                 </li>
                 <li class="user-footer">
-                  <a href="#" class="btn btn-outline-secondary">Profile</a>
+                  <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
                   <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
                 </li>
               </ul>
@@ -138,12 +151,12 @@
         <div class="app-content-header">
           <div class="container-fluid">
             <div class="row">
-              <div class="col-sm-6"><h3 class="mb-0">Create Post</h3></div>
+              <div class="col-sm-6"><h3 class="mb-0" id="pageTitle">Create Post</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
                   <li class="breadcrumb-item"><a href="index.html">Posts</a></li>
-                  <li class="breadcrumb-item active">Create</li>
+                  <li class="breadcrumb-item active" id="breadcrumbAction">Create</li>
                 </ol>
               </div>
             </div>
@@ -154,17 +167,19 @@
           <div class="container-fluid">
             <form id="postForm">
               <div class="row">
-                <!-- Left Column: Main Content -->
+                <!-- ===== Left Column: Main Content ===== -->
                 <div class="col-md-8">
                   <div class="card">
                     <div class="card-header">
                       <h3 class="card-title"><i class="bi bi-pencil-square me-2"></i>Post Content</h3>
                     </div>
                     <div class="card-body">
+                      <!-- Title -->
                       <div class="mb-3">
                         <label for="postTitle" class="form-label">Title <span class="text-danger">*</span></label>
                         <input type="text" class="form-control form-control-lg" id="postTitle" placeholder="Enter post title..." required />
                       </div>
+                      <!-- Slug -->
                       <div class="mb-3">
                         <label for="postSlug" class="form-label">Slug</label>
                         <div class="input-group">
@@ -173,14 +188,21 @@
                         </div>
                         <small class="text-muted">Leave blank to auto-generate from title.</small>
                       </div>
+                      <!-- Excerpt -->
                       <div class="mb-3">
                         <label for="postExcerpt" class="form-label">Excerpt</label>
                         <textarea class="form-control" id="postExcerpt" rows="2" placeholder="Short description of the post..."></textarea>
                       </div>
+                      <!-- Content — CKEditor 5 -->
                       <div class="mb-3">
-                        <label for="postContent" class="form-label">Content <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="postContent" rows="16" placeholder="Write your post content here..." required></textarea>
-                        <small class="text-muted">Supports Markdown formatting.</small>
+                        <label class="form-label">Content <span class="text-danger">*</span></label>
+                        <!-- CKEditor sẽ replace textarea này -->
+                        <div id="editor">
+                          <p>Write your post content here...</p>
+                        </div>
+                        <!-- Hidden textarea để submit form -->
+                        <textarea id="postContent" name="postContent" style="display:none"></textarea>
+                        <small class="text-muted mt-1 d-block"><i class="bi bi-info-circle me-1"></i>Rich text editor — supports bold, italic, headings, links, images, tables, code blocks, etc.</small>
                       </div>
                     </div>
                   </div>
@@ -201,8 +223,11 @@
                         <input type="text" class="form-control" id="metaTitle" placeholder="SEO title (leave blank to use post title)" />
                       </div>
                       <div class="mb-3">
-                        <label for="metaDescription" class="form-label">Meta Description</label>
-                        <textarea class="form-control" id="metaDescription" rows="2" placeholder="SEO description (max 160 characters)"></textarea>
+                        <label for="metaDescription" class="form-label">
+                          Meta Description
+                          <small class="text-muted ms-1" id="metaDescCount">(0/160)</small>
+                        </label>
+                        <textarea class="form-control" id="metaDescription" rows="2" placeholder="SEO description (max 160 characters)" maxlength="160"></textarea>
                       </div>
                       <div class="mb-0">
                         <label for="metaKeywords" class="form-label">Keywords</label>
@@ -212,7 +237,7 @@
                   </div>
                 </div>
 
-                <!-- Right Column: Settings -->
+                <!-- ===== Right Column: Settings ===== -->
                 <div class="col-md-4">
                   <!-- Publish Card -->
                   <div class="card">
@@ -223,9 +248,9 @@
                       <div class="mb-3">
                         <label for="postStatus" class="form-label">Status</label>
                         <select class="form-select" id="postStatus">
-                          <option value="draft">Draft</option>
-                          <option value="published">Published</option>
-                          <option value="archived">Archived</option>
+                          <option value="DRAFT">Draft</option>
+                          <option value="PUBLISHED">Published</option>
+                          <option value="ARCHIVED">Archived</option>
                         </select>
                       </div>
                       <div class="mb-3">
@@ -234,10 +259,10 @@
                       </div>
                     </div>
                     <div class="card-footer d-grid gap-2">
-                      <button type="submit" class="btn btn-primary">
+                      <button type="submit" class="btn btn-primary" id="btnPublish">
                         <i class="bi bi-check-circle me-1"></i> Publish Post
                       </button>
-                      <button type="button" class="btn btn-outline-secondary">
+                      <button type="button" class="btn btn-outline-secondary" id="btnDraft">
                         <i class="bi bi-save me-1"></i> Save as Draft
                       </button>
                       <a href="index.html" class="btn btn-outline-danger">
@@ -254,20 +279,17 @@
                     <div class="card-body">
                       <div class="mb-3">
                         <label for="postCategory" class="form-label">Select Category <span class="text-danger">*</span></label>
+                        <!-- Populated dynamically from API -->
                         <select class="form-select" id="postCategory" required>
                           <option value="">-- Choose Category --</option>
-                          <option>Java</option>
-                          <option>JavaScript</option>
-                          <option>DevOps</option>
-                          <option>Database</option>
-                          <option>Frontend</option>
-                          <option>Backend</option>
                         </select>
                       </div>
                       <div class="mb-0">
                         <label for="postTags" class="form-label">Tags</label>
-                        <input type="text" class="form-control" id="postTags" placeholder="spring, java, backend" />
-                        <small class="text-muted">Separate tags with commas.</small>
+                        <!-- Select2 multi-select — populated from API -->
+                        <select class="form-select" id="postTags" multiple>
+                        </select>
+                        <small class="text-muted">Select existing tags or type to add new ones.</small>
                       </div>
                     </div>
                   </div>
@@ -279,12 +301,13 @@
                     </div>
                     <div class="card-body">
                       <div class="mb-3">
-                        <div class="border rounded p-3 text-center bg-body-secondary" style="min-height:120px; cursor:pointer;">
+                        <div id="imgDropZone" class="border rounded p-3 text-center bg-body-secondary" style="min-height:120px; cursor:pointer;" onclick="document.getElementById('featuredImageFile').click()">
                           <i class="bi bi-cloud-upload fs-2 text-muted d-block mb-2"></i>
-                          <span class="text-muted">Click to upload or drag & drop</span>
+                          <span class="text-muted">Click to upload or drag &amp; drop</span>
                           <br><small class="text-muted">PNG, JPG, GIF up to 5MB</small>
                         </div>
-                        <input type="file" class="form-control mt-2" accept="image/*" />
+                        <img id="imgPreview" class="img-fluid w-100 mt-2 d-none" alt="Preview" />
+                        <input type="file" id="featuredImageFile" class="form-control mt-2" accept="image/*" />
                       </div>
                       <div class="mb-0">
                         <label for="imageAlt" class="form-label">Alt Text</label>
@@ -299,10 +322,9 @@
                       <h3 class="card-title"><i class="bi bi-person me-2"></i>Author</h3>
                     </div>
                     <div class="card-body">
-                      <select class="form-select">
-                        <option selected>Admin</option>
-                        <option>Editor 1</option>
-                        <option>Editor 2</option>
+                      <!-- Populated dynamically from API -->
+                      <select class="form-select" id="postAuthor">
+                        <option value="">-- Loading authors... --</option>
                       </select>
                     </div>
                   </div>
@@ -319,10 +341,16 @@
       </footer>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <!-- CKEditor 5 ClassicEditor (full build via CDN) -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+    <!-- Tom Select (vanilla JS multi-select) -->
+    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+    <!-- App JS -->
     <script src="../js/http.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/ui.js"></script>
@@ -333,10 +361,13 @@
       Auth.guard();
 
       // Lấy postId từ URL nếu đang edit: posts/create.html?id=123
-      const urlParams = new URLSearchParams(window.location.search);
+      const urlParams  = new URLSearchParams(window.location.search);
       const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
 
+      let ckEditor = null; // sẽ giữ instance CKEditor
+
       document.addEventListener('DOMContentLoaded', async function () {
+        // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
         const sidebarWrapper = document.querySelector('.sidebar-wrapper');
         if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
           OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
@@ -344,79 +375,174 @@
           });
         }
 
-        // Auto slug từ title
+        // ── CKEditor 5 ──────────────────────────────────────────────────────
+        ckEditor = await ClassicEditor.create(document.getElementById('editor'), {
+          toolbar: {
+            items: [
+              'heading', '|',
+              'bold', 'italic', 'underline', 'strikethrough', '|',
+              'link', 'blockQuote', 'code', 'codeBlock', '|',
+              'bulletedList', 'numberedList', 'todoList', '|',
+              'insertTable', '|',
+              'imageUpload', 'mediaEmbed', '|',
+              'horizontalLine', '|',
+              'outdent', 'indent', '|',
+              'undo', 'redo',
+            ],
+            shouldNotGroupWhenFull: true,
+          },
+          placeholder: 'Write your post content here...',
+          language: 'en',
+        });
+
+        // ── Tom Select (Tags) ────────────────────────────────────────────
+        window.tomSelectTags = new TomSelect('#postTags', {
+          plugins: ['remove_button', 'caret_position'],
+          create: true,           // cho phép tạo tag mới bằng cách gõ
+          placeholder: 'Select or type tags...',
+          maxOptions: 200,
+          delimiter: ',',
+        });
+
+        // ── Auto slug từ title ──────────────────────────────────────────────
         document.getElementById('postTitle').addEventListener('input', function () {
           document.getElementById('postSlug').value = UI.toSlug(this.value);
         });
 
-        // Load categories vào dropdown
+        // ── Meta description char counter ───────────────────────────────────
+        document.getElementById('metaDescription').addEventListener('input', function () {
+          document.getElementById('metaDescCount').textContent = `(${this.value.length}/160)`;
+        });
+
+        // ── Image preview khi chọn file ─────────────────────────────────────
+        document.getElementById('featuredImageFile').addEventListener('change', function () {
+          const file = this.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = e => {
+            const preview = document.getElementById('imgPreview');
+            preview.src = e.target.result;
+            preview.classList.remove('d-none');
+            document.getElementById('imgDropZone').classList.add('d-none');
+          };
+          reader.readAsDataURL(file);
+        });
+
+        // ── Load Categories ─────────────────────────────────────────────────
         try {
           const cats = await CategoryService.getAll();
-          const sel = document.getElementById('postCategory');
+          const sel  = document.getElementById('postCategory');
           sel.innerHTML = '<option value="">-- Choose Category --</option>' +
             (Array.isArray(cats) ? cats : []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-        } catch (_) {}
+        } catch (_) {
+          UI.toast('Could not load categories.', 'warning');
+        }
 
-        // Load tags gợi ý
+        // ── Load Tags into Tom Select ────────────────────────────────────
         try {
           const tags = await TagService.getAll();
-          const tagNames = (Array.isArray(tags) ? tags : []).map(t => t.name).join(', ');
-          document.getElementById('postTags').placeholder = tagNames ? `e.g. ${tagNames.split(', ').slice(0, 3).join(', ')}` : 'spring, java, backend';
+          const ts = window.tomSelectTags;
+          (Array.isArray(tags) ? tags : []).forEach(t => {
+            ts.addOption({ value: String(t.id), text: t.name });
+          });
+          ts.refreshOptions(false);
         } catch (_) {}
 
-        // Nếu là edit mode: load dữ liệu bài viết
+        // ── Load Authors ────────────────────────────────────────────────────
+        try {
+          const users  = await Http.get('/api/users') || [];
+          const list   = Array.isArray(users) ? users : (users.content ?? []);
+          const selAut = document.getElementById('postAuthor');
+          selAut.innerHTML = list.map(u => `<option value="${u.id}">${u.username || u.name}</option>`).join('');
+        } catch (_) {
+          document.getElementById('postAuthor').innerHTML = '<option value="">-- Could not load --</option>';
+        }
+
+        // ── Edit mode: load existing post ───────────────────────────────────
         if (editPostId) {
-          document.querySelector('.col-sm-6 h3').textContent = 'Edit Post';
-          document.querySelector('.breadcrumb-item.active').textContent = 'Edit';
+          document.getElementById('pageTitle').textContent = 'Edit Post';
+          document.getElementById('breadcrumbAction').textContent = 'Edit';
+          document.getElementById('btnPublish').innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Post';
           try {
             const post = await PostService.getById(editPostId);
             document.getElementById('postTitle').value   = post.title || '';
-            document.getElementById('postSlug').value    = post.slug || '';
+            document.getElementById('postSlug').value    = post.slug  || '';
             document.getElementById('postExcerpt').value = post.excerpt || '';
-            document.getElementById('postContent').value = post.content || '';
             document.getElementById('postStatus').value  = post.status || 'DRAFT';
+
+            // Set CKEditor content
+            ckEditor.setData(post.content || '');
+
+            // Category
             if (post.categoryId) document.getElementById('postCategory').value = post.categoryId;
-            if (post.tags) document.getElementById('postTags').value = post.tags.map(t => t.name).join(', ');
+
+            // Tags — restore into Tom Select
+            if (post.tags && post.tags.length) {
+              const ts = window.tomSelectTags;
+              post.tags.forEach(t => {
+                const val  = String(t.id || t.name);
+                const text = t.name || t;
+                if (!ts.options[val]) ts.addOption({ value: val, text });
+                ts.addItem(val, true);
+              });
+            }
+
             // SEO meta
             try {
-              const meta = await PostService.getMeta(editPostId);
+              const meta   = await PostService.getMeta(editPostId);
               const metaMap = {};
               (Array.isArray(meta) ? meta : []).forEach(m => metaMap[m.key] = m.value);
               if (metaMap.metaTitle)       document.getElementById('metaTitle').value       = metaMap.metaTitle;
-              if (metaMap.metaDescription) document.getElementById('metaDescription').value = metaMap.metaDescription;
+              if (metaMap.metaDescription) {
+                document.getElementById('metaDescription').value = metaMap.metaDescription;
+                document.getElementById('metaDescCount').textContent = `(${metaMap.metaDescription.length}/160)`;
+              }
               if (metaMap.metaKeywords)    document.getElementById('metaKeywords').value    = metaMap.metaKeywords;
             } catch (_) {}
+
           } catch (err) { UI.toast('Failed to load post: ' + err.message, 'danger'); }
         }
 
-        // Publish button (submit form)
+        // ── Form submit — Publish ────────────────────────────────────────────
         document.getElementById('postForm').addEventListener('submit', async function (e) {
           e.preventDefault();
-          await savePost('PUBLISHED');
+          await savePost(document.getElementById('postStatus').value || 'PUBLISHED');
         });
 
-        // Save as Draft button
-        document.querySelector('.btn-outline-secondary').addEventListener('click', async function () {
+        // ── Save as Draft ────────────────────────────────────────────────────
+        document.getElementById('btnDraft').addEventListener('click', async function () {
           await savePost('DRAFT');
         });
 
         await UI.renderCurrentUser();
       });
 
+      // ── savePost ─────────────────────────────────────────────────────────
       async function savePost(status) {
-        const title   = document.getElementById('postTitle').value.trim();
-        const content = document.getElementById('postContent').value.trim();
-        if (!title || !content) { UI.toast('Title and content are required.', 'warning'); return; }
+        const title = document.getElementById('postTitle').value.trim();
 
-        const tagInput = document.getElementById('postTags').value.trim();
+        // Lấy nội dung từ CKEditor (HTML string)
+        const content = ckEditor ? ckEditor.getData() : '';
+
+        if (!title)   { UI.toast('Title is required.', 'warning');   return; }
+        if (!content || content === '<p>&nbsp;</p>') {
+          UI.toast('Content cannot be empty.', 'warning');
+          return;
+        }
+
+        // Tags: Tom Select trả về array of value (id string hoặc tên mới do user gõ)
+        const selectedTags = window.tomSelectTags ? window.tomSelectTags.getValue() : [];
+
         const payload = {
           title,
           slug:       document.getElementById('postSlug').value.trim() || UI.toSlug(title),
           excerpt:    document.getElementById('postExcerpt').value.trim(),
-          content,
+          content,           // HTML từ CKEditor
           status,
           categoryId: document.getElementById('postCategory').value || null,
-          tagNames:   tagInput ? tagInput.split(',').map(t => t.trim()).filter(Boolean) : [],
+          // Nếu value là số → tagId, nếu là chuỗi → tagName mới
+          tagNames:   selectedTags.filter(v => isNaN(Number(v))),
+          tagIds:     selectedTags.filter(v => !isNaN(Number(v))).map(Number),
         };
 
         try {
@@ -438,9 +564,9 @@
           const pid = post?.id || editPostId;
           if (pid) {
             await Promise.allSettled([
-              metaTitle && PostService.setMeta(pid, 'metaTitle', metaTitle),
+              metaTitle && PostService.setMeta(pid, 'metaTitle',       metaTitle),
               metaDesc  && PostService.setMeta(pid, 'metaDescription', metaDesc),
-              metaKw    && PostService.setMeta(pid, 'metaKeywords', metaKw),
+              metaKw    && PostService.setMeta(pid, 'metaKeywords',    metaKw),
             ]);
           }
         } catch (err) { UI.toast(err.message, 'danger'); }

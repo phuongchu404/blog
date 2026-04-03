@@ -146,7 +146,7 @@
               <div class="card-header">
                 <h3 class="card-title"><i class="bi bi-shield-check me-2"></i>All Roles</h3>
                 <div class="card-tools">
-                  <span class="badge text-bg-primary">4 total</span>
+                  <span class="badge text-bg-primary" id="roles-count-badge">...</span>
                 </div>
               </div>
               <div class="card-body p-0">
@@ -162,70 +162,7 @@
                     </tr>
                   </thead>
                   <tbody id="roles-tbody">
-                    <tr>
-                      <td>1</td>
-                      <td>
-                        <span class="badge text-bg-danger fs-6">ADMIN</span>
-                      </td>
-                      <td>Full system access, all permissions granted</td>
-                      <td>
-                        <span class="badge text-bg-secondary">All</span>
-                      </td>
-                      <td><span class="badge text-bg-primary">3</span></td>
-                      <td>
-                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
-                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete" disabled><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>2</td>
-                      <td>
-                        <span class="badge text-bg-primary fs-6">MODERATOR</span>
-                      </td>
-                      <td>Can moderate comments and manage content</td>
-                      <td>
-                        <span class="badge text-bg-secondary">12</span>
-                      </td>
-                      <td><span class="badge text-bg-primary">5</span></td>
-                      <td>
-                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
-                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>3</td>
-                      <td>
-                        <span class="badge text-bg-success fs-6">AUTHOR</span>
-                      </td>
-                      <td>Can create and manage own posts</td>
-                      <td>
-                        <span class="badge text-bg-secondary">8</span>
-                      </td>
-                      <td><span class="badge text-bg-primary">14</span></td>
-                      <td>
-                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
-                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>4</td>
-                      <td>
-                        <span class="badge text-bg-secondary fs-6">USER</span>
-                      </td>
-                      <td>Default role, can read and comment on posts</td>
-                      <td>
-                        <span class="badge text-bg-secondary">3</span>
-                      </td>
-                      <td><span class="badge text-bg-primary">13</span></td>
-                      <td>
-                        <button class="btn btn-sm btn-info" title="Manage Permissions" data-bs-toggle="modal" data-bs-target="#managePermissionsModal"><i class="bi bi-key me-1"></i>Permissions</button>
-                        <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editRoleModal"><i class="bi bi-pencil"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                      </td>
-                    </tr>
+                    <tr><td colspan="6" class="text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading roles...</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -304,59 +241,63 @@
 
     <!-- Manage Permissions Modal -->
     <div class="modal fade" id="managePermissionsModal" tabindex="-1" aria-labelledby="managePermissionsModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-xl">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="managePermissionsModalLabel"><i class="bi bi-key me-2"></i>Manage Permissions — <span class="badge text-bg-primary">MODERATOR</span></h5>
+            <h5 class="modal-title" id="managePermissionsModalLabel"><i class="bi bi-key me-2"></i>Manage Permissions — <span class="badge text-bg-primary" id="managingRoleName">ROLE</span></h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <p class="text-muted mb-3">Select the permissions to assign to this role.</p>
-            <!-- Posts -->
-            <h6 class="text-uppercase text-muted fw-bold mb-2">Posts</h6>
-            <div class="row mb-3">
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostRead" checked /><label class="form-check-label" for="pPostRead">post:read:all</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostCreate" /><label class="form-check-label" for="pPostCreate">post:create</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostUpdate" checked /><label class="form-check-label" for="pPostUpdate">post:update:any</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostDelete" /><label class="form-check-label" for="pPostDelete">post:delete:any</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostPublish" checked /><label class="form-check-label" for="pPostPublish">post:publish</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pPostMeta" /><label class="form-check-label" for="pPostMeta">post:meta:manage</label></div></div>
-            </div>
-            <hr />
-            <!-- Comments -->
-            <h6 class="text-uppercase text-muted fw-bold mb-2">Comments</h6>
-            <div class="row mb-3">
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentRead" checked /><label class="form-check-label" for="pCommentRead">comment:read:all</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentCreate" checked /><label class="form-check-label" for="pCommentCreate">comment:create</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentUpdate" checked /><label class="form-check-label" for="pCommentUpdate">comment:update:any</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentDelete" checked /><label class="form-check-label" for="pCommentDelete">comment:delete:any</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCommentModerate" checked /><label class="form-check-label" for="pCommentModerate">comment:moderate</label></div></div>
-            </div>
-            <hr />
-            <!-- Categories & Tags -->
-            <h6 class="text-uppercase text-muted fw-bold mb-2">Categories & Tags</h6>
-            <div class="row mb-3">
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCatCreate" /><label class="form-check-label" for="pCatCreate">category:create</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCatUpdate" /><label class="form-check-label" for="pCatUpdate">category:update</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pCatDelete" /><label class="form-check-label" for="pCatDelete">category:delete</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pTagCreate" /><label class="form-check-label" for="pTagCreate">tag:create</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pTagUpdate" /><label class="form-check-label" for="pTagUpdate">tag:update</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pTagDelete" /><label class="form-check-label" for="pTagDelete">tag:delete</label></div></div>
-            </div>
-            <hr />
-            <!-- Users -->
-            <h6 class="text-uppercase text-muted fw-bold mb-2">Users</h6>
-            <div class="row mb-3">
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pUserRead" /><label class="form-check-label" for="pUserRead">user:read:all</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pUserDelete" /><label class="form-check-label" for="pUserDelete">user:delete</label></div></div>
-              <div class="col-md-4"><div class="form-check"><input class="form-check-input" type="checkbox" id="pUserAssignRole" /><label class="form-check-label" for="pUserAssignRole">user:assign-role</label></div></div>
+            <p class="text-muted mb-2">Select permissions to assign to this role. Permissions are grouped by <strong>type</strong> (MENU controls sidebar/page access; API controls backend endpoint access).</p>
+
+            <!-- MENU / API Tabs -->
+            <ul class="nav nav-tabs mb-3" id="rolePermTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="rp-tab-all" data-bs-toggle="tab" data-bs-target="#rp-all" type="button" role="tab">
+                  <i class="bi bi-grid me-1"></i>All
+                  <span class="badge bg-secondary ms-1" id="rpAllCount">0</span>
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="rp-tab-menu" data-bs-toggle="tab" data-bs-target="#rp-menu" type="button" role="tab">
+                  <i class="bi bi-layout-sidebar me-1"></i>MENU
+                  <span class="badge bg-purple ms-1" id="rpMenuCount">0</span>
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="rp-tab-api" data-bs-toggle="tab" data-bs-target="#rp-api" type="button" role="tab">
+                  <i class="bi bi-code-slash me-1"></i>API
+                  <span class="badge bg-primary ms-1" id="rpApiCount">0</span>
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="rolePermTabContent">
+              <!-- All -->
+              <div class="tab-pane fade show active" id="rp-all" role="tabpanel">
+                <div id="rp-all-content"><p class="text-muted">Loading...</p></div>
+              </div>
+              <!-- MENU -->
+              <div class="tab-pane fade" id="rp-menu" role="tabpanel">
+                <div id="rp-menu-content"><p class="text-muted">Loading...</p></div>
+              </div>
+              <!-- API -->
+              <div class="tab-pane fade" id="rp-api" role="tabpanel">
+                <div id="rp-api-content"><p class="text-muted">Loading...</p></div>
+              </div>
             </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary">
-              <i class="bi bi-check-circle me-1"></i> Save Permissions
-            </button>
+          <div class="modal-footer d-flex justify-content-between">
+            <div>
+              <button type="button" class="btn btn-outline-secondary btn-sm" id="btnSelectAll"><i class="bi bi-check2-all me-1"></i>Select All</button>
+              <button type="button" class="btn btn-outline-secondary btn-sm ms-1" id="btnSelectNone"><i class="bi bi-x-circle me-1"></i>Clear All</button>
+            </div>
+            <div>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+              <button type="button" class="btn btn-primary" id="btnSavePermissions">
+                <i class="bi bi-check-circle me-1"></i> Save Permissions
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -382,7 +323,7 @@
 
       function renderRoles(list) {
         const tbody = document.getElementById('roles-tbody');
-        document.querySelector('.card-tools .badge').textContent = list.length + ' total';
+        document.getElementById('roles-count-badge').textContent = list.length + ' total';
         if (!list.length) {
           tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No roles found.</td></tr>';
           return;
@@ -410,34 +351,56 @@
 
       function openManagePermissions(roleId, roleName) {
         managingRoleId = roleId;
-        document.getElementById('managePermissionsModalLabel').innerHTML =
-          `<i class="bi bi-key me-2"></i>Manage Permissions — <span class="badge text-bg-primary">${roleName}</span>`;
+        document.getElementById('managingRoleName').textContent = roleName;
         const role = allRoles.find(r => r.id === roleId);
         const assignedIds = new Set((role?.permissions || []).map(p => p.id));
-        // Render dynamic permission checkboxes from loaded permissions
+        // Reset to first tab
+        bootstrap.Tab.getOrCreateInstance(document.getElementById('rp-tab-all')).show();
         renderPermissionCheckboxes(assignedIds);
       }
 
       function renderPermissionCheckboxes(assignedIds = new Set()) {
-        const groups = {};
-        allPermissions.forEach(p => {
-          const group = p.name.split(':')[0];
-          if (!groups[group]) groups[group] = [];
-          groups[group].push(p);
-        });
-        const container = document.querySelector('#managePermissionsModal .modal-body');
-        const html = Object.entries(groups).map(([group, perms]) => `
-          <h6 class="text-uppercase text-muted fw-bold mb-2 mt-3">${group}</h6>
-          <div class="row mb-2">
-            ${perms.map(p => `
-              <div class="col-md-4">
-                <div class="form-check">
-                  <input class="form-check-input perm-check" type="checkbox" id="pm_${p.id}" value="${p.id}" ${assignedIds.has(p.id) ? 'checked' : ''} />
-                  <label class="form-check-label" for="pm_${p.id}"><code>${p.name}</code></label>
-                </div>
-              </div>`).join('')}
-          </div><hr/>`).join('');
-        container.innerHTML = `<p class="text-muted mb-2">Select permissions for this role.</p>${html}`;
+        const menuPerms = allPermissions.filter(p => (p.type || '').toUpperCase() === 'MENU');
+        const apiPerms  = allPermissions.filter(p => (p.type || '').toUpperCase() === 'API');
+
+        document.getElementById('rpAllCount').textContent  = allPermissions.length;
+        document.getElementById('rpMenuCount').textContent = menuPerms.length;
+        document.getElementById('rpApiCount').textContent  = apiPerms.length;
+
+        function buildCheckboxSection(list) {
+          if (!list.length) return '<p class="text-muted">No permissions in this category.</p>';
+          const groups = {};
+          list.forEach(p => {
+            const group = p.name.split(':')[0];
+            if (!groups[group]) groups[group] = [];
+            groups[group].push(p);
+          });
+          return Object.entries(groups).map(([group, perms]) => {
+            const isMenuGroup = (perms[0]?.type || '').toUpperCase() === 'MENU';
+            return `
+              <h6 class="text-uppercase text-muted fw-bold mb-2 mt-3"><i class="bi ${isMenuGroup ? 'bi-layout-sidebar' : 'bi-code-slash'} me-1"></i>${group}</h6>
+              <div class="row mb-2">
+                ${perms.map(p => {
+                  const wl = p.isWhiteList === 1 || p.isWhiteList === true;
+                  return `<div class="col-md-4 mb-1">
+                    <div class="form-check">
+                      <input class="form-check-input perm-check" type="checkbox" id="pm_${p.id}" value="${p.id}" ${assignedIds.has(p.id) ? 'checked' : ''} />
+                      <label class="form-check-label" for="pm_${p.id}">
+                        <code>${p.name}</code>
+                        ${wl ? '<span class="badge text-bg-success ms-1" style="font-size:0.6rem">Public</span>' : ''}
+                        ${p.method ? `<span class="badge ms-1" style="font-size:0.6rem;background:#6c757d;color:#fff">${p.method}</span>` : ''}
+                      </label>
+                      ${p.tag ? `<small class="d-block text-muted" style="font-size:0.7rem">${p.tag}</small>` : ''}
+                    </div>
+                  </div>`;
+                }).join('')}
+              </div><hr/>`;
+          }).join('');
+        }
+
+        document.getElementById('rp-all-content').innerHTML   = buildCheckboxSection(allPermissions);
+        document.getElementById('rp-menu-content').innerHTML  = buildCheckboxSection(menuPerms);
+        document.getElementById('rp-api-content').innerHTML   = buildCheckboxSection(apiPerms);
       }
 
       async function deleteRole(id) {
@@ -484,12 +447,21 @@
           } catch (err) { UI.toast(err.message, 'danger'); }
         });
 
+        // Select All / Clear All
+        document.getElementById('btnSelectAll').addEventListener('click', () => {
+          document.querySelectorAll('.perm-check').forEach(cb => cb.checked = true);
+        });
+        document.getElementById('btnSelectNone').addEventListener('click', () => {
+          document.querySelectorAll('.perm-check').forEach(cb => cb.checked = false);
+        });
+
         // Save permissions
-        document.querySelector('#managePermissionsModal .btn-primary').addEventListener('click', async function () {
-          const selected = [...document.querySelectorAll('.perm-check:checked')].map(cb => Number(cb.value));
+        document.getElementById('btnSavePermissions').addEventListener('click', async function () {
+          // Deduplicate IDs across all tab panels
+          const selected = [...new Set([...document.querySelectorAll('.perm-check:checked')].map(cb => Number(cb.value)))];
           try {
             await RoleService.assignPermissions(managingRoleId, selected);
-            UI.toast('Permissions saved.');
+            UI.toast('Permissions saved successfully.');
             bootstrap.Modal.getInstance(document.getElementById('managePermissionsModal'))?.hide();
             loadRoles();
           } catch (err) { UI.toast(err.message, 'danger'); }
