@@ -148,11 +148,16 @@ function showReplyForm(parentId) {
 
 async function submitComment() {
   if (!Auth.requireLogin()) return;
+  const user = Auth.getUser();
   const text = document.getElementById('new-comment-text')?.value.trim();
   if (!text) { UI.toast('Vui lòng nhập nội dung bình luận.', 'error'); return; }
   try {
-    await CommentService.create({ postId: currentPost.id, content: text });
-    UI.toast('Bình luận đã được gửi, chờ duyệt.', 'success');
+    await CommentService.create({
+      postId:  currentPost.id,
+      userId:  user.id,
+      content: text,
+    });
+    UI.toast('Bình luận đã được gửi, đang chờ duyệt!', 'success');
     document.getElementById('new-comment-text').value = '';
     await loadComments(currentPost.id);
   } catch (err) {
@@ -162,11 +167,17 @@ async function submitComment() {
 
 async function submitReply(parentId) {
   if (!Auth.requireLogin()) return;
+  const user = Auth.getUser();
   const text = document.getElementById(`reply-text-${parentId}`)?.value.trim();
   if (!text) { UI.toast('Vui lòng nhập nội dung trả lời.', 'error'); return; }
   try {
-    await CommentService.create({ postId: currentPost.id, parentId, content: text });
-    UI.toast('Trả lời đã được gửi, chờ duyệt.', 'success');
+    await CommentService.create({
+      postId:   currentPost.id,
+      userId:   user.id,
+      parentId: parentId,
+      content:  text,
+    });
+    UI.toast('Trả lời đã được gửi, đang chờ duyệt!', 'success');
     await loadComments(currentPost.id);
   } catch (err) {
     UI.toast(err.message || 'Không thể gửi trả lời.', 'error');
@@ -180,7 +191,8 @@ async function deleteComment(id) {
     UI.toast('Đã xóa bình luận.', 'success');
     await loadComments(currentPost.id);
   } catch (err) {
-    UI.toast(err.message || 'Không thể xóa bình luận.', 'error');
+    // Người dùng thường không có quyền xóa — chỉ admin/moderator mới được
+    UI.toast('Bạn không có quyền xóa bình luận này.', 'error');
   }
 }
 
