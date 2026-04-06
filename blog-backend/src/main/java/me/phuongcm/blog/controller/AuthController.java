@@ -1,12 +1,8 @@
 package me.phuongcm.blog.controller;
 
+import co.elastic.clients.elasticsearch.security.ChangePasswordRequest;
 import jakarta.validation.Valid;
-import me.phuongcm.blog.dto.ApiResponse;
-import me.phuongcm.blog.dto.LoginRequest;
-import me.phuongcm.blog.dto.LoginResponse;
-import me.phuongcm.blog.dto.RegisterRequest;
-import me.phuongcm.blog.dto.TokenRefreshRequest;
-import me.phuongcm.blog.dto.TokenRefreshResponse;
+import me.phuongcm.blog.dto.*;
 import me.phuongcm.blog.entity.RefreshToken;
 import me.phuongcm.blog.entity.User;
 import me.phuongcm.blog.common.exception.TokenRefreshException;
@@ -104,5 +100,11 @@ public class AuthController {
         User user = authService.getCurrentUser();
         refreshTokenService.deleteByUserId(user.getId());
         return ResponseEntity.ok(ApiResponse.ok("Log out successful", null));
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponse<User>> changePassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest) {
+        User user = authService.changePassword(changePasswordRequest);
+        return ResponseEntity.ok(ApiResponse.ok("Password changed successfully", user));
     }
 }

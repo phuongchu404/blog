@@ -6,6 +6,7 @@ import me.phuongcm.blog.common.utils.AuthProvider;
 import me.phuongcm.blog.common.utils.ERole;
 import me.phuongcm.blog.common.utils.Error;
 import me.phuongcm.blog.common.utils.Status;
+import me.phuongcm.blog.dto.ChangePasswordRequestDTO;
 import me.phuongcm.blog.dto.LoginRequest;
 import me.phuongcm.blog.dto.LoginResponse;
 import me.phuongcm.blog.dto.RegisterRequest;
@@ -107,7 +108,22 @@ public class AuthServiceImpl implements AuthService {
     public User getCurrentUser() {
         String username = SecurityUtil.getCurrentUsername()
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
-        return userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
+        
+        java.util.Set<Role> roles = userRoleRepository.findRoleByUsername(username);
+        if (roles != null) {
+            user.setRoles(roles.stream().map(Role::getName).collect(java.util.stream.Collectors.toList()));
+        }
+        
+        return user;
+    }
+
+    @Override
+    public User changePassword(ChangePasswordRequestDTO changePasswordRequest) {
+        User user = userRepository.findByUsername(changePasswordRequest.getUserName()).orElseThrow(()-> new ServiceException(Error.USER_NOT_FOUND));
+        user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
+        userRepository.save(user);
+        return user;
     }
 }

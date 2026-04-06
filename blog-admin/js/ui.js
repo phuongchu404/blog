@@ -70,13 +70,73 @@ const UI = {
     try {
       const user = await Auth.me();
       localStorage.setItem('user', JSON.stringify(user));
-      document.querySelectorAll('.current-user-name')
-        .forEach(el => { el.textContent = user.username || user.name || 'Admin'; });
+      const displayName = user.username || user.name || 'Admin';
+      const roleText = (user.roles || []).map(r => r.name || r).join(', ') || 'User';
+
+      document.querySelectorAll('.current-user-name, .user-menu .d-none.d-md-inline, #headerUserName')
+        .forEach(el => { el.textContent = displayName; });
+        
       document.querySelectorAll('.current-user-email')
         .forEach(el => { el.textContent = user.email || ''; });
+        
       document.querySelectorAll('.current-user-role')
-        .forEach(el => { el.textContent = (user.roles || []).join(', ') || 'User'; });
+        .forEach(el => { el.textContent = roleText; });
+
+      // AdminLTE user menu dropdown profile text
+      document.querySelectorAll('.user-header p, #menuUserName').forEach(el => {
+        el.innerHTML = `${displayName} <small>${roleText}</small>`;
+      });
+
+      // Cập nhật giao diện theo quyền (với data mới từ server)
+      this.applyAccessControl(user);
     } catch (_) {}
+  },
+
+  /**
+   * Ẩn/Hiện menu dựa trên Roles của user.
+   * @param {Object} user 
+   */
+  applyAccessControl(user) {
+    const userRoles = (user?.roles || []).map(r => typeof r === 'string' ? r.toUpperCase() : (r.name || '').toUpperCase());
+    // Hỗ trợ cả 'ADMIN' và 'ROLE_ADMIN'
+    const isAdmin = userRoles.some(r => r.includes('ADMIN'));
+
+    if (!isAdmin) {
+      // Hide Admin-only links by checking text content
+      document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
+        const link = item.querySelector('a.nav-link');
+        if (!link) return;
+        const text = link.textContent.trim().toUpperCase();
+        
+        if (text === 'USERS' || text === 'ROLES' || text === 'PERMISSIONS' || text === 'SETTINGS') {
+          item.style.display = 'none';
+        }
+      });
+      
+      // Hide Admin-only headers
+      document.querySelectorAll('.app-sidebar .nav-header').forEach(header => {
+        const text = header.textContent.trim().toUpperCase();
+        if (text.includes('ACCESS CONTROL') || text.includes('SETTINGS')) {
+          header.style.display = 'none';
+        }
+      });
+    } else {
+      // Dành cho trường hợp reload hoặc clear filter (show lại nếu là ADMIN)
+      document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
+        const link = item.querySelector('a.nav-link');
+        if (!link) return;
+        const text = link.textContent.trim().toUpperCase();
+        if (text === 'USERS' || text === 'ROLES' || text === 'PERMISSIONS' || text === 'SETTINGS') {
+          item.style.display = '';
+        }
+      });
+      document.querySelectorAll('.app-sidebar .nav-header').forEach(header => {
+        const text = header.textContent.trim().toUpperCase();
+        if (text.includes('ACCESS CONTROL') || text.includes('SETTINGS')) {
+          header.style.display = '';
+        }
+      });
+    }
   },
 
   /**
@@ -110,3 +170,13 @@ const UI = {
       .replace(/\s+/g, '-');
   },
 };
+
+// Thực thi đồng bộ sớm (Synchronous execution) để ẩn menu ngay lập tức dựa trên cache, tránh flicker
+(function applyCachedAccessControl() {
+  try {
+    const cachedUser = localStorage.getItem('user');
+    if (cachedUser) {
+      UI.applyAccessControl(JSON.parse(cachedUser));
+    }
+  } catch (e) {}
+})();

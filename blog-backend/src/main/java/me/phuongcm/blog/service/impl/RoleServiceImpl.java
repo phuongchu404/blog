@@ -5,12 +5,14 @@ import me.phuongcm.blog.common.exception.ServiceException;
 import me.phuongcm.blog.common.utils.ERole;
 import me.phuongcm.blog.common.utils.Error;
 import me.phuongcm.blog.dto.RoleDTO;
+import me.phuongcm.blog.dto.RoleResponseDTO;
 import me.phuongcm.blog.entity.Permission;
 import me.phuongcm.blog.entity.Role;
 import me.phuongcm.blog.entity.RolePermission;
 import me.phuongcm.blog.repository.PermissionRepository;
 import me.phuongcm.blog.repository.RolePermissionRepository;
 import me.phuongcm.blog.repository.RoleRepository;
+import me.phuongcm.blog.repository.UserRoleRepository;
 import me.phuongcm.blog.service.RoleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepository;
     private final RolePermissionRepository rolePermissionRepository;
     private final PermissionRepository permissionRepository;
+    private final UserRoleRepository userRoleRepository;
 
     @Override
     public void initRole() {
@@ -39,8 +42,25 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+    public List<RoleResponseDTO> getAllRoles() {
+        List<Role> roles = roleRepository.findAll();
+        return roles.stream().map(role -> {
+            RoleResponseDTO dto = new RoleResponseDTO();
+            dto.setId(role.getId());
+            dto.setName(role.getName());
+            dto.setDescription(role.getDescription());
+            dto.setCreatedAt(role.getCreatedAt());
+            dto.setUpdatedAt(role.getUpdatedAt());
+            
+            java.util.Set<Permission> perms = permissionRepository.findByRoleId(role.getId());
+            dto.setPermissions(new java.util.ArrayList<>(perms));
+            dto.setPermissionCount(perms.size());
+            
+            long count = userRoleRepository.countByRoleId(role.getId());
+            dto.setUserCount(count);
+            
+            return dto;
+        }).collect(Collectors.toList());
     }
 
     @Override

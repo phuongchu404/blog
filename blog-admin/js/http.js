@@ -3,7 +3,7 @@
  * Phụ thuộc: không có
  */
 
-const API_BASE = localStorage.getItem('apiBaseUrl') || 'http://localhost:8080';
+const API_BASE = localStorage.getItem('apiBaseUrl') || 'http://localhost:8055';
 
 const Http = {
   _token() {
@@ -27,11 +27,16 @@ const Http = {
     }
     if (!res.ok) {
       let msg = `HTTP ${res.status}`;
-      try { const body = await res.json(); msg = body.message || body.error || msg; } catch (_) {}
+      try { const body = await res.json(); msg = body.message || body.error || msg; } catch (_) { }
       throw new Error(msg);
     }
     if (res.status === 204) return null;
-    return res.json();
+    const json = await res.json();
+    // Unwrap ApiResponse wrapper: { success, message, data } → trả về data
+    if (json && typeof json === 'object' && 'success' in json && 'data' in json) {
+      return json.data;
+    }
+    return json;
   },
 
   async get(path) {

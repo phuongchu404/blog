@@ -91,7 +91,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 
                         // ----- Không cần đăng nhập -----
-                        .requestMatchers("/auth/login", "/auth/register").permitAll()
+                        .requestMatchers("/auth/login", "/auth/register", "/auth/change-password").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
 
                         // GET public content

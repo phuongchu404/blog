@@ -37,4 +37,7 @@ public interface PermissionRepository extends JpaRepository<Permission, Long> {
            "INNER JOIN ur.user u " +
            "WHERE u.id = :userId")
     Set<Permission> findPermissionsByUserId(@Param("userId") Long userId);
+
+    @Query("SELECT p FROM RolePermission rp INNER JOIN rp.permission p WHERE rp.role.id = :roleId")
+    Set<Permission> findByRoleId(@Param("roleId") Long roleId);
 }

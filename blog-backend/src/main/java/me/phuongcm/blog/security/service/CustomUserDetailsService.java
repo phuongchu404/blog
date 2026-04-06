@@ -53,7 +53,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         // 2. Load permission names (e.g., "post:create", "comment:moderate")
         Set<Permission> permissions = permissionRepository.findPermissionsByUsername(username);
         Set<String> permissionAuthorities = permissions.stream()
-                .map(Permission::getName)
+                .map(Permission::getTag)
                 .collect(Collectors.toSet());
 
         // 3. Gộp roles + permissions thành một Set<String> authorities

@@ -25,7 +25,10 @@ const Auth = {
 
   /** Đăng nhập — lưu token vào localStorage */
   async login(username, password) {
+    // Http._handle() tự động unwrap ApiResponse → nhận { accessToken, refreshToken, ... }
     const data = await Http.post('/auth/login', { username, password });
+    console.log('login data', data);
+    if (!data?.accessToken) throw new Error('Login failed: no access token received.');
     localStorage.setItem('token', data.accessToken);
     if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
     return data;
@@ -39,8 +42,9 @@ const Auth = {
   /** Làm mới access token bằng refresh token */
   async refresh() {
     const refreshToken = localStorage.getItem('refreshToken');
+    // Http._handle() tự động unwrap ApiResponse → nhận { accessToken, refreshToken }
     const data = await Http.post('/auth/refresh', { refreshToken });
-    localStorage.setItem('token', data.accessToken);
+    if (data?.accessToken) localStorage.setItem('token', data.accessToken);
     return data;
   },
 
@@ -56,3 +60,12 @@ const Auth = {
     window.location.href = this._loginPath();
   },
 };
+
+// Global listener to capture clicks on logout links (any link pointing to login.html)
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a');
+  if (link && link.getAttribute('href') && link.getAttribute('href').endsWith('login.html')) {
+    e.preventDefault();
+    Auth.logout();
+  }
+});

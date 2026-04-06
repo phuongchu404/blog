@@ -1,13 +1,14 @@
 package me.phuongcm.blog.service;
 
 import me.phuongcm.blog.dto.RoleDTO;
+import me.phuongcm.blog.dto.RoleResponseDTO;
 import me.phuongcm.blog.entity.Role;
 import java.util.List;
 
 public interface RoleService {
     void initRole();
     
-    List<Role> getAllRoles();
+    List<RoleResponseDTO> getAllRoles();
     
     Role createRole(RoleDTO dto);
     

@@ -78,7 +78,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        List<User> users = userRepository.findAll();
+        List<UserRole> allUserRoles = userRoleRepository.findAll();
+        java.util.Map<Long, List<String>> userRolesMap = allUserRoles.stream()
+                .collect(java.util.stream.Collectors.groupingBy(ur -> ur.getUser().getId(),
+                         java.util.stream.Collectors.mapping(ur -> ur.getRole().getName(), java.util.stream.Collectors.toList())));
+        for (User user : users) {
+             user.setRoles(userRolesMap.getOrDefault(user.getId(), java.util.Collections.emptyList()));
+        }
+        return users;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package me.phuongcm.blog.service;
 
+import co.elastic.clients.elasticsearch.security.ChangePasswordRequest;
+import me.phuongcm.blog.dto.ChangePasswordRequestDTO;
 import me.phuongcm.blog.dto.LoginRequest;
 import me.phuongcm.blog.dto.LoginResponse;
 import me.phuongcm.blog.dto.RegisterRequest;
@@ -26,4 +28,6 @@ public interface AuthService {
      * @return User đang đăng nhập
      */
     User getCurrentUser();
+
+    User changePassword(ChangePasswordRequestDTO changePasswordRequest);
 }

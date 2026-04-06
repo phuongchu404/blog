@@ -1,669 +1,910 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Blog Admin | Permissions</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
-    <link rel="stylesheet" href="../css/custom.css" />
-    <style>
-      .type-badge-MENU  { background-color: #6f42c1; color: #fff; }
-      .type-badge-API   { background-color: #0d6efd; color: #fff; }
-      .method-badge     { font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
-      .method-GET       { background: #198754; color: #fff; }
-      .method-POST      { background: #0d6efd; color: #fff; }
-      .method-PUT       { background: #fd7e14; color: #fff; }
-      .method-DELETE    { background: #dc3545; color: #fff; }
-      .method-star      { background: #6c757d; color: #fff; }
-      .whitelist-badge  { font-size: 0.7rem; }
-      .tab-pane .card   { border: none; }
-      #permissionsTable th, #permissionsTable td { vertical-align: middle; }
-    </style>
-  </head>
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-    <div class="app-wrapper">
 
-      <!-- ======= Header ======= -->
-      <nav class="app-header navbar navbar-expand bg-body">
-        <div class="container-fluid">
-          <ul class="navbar-nav">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Blog Admin | Permissions</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+    crossorigin="anonymous" media="print" onload="this.media = 'all'" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+  <link rel="stylesheet" href="../css/custom.css" />
+  <style>
+    .type-badge-MENU {
+      background-color: #6f42c1;
+      color: #fff;
+    }
+
+    .type-badge-API {
+      background-color: #0d6efd;
+      color: #fff;
+    }
+
+    .method-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .method-GET {
+      background: #198754;
+      color: #fff;
+    }
+
+    .method-POST {
+      background: #0d6efd;
+      color: #fff;
+    }
+
+    .method-PUT {
+      background: #fd7e14;
+      color: #fff;
+    }
+
+    .method-DELETE {
+      background: #dc3545;
+      color: #fff;
+    }
+
+    .method-star {
+      background: #6c757d;
+      color: #fff;
+    }
+
+    .whitelist-badge {
+      font-size: 0.7rem;
+    }
+
+    .tab-pane .card {
+      border: none;
+    }
+
+    #permissionsTable th,
+    #permissionsTable td {
+      vertical-align: middle;
+    }
+  </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+  <div class="app-wrapper">
+    <!-- ======= Header ======= -->
+    <nav class="app-header navbar navbar-expand bg-body">
+      <div class="container-fluid">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+          </li>
+          <li class="nav-item d-none d-md-block">
+            <a href="../index.html" class="nav-link">Dashboard</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+              <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+              <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+            </a>
+          </li>
+          <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+              <img id="headerUserAvatar"
+                src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
+                class="user-image rounded-circle shadow" alt="Admin" />
+              <span class="d-none d-md-inline" id="headerUserName">Admin</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+              <li class="user-header text-bg-primary">
+                <img id="menuUserAvatar"
+                  src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
+                  class="rounded-circle shadow" alt="Admin" />
+                <p id="menuUserName">
+                  Admin <small>Blog Administrator</small>
+                </p>
+              </li>
+              <li class="user-footer">
+                <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
+                <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ======= Sidebar ======= -->
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="brand-link">
+          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo"
+            class="brand-image opacity-75 shadow" />
+          <span class="brand-text fw-light">Blog Admin</span>
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <nav class="mt-2">
+          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+            <li class="nav-header">MAIN MENU</li>
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
-            </li>
-            <li class="nav-item d-none d-md-block">
-              <a href="../index.html" class="nav-link">Dashboard</a>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              <a href="../index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i>
+                <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img id="headerUserAvatar" src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
-                <span class="d-none d-md-inline" id="headerUserName">Admin</span>
+            <li class="nav-item">
+              <a href="#" class="nav-link">
+                <i class="nav-icon bi bi-file-earmark-text"></i>
+                <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
               </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <li class="user-header text-bg-primary">
-                  <img id="menuUserAvatar" src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
-                  <p id="menuUserName">Admin <small>Blog Administrator</small></p>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="../posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i>
+                    <p>All Posts</p>
+                  </a>
                 </li>
-                <li class="user-footer">
-                  <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
-                  <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                <li class="nav-item">
+                  <a href="../posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i>
+                    <p>Create Post</p>
+                  </a>
                 </li>
               </ul>
             </li>
+            <li class="nav-item">
+              <a href="../categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i>
+                <p>Categories</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i>
+                <p>Tags</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i>
+                <p>Comments</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i>
+                <p>Users</p>
+              </a>
+            </li>
+            <li class="nav-header">ACCESS CONTROL</li>
+            <li class="nav-item">
+              <a href="../roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i>
+                <p>Roles</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="index.html" class="nav-link active"><i class="nav-icon bi bi-key"></i>
+                <p>Permissions</p>
+              </a>
+            </li>
+            <li class="nav-header">SETTINGS</li>
+            <li class="nav-item">
+              <a href="../settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i>
+                <p>Settings</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i>
+                <p>Logout</p>
+              </a>
+            </li>
           </ul>
-        </div>
-      </nav>
+        </nav>
+      </div>
+    </aside>
 
-      <!-- ======= Sidebar ======= -->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <div class="sidebar-brand">
-          <a href="../index.html" class="brand-link">
-            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
-            <span class="brand-text fw-light">Blog Admin</span>
-          </a>
+    <!-- ======= Main Content ======= -->
+    <main class="app-main">
+      <div class="app-content-header">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-6">
+              <h3 class="mb-0">Permissions</h3>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-end">
+                <li class="breadcrumb-item">
+                  <a href="../index.html">Home</a>
+                </li>
+                <li class="breadcrumb-item active">Permissions</li>
+              </ol>
+            </div>
+          </div>
         </div>
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
-              <li class="nav-header">MAIN MENU</li>
-              <li class="nav-item">
-                <a href="../index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p></a>
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-file-earmark-text"></i>
-                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item"><a href="../posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>All Posts</p></a></li>
-                  <li class="nav-item"><a href="../posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>Create Post</p></a></li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a href="../categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categories</p></a>
-              </li>
-              <li class="nav-item">
-                <a href="../tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i><p>Tags</p></a>
-              </li>
-              <li class="nav-item">
-                <a href="../comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i><p>Comments</p></a>
-              </li>
-              <li class="nav-item">
-                <a href="../users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Users</p></a>
-              </li>
-              <li class="nav-header">ACCESS CONTROL</li>
-              <li class="nav-item">
-                <a href="../roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i><p>Roles</p></a>
-              </li>
-              <li class="nav-item">
-                <a href="index.html" class="nav-link active"><i class="nav-icon bi bi-key"></i><p>Permissions</p></a>
-              </li>
-              <li class="nav-header">SETTINGS</li>
-              <li class="nav-item">
-                <a href="../settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i><p>Settings</p></a>
-              </li>
-              <li class="nav-item">
-                <a href="../login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p></a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </aside>
+      </div>
 
-      <!-- ======= Main Content ======= -->
-      <main class="app-main">
-        <div class="app-content-header">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm-6"><h3 class="mb-0">Permissions</h3></div>
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
-                  <li class="breadcrumb-item active">Permissions</li>
-                </ol>
+      <div class="app-content">
+        <div class="container-fluid">
+          <!-- Action Bar -->
+          <div class="row mb-3 align-items-center">
+            <div class="col-md-4">
+              <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search permissions..." />
+                <!-- <button class="btn btn-outline-secondary" type="button">
+                  <i class="bi bi-search"></i>
+                </button> -->
+              </div>
+            </div>
+            <div class="col-md-3">
+              <select class="form-select" id="filterGroup">
+                <option value="">All Resources</option>
+                <option>menu</option>
+                <option>post</option>
+                <option>comment</option>
+                <option>category</option>
+                <option>tag</option>
+                <option>user</option>
+                <option>role</option>
+                <option>permission</option>
+              </select>
+            </div>
+            <div class="col-md-5 text-end d-flex gap-2 justify-content-end">
+              <!-- Stat badges -->
+              <span class="align-self-center">
+                <span class="badge type-badge-MENU me-1" id="statMenu">MENU: 0</span>
+                <span class="badge type-badge-API" id="statApi">API: 0</span>
+              </span>
+              <button class="btn btn-primary" id="btnAddPermission" data-bs-toggle="modal"
+                data-bs-target="#addPermissionModal">
+                <i class="bi bi-plus-circle me-1"></i> Add Permission
+              </button>
+            </div>
+          </div>
+
+          <!-- Tabs: MENU | API -->
+          <ul class="nav nav-tabs mb-3" id="permTypeTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="tab-all-btn" data-bs-toggle="tab" data-bs-target="#tab-all"
+                type="button" role="tab">
+                <i class="bi bi-grid me-1"></i>All
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-menu-btn" data-bs-toggle="tab" data-bs-target="#tab-menu" type="button"
+                role="tab">
+                <i class="bi bi-layout-sidebar me-1"></i>MENU
+                <span class="badge bg-secondary ms-1" id="tabMenuCount">0</span>
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="tab-api-btn" data-bs-toggle="tab" data-bs-target="#tab-api" type="button"
+                role="tab">
+                <i class="bi bi-code-slash me-1"></i>API
+                <span class="badge bg-secondary ms-1" id="tabApiCount">0</span>
+              </button>
+            </li>
+          </ul>
+
+          <div class="tab-content" id="permTypeTabContent">
+            <!-- Tab: All -->
+            <div class="tab-pane fade show active" id="tab-all" role="tabpanel">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h3 class="card-title mb-0">
+                    <i class="bi bi-key me-2"></i>All Permissions
+                  </h3>
+                  <span class="badge text-bg-secondary" id="allCountBadge">0 total</span>
+                </div>
+                <div class="card-body p-0">
+                  <table class="table table-sm table-hover align-middle mb-0" id="permissionsTable">
+                    <thead class="table-light">
+                      <tr>
+                        <th style="width: 30px">#</th>
+                        <th style="width: 150px">Name</th>
+                        <th style="width: 70px">Type</th>
+                        <th style="width: 90px">Tag / Description</th>
+                        <th style="width: 80px">Method</th>
+                        <th style="width: 100px">Pattern / Route</th>
+                        <th style="width: 80px">Whitelist</th>
+                        <th style="width: 120px">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="all-tbody">
+                      <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                          <i class="bi bi-hourglass-split me-2"></i>Loading...
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="card-footer clearfix">
+                  <ul class="pagination pagination-sm m-0 float-end" id="perm-pagination"></ul>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab: MENU -->
+            <div class="tab-pane fade" id="tab-menu" role="tabpanel">
+              <div class="row" id="menu-groups-container">
+                <div class="col-12 text-center text-muted py-4">
+                  <i class="bi bi-hourglass-split me-2"></i>Loading...
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab: API -->
+            <div class="tab-pane fade" id="tab-api" role="tabpanel">
+              <div class="row" id="api-groups-container">
+                <div class="col-12 text-center text-muted py-4">
+                  <i class="bi bi-hourglass-split me-2"></i>Loading...
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
+    </main>
 
-        <div class="app-content">
-          <div class="container-fluid">
+    <footer class="app-footer">
+      <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+      <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
+      rights reserved.
+    </footer>
+  </div>
 
-            <!-- Action Bar -->
-            <div class="row mb-3 align-items-center">
-              <div class="col-md-4">
-                <div class="input-group">
-                  <input type="text" id="searchInput" class="form-control" placeholder="Search permissions..." />
-                  <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
-                </div>
+  <!-- ================== Add Permission Modal ================== -->
+  <div class="modal fade" id="addPermissionModal" tabindex="-1" aria-labelledby="addPermissionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addPermissionModalLabel">
+            <i class="bi bi-plus-circle me-2"></i>Add New Permission
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addPermissionForm">
+            <div class="row g-3">
+              <!-- tag -->
+              <div class="col-md-8">
+                <label for="permTag" class="form-label">Permission Tag <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="permName" placeholder="e.g. post:create" required />
+                <small class="text-muted">Format: <code>resource:action</code></small>
               </div>
-              <div class="col-md-3">
-                <select class="form-select" id="filterGroup">
-                  <option value="">All Resources</option>
-                  <option>menu</option>
-                  <option>post</option>
-                  <option>comment</option>
-                  <option>category</option>
-                  <option>tag</option>
-                  <option>user</option>
-                  <option>role</option>
-                  <option>permission</option>
+
+              <!-- Type -->
+              <div class="col-md-4">
+                <label for="permType" class="form-label">Type <span class="text-danger">*</span></label>
+                <select class="form-select" id="permType" required>
+                  <option value="">-- Select --</option>
+                  <option value="MENU">MENU (Frontend route)</option>
+                  <option value="API">API (Backend endpoint)</option>
                 </select>
               </div>
-              <div class="col-md-5 text-end d-flex gap-2 justify-content-end">
-                <!-- Stat badges -->
-                <span class="align-self-center">
-                  <span class="badge type-badge-MENU me-1" id="statMenu">MENU: 0</span>
-                  <span class="badge type-badge-API" id="statApi">API: 0</span>
-                </span>
-                <button class="btn btn-primary" id="btnAddPermission" data-bs-toggle="modal" data-bs-target="#addPermissionModal">
-                  <i class="bi bi-plus-circle me-1"></i> Add Permission
-                </button>
+
+              <!-- Name -->
+              <div class="col-md-12">
+                <label for="permName" class="form-label">Name / Description
+                  <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="permTag" placeholder="e.g. Tạo bài viết" required />
+                <small class="text-muted">Short label shown on UI</small>
+              </div>
+
+              <!-- Pattern -->
+              <div class="col-md-8">
+                <label for="permPattern" class="form-label">Pattern / Route</label>
+                <input type="text" class="form-control" id="permPattern"
+                  placeholder="e.g. /api/v1/posts/** or /admin/posts" />
+                <small class="text-muted">URL pattern (API) or frontend route (MENU)</small>
+              </div>
+
+              <!-- Method — only for API -->
+              <div class="col-md-4" id="addMethodGroup">
+                <label for="permMethod" class="form-label">HTTP Method</label>
+                <select class="form-select" id="permMethod">
+                  <option value="">ANY</option>
+                  <option value="GET">GET</option>
+                  <option value="POST">POST</option>
+                  <option value="PUT">PUT</option>
+                  <option value="DELETE">DELETE</option>
+                  <option value="*">* (All)</option>
+                </select>
+                <small class="text-muted">Only applicable for API type</small>
+              </div>
+
+              <!-- Is White List -->
+              <div class="col-md-12">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="permIsWhiteList" />
+                  <label class="form-check-label" for="permIsWhiteList">
+                    <i class="bi bi-unlock me-1"></i>White List (public — no
+                    authentication required)
+                  </label>
+                </div>
               </div>
             </div>
-
-            <!-- Tabs: MENU | API -->
-            <ul class="nav nav-tabs mb-3" id="permTypeTabs" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="tab-all-btn" data-bs-toggle="tab" data-bs-target="#tab-all" type="button" role="tab">
-                  <i class="bi bi-grid me-1"></i>All
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-menu-btn" data-bs-toggle="tab" data-bs-target="#tab-menu" type="button" role="tab">
-                  <i class="bi bi-layout-sidebar me-1"></i>MENU
-                  <span class="badge bg-secondary ms-1" id="tabMenuCount">0</span>
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="tab-api-btn" data-bs-toggle="tab" data-bs-target="#tab-api" type="button" role="tab">
-                  <i class="bi bi-code-slash me-1"></i>API
-                  <span class="badge bg-secondary ms-1" id="tabApiCount">0</span>
-                </button>
-              </li>
-            </ul>
-
-            <div class="tab-content" id="permTypeTabContent">
-
-              <!-- Tab: All -->
-              <div class="tab-pane fade show active" id="tab-all" role="tabpanel">
-                <div class="card">
-                  <div class="card-header d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0"><i class="bi bi-key me-2"></i>All Permissions</h3>
-                    <span class="badge text-bg-secondary" id="allCountBadge">0 total</span>
-                  </div>
-                  <div class="card-body p-0">
-                    <table class="table table-sm table-hover align-middle mb-0" id="permissionsTable">
-                      <thead class="table-light">
-                        <tr>
-                          <th style="width:30px">#</th>
-                          <th>Name</th>
-                          <th style="width:70px">Type</th>
-                          <th>Tag / Description</th>
-                          <th style="width:80px">Method</th>
-                          <th>Pattern / Route</th>
-                          <th style="width:80px">Whitelist</th>
-                          <th style="width:90px">Actions</th>
-                        </tr>
-                      </thead>
-                      <tbody id="all-tbody">
-                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading...</td></tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tab: MENU -->
-              <div class="tab-pane fade" id="tab-menu" role="tabpanel">
-                <div class="row" id="menu-groups-container">
-                  <div class="col-12 text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading...</div>
-                </div>
-              </div>
-
-              <!-- Tab: API -->
-              <div class="tab-pane fade" id="tab-api" role="tabpanel">
-                <div class="row" id="api-groups-container">
-                  <div class="col-12 text-center text-muted py-4"><i class="bi bi-hourglass-split me-2"></i>Loading...</div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
+          </form>
         </div>
-      </main>
-
-      <footer class="app-footer">
-        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
-      </footer>
-    </div>
-
-    <!-- ================== Add Permission Modal ================== -->
-    <div class="modal fade" id="addPermissionModal" tabindex="-1" aria-labelledby="addPermissionModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="addPermissionModalLabel"><i class="bi bi-plus-circle me-2"></i>Add New Permission</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="addPermissionForm">
-              <div class="row g-3">
-
-                <!-- Name -->
-                <div class="col-md-8">
-                  <label for="permName" class="form-label">Permission Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="permName" placeholder="e.g. post:create" required />
-                  <small class="text-muted">Format: <code>resource:action</code></small>
-                </div>
-
-                <!-- Type -->
-                <div class="col-md-4">
-                  <label for="permType" class="form-label">Type <span class="text-danger">*</span></label>
-                  <select class="form-select" id="permType" required>
-                    <option value="">-- Select --</option>
-                    <option value="MENU">MENU (Frontend route)</option>
-                    <option value="API">API (Backend endpoint)</option>
-                  </select>
-                </div>
-
-                <!-- Tag -->
-                <div class="col-md-12">
-                  <label for="permTag" class="form-label">Tag / Description <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="permTag" placeholder="e.g. Tạo bài viết" required />
-                  <small class="text-muted">Short label shown on UI</small>
-                </div>
-
-                <!-- Pattern -->
-                <div class="col-md-8">
-                  <label for="permPattern" class="form-label">Pattern / Route</label>
-                  <input type="text" class="form-control" id="permPattern" placeholder="e.g. /api/v1/posts/** or /admin/posts" />
-                  <small class="text-muted">URL pattern (API) or frontend route (MENU)</small>
-                </div>
-
-                <!-- Method — only for API -->
-                <div class="col-md-4" id="addMethodGroup">
-                  <label for="permMethod" class="form-label">HTTP Method</label>
-                  <select class="form-select" id="permMethod">
-                    <option value="">ANY</option>
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="DELETE">DELETE</option>
-                    <option value="*">* (All)</option>
-                  </select>
-                  <small class="text-muted">Only applicable for API type</small>
-                </div>
-
-                <!-- Is White List -->
-                <div class="col-md-12">
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="permIsWhiteList" />
-                    <label class="form-check-label" for="permIsWhiteList">
-                      <i class="bi bi-unlock me-1"></i>White List (public — no authentication required)
-                    </label>
-                  </div>
-                </div>
-
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" form="addPermissionForm" class="btn btn-primary">
-              <i class="bi bi-check-circle me-1"></i> Create Permission
-            </button>
-          </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" form="addPermissionForm" class="btn btn-primary">
+            <i class="bi bi-check-circle me-1"></i> Create Permission
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- ================== Edit Permission Modal ================== -->
-    <div class="modal fade" id="editPermissionModal" tabindex="-1" aria-labelledby="editPermissionModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="editPermissionModalLabel"><i class="bi bi-pencil me-2"></i>Edit Permission</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form id="editPermissionForm">
-              <div class="row g-3">
-
-                <!-- Name -->
-                <div class="col-md-8">
-                  <label for="editPermName" class="form-label">Permission Name <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="editPermName" required />
-                </div>
-
-                <!-- Type -->
-                <div class="col-md-4">
-                  <label for="editPermType" class="form-label">Type <span class="text-danger">*</span></label>
-                  <select class="form-select" id="editPermType" required>
-                    <option value="MENU">MENU (Frontend route)</option>
-                    <option value="API">API (Backend endpoint)</option>
-                  </select>
-                </div>
-
-                <!-- Tag -->
-                <div class="col-md-12">
-                  <label for="editPermTag" class="form-label">Tag / Description <span class="text-danger">*</span></label>
-                  <input type="text" class="form-control" id="editPermTag" required />
-                </div>
-
-                <!-- Pattern -->
-                <div class="col-md-8">
-                  <label for="editPermPattern" class="form-label">Pattern / Route</label>
-                  <input type="text" class="form-control" id="editPermPattern" />
-                </div>
-
-                <!-- Method -->
-                <div class="col-md-4">
-                  <label for="editPermMethod" class="form-label">HTTP Method</label>
-                  <select class="form-select" id="editPermMethod">
-                    <option value="">ANY</option>
-                    <option value="GET">GET</option>
-                    <option value="POST">POST</option>
-                    <option value="PUT">PUT</option>
-                    <option value="DELETE">DELETE</option>
-                    <option value="*">* (All)</option>
-                  </select>
-                </div>
-
-                <!-- Is White List -->
-                <div class="col-md-12">
-                  <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="editPermIsWhiteList" />
-                    <label class="form-check-label" for="editPermIsWhiteList">
-                      <i class="bi bi-unlock me-1"></i>White List (public — no authentication required)
-                    </label>
-                  </div>
-                </div>
-
+  <!-- ================== Edit Permission Modal ================== -->
+  <div class="modal fade" id="editPermissionModal" tabindex="-1" aria-labelledby="editPermissionModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editPermissionModalLabel">
+            <i class="bi bi-pencil me-2"></i>Edit Permission
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editPermissionForm">
+            <div class="row g-3">
+              <!-- Name -->
+              <div class="col-md-8">
+                <label for="editPermName" class="form-label">Permission Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="editPermName" required />
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-            <button type="submit" form="editPermissionForm" class="btn btn-primary">
-              <i class="bi bi-check-circle me-1"></i> Save Changes
-            </button>
-          </div>
+
+              <!-- Type -->
+              <div class="col-md-4">
+                <label for="editPermType" class="form-label">Type <span class="text-danger">*</span></label>
+                <select class="form-select" id="editPermType" required>
+                  <option value="MENU">MENU (Frontend route)</option>
+                  <option value="API">API (Backend endpoint)</option>
+                </select>
+              </div>
+
+              <!-- Tag -->
+              <div class="col-md-12">
+                <label for="editPermTag" class="form-label">Tag / Description <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="editPermTag" required />
+              </div>
+
+              <!-- Pattern -->
+              <div class="col-md-8">
+                <label for="editPermPattern" class="form-label">Pattern / Route</label>
+                <input type="text" class="form-control" id="editPermPattern" />
+              </div>
+
+              <!-- Method -->
+              <div class="col-md-4">
+                <label for="editPermMethod" class="form-label">HTTP Method</label>
+                <select class="form-select" id="editPermMethod">
+                  <option value="">ANY</option>
+                  <option value="GET">GET</option>
+                  <option value="POST">POST</option>
+                  <option value="PUT">PUT</option>
+                  <option value="DELETE">DELETE</option>
+                  <option value="*">* (All)</option>
+                </select>
+              </div>
+
+              <!-- Is White List -->
+              <div class="col-md-12">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="editPermIsWhiteList" />
+                  <label class="form-check-label" for="editPermIsWhiteList">
+                    <i class="bi bi-unlock me-1"></i>White List (public — no
+                    authentication required)
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="submit" form="editPermissionForm" class="btn btn-primary">
+            <i class="bi bi-check-circle me-1"></i> Save Changes
+          </button>
         </div>
       </div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
-    <script src="../js/http.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/ui.js"></script>
-    <script src="../js/permission.service.js"></script>
-    <script>
-      Auth.guard();
-      let allPermissions = [];
-      let editingPermId = null;
+  <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+  <script src="../js/http.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/permission.service.js"></script>
+  <script>
+    Auth.guard();
+    let allPermissions = [];
+    let editingPermId = null;
+    let permCurrentPage = 1;
+    const permPageSize = 10;
 
-      // ─── Helpers ──────────────────────────────────────────────────────────
-      const methodClass = m => {
-        if (!m || m === '') return 'method-star';
-        return 'method-' + ({'GET':'GET','POST':'POST','PUT':'PUT','DELETE':'DELETE','*':'star'}[m] || 'star');
-      };
-      const methodLabel = m => m && m !== '' ? m : '*';
+    // ─── Helpers ──────────────────────────────────────────────────────────
+    const methodClass = (m) => {
+      if (!m || m === "") return "method-star";
+      return (
+        "method-" +
+        ({
+          GET: "GET",
+          POST: "POST",
+          PUT: "PUT",
+          DELETE: "DELETE",
+          "*": "star",
+        }[m] || "star")
+      );
+    };
+    const methodLabel = (m) => (m && m !== "" ? m : "*");
 
-      function typeBadge(type) {
-        const t = (type || 'API').toUpperCase();
-        return `<span class="badge type-badge-${t}">${t}</span>`;
-      }
+    function typeBadge(type) {
+      const t = (type || "API").toUpperCase();
+      return `<span class="badge type-badge-${t}">${t}</span>`;
+    }
 
-      // ─── Table row renderer ───────────────────────────────────────────────
-      function buildTableRow(p, idx) {
-        const wl = p.isWhiteList === 1 || p.isWhiteList === true;
-        return `
+    // ─── Table row renderer ───────────────────────────────────────────────
+    function buildTableRow(p, idx) {
+      const wl = p.isWhiteList === 1 || p.isWhiteList === true;
+      return `
           <tr>
             <td>${idx + 1}</td>
             <td><code>${p.name}</code></td>
             <td>${typeBadge(p.type)}</td>
-            <td>${p.tag || p.description || '—'}</td>
-            <td>${p.type === 'API' ? `<span class="method-badge ${methodClass(p.method)}">${methodLabel(p.method)}</span>` : '<span class="text-muted">—</span>'}</td>
-            <td>${p.pattern ? `<code class="text-muted small">${p.pattern}</code>` : '—'}</td>
+            <td>${p.tag || p.description || "—"}</td>
+            <td>${p.type === "API" ? `<span class="method-badge ${methodClass(p.method)}">${methodLabel(p.method)}</span>` : '<span class="text-muted">—</span>'}</td>
+            <td>${p.pattern ? `<code class="text-muted small">${p.pattern}</code>` : "—"}</td>
             <td>${wl ? '<span class="badge text-bg-success whitelist-badge"><i class="bi bi-unlock me-1"></i>Public</span>' : '<span class="badge text-bg-secondary whitelist-badge"><i class="bi bi-lock me-1"></i>Auth</span>'}</td>
             <td>
               <button class="btn btn-xs btn-warning me-1" onclick="openEditPerm(${p.id})" data-bs-toggle="modal" data-bs-target="#editPermissionModal" title="Edit"><i class="bi bi-pencil"></i></button>
               <button class="btn btn-xs btn-danger" onclick="deletePerm(${p.id})" title="Delete"><i class="bi bi-trash"></i></button>
             </td>
           </tr>`;
+    }
+
+    // ─── Card group renderer (for MENU / API tabs) ────────────────────────
+    const groupColors = {
+      menu: "bg-purple",
+      post: "bg-primary",
+      comment: "bg-warning text-dark",
+      category: "bg-success",
+      tag: "bg-success",
+      user: "bg-danger",
+      role: "bg-danger",
+      permission: "bg-secondary",
+    };
+    const groupIcons = {
+      menu: "bi-layout-sidebar",
+      post: "bi-file-earmark-text",
+      comment: "bi-chat-dots",
+      category: "bi-tags",
+      tag: "bi-hash",
+      user: "bi-people",
+      role: "bi-shield-check",
+      permission: "bi-key",
+    };
+
+    function buildGroupCards(list, containerId) {
+      const container = document.getElementById(containerId);
+      if (!list.length) {
+        container.innerHTML =
+          '<div class="col-12 text-center text-muted py-4">No permissions found.</div>';
+        return;
       }
+      const groups = {};
+      list.forEach((p) => {
+        const g = p.tag.split(":")[0];
+        if (!groups[g]) groups[g] = [];
+        groups[g].push(p);
+      });
 
-      // ─── Card group renderer (for MENU / API tabs) ────────────────────────
-      const groupColors = {
-        menu: 'bg-purple', post: 'bg-primary', comment: 'bg-warning text-dark',
-        category: 'bg-success', tag: 'bg-success', user: 'bg-danger',
-        role: 'bg-danger', permission: 'bg-secondary',
-      };
-      const groupIcons = {
-        menu: 'bi-layout-sidebar', post: 'bi-file-earmark-text', comment: 'bi-chat-dots',
-        category: 'bi-tags', tag: 'bi-hash', user: 'bi-people',
-        role: 'bi-shield-check', permission: 'bi-key',
-      };
-
-      function buildGroupCards(list, containerId) {
-        const container = document.getElementById(containerId);
-        if (!list.length) {
-          container.innerHTML = '<div class="col-12 text-center text-muted py-4">No permissions found.</div>';
-          return;
-        }
-        const groups = {};
-        list.forEach(p => {
-          const g = p.name.split(':')[0];
-          if (!groups[g]) groups[g] = [];
-          groups[g].push(p);
-        });
-
-        container.innerHTML = Object.entries(groups).map(([group, perms]) => {
-          const colorRaw = groupColors[group] || 'bg-secondary';
-          const colorClass = colorRaw.includes('text-dark') ? colorRaw : colorRaw + ' text-white';
-          const icon = groupIcons[group] || 'bi-key';
-          const isMenu = perms[0]?.type === 'MENU';
+      container.innerHTML = Object.entries(groups)
+        .map(([group, perms]) => {
+          const colorRaw = groupColors[group] || "bg-secondary";
+          const colorClass = colorRaw.includes("text-dark")
+            ? colorRaw
+            : colorRaw + " text-white";
+          const icon = groupIcons[group] || "bi-key";
+          const isMenu = perms[0]?.type === "MENU";
 
           return `
             <div class="col-md-6 mb-4">
               <div class="card h-100 shadow-sm">
                 <div class="card-header ${colorClass}">
-                  <h3 class="card-title"><i class="bi ${icon} me-2"></i>${group.charAt(0).toUpperCase() + group.slice(1)} Permissions</h3>
+                  <h3 class="card-title"><i class="bi ${icon} me-2"></i>${group.charAt(0).toUpperCase() + group.slice(1)}</h3>
                   <div class="card-tools"><span class="badge bg-white text-dark">${perms.length}</span></div>
                 </div>
                 <div class="card-body p-0">
                   <table class="table table-sm table-hover mb-0">
                     <thead class="table-light">
                       <tr>
-                        <th>Permission</th>
+                        <th style="width: 130px">Permission</th>
                         <th>Tag</th>
-                        ${isMenu ? '<th>Route</th>' : '<th>Method</th><th>Pattern</th>'}
+                        ${isMenu ? "<th>Route</th>" : "<th>Method</th><th>Pattern</th>"}
                         <th>Access</th>
-                        <th></th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      ${perms.map(p => {
-                        const wl = p.isWhiteList === 1 || p.isWhiteList === true;
-                        const accessBadge = wl
-                          ? '<span class="badge text-bg-success whitelist-badge"><i class="bi bi-unlock"></i> Public</span>'
-                          : '<span class="badge text-bg-secondary whitelist-badge"><i class="bi bi-lock"></i> Auth</span>';
-                        if (isMenu) {
-                          return `<tr>
+                      ${perms
+              .map((p) => {
+                const wl =
+                  p.isWhiteList === 1 || p.isWhiteList === true;
+                const accessBadge = wl
+                  ? '<span class="badge text-bg-success whitelist-badge"><i class="bi bi-unlock"></i> Public</span>'
+                  : '<span class="badge text-bg-secondary whitelist-badge"><i class="bi bi-lock"></i> Auth</span>';
+                if (isMenu) {
+                  return `<tr>
                             <td><code>${p.name}</code></td>
-                            <td><small>${p.tag || '—'}</small></td>
-                            <td><code class="text-muted small">${p.pattern || '—'}</code></td>
+                            <td><small>${p.tag || "—"}</small></td>
+                            <td><code class="text-muted small">${p.pattern || "—"}</code></td>
                             <td>${accessBadge}</td>
                             <td>
                               <button class="btn btn-xs btn-warning me-1" onclick="openEditPerm(${p.id})" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
                               <button class="btn btn-xs btn-danger" onclick="deletePerm(${p.id})"><i class="bi bi-trash"></i></button>
                             </td>
                           </tr>`;
-                        } else {
-                          return `<tr>
+                } else {
+                  return `<tr>
                             <td><code>${p.name}</code></td>
-                            <td><small>${p.tag || '—'}</small></td>
+                            <td><small>${p.tag || "—"}</small></td>
                             <td><span class="method-badge ${methodClass(p.method)}">${methodLabel(p.method)}</span></td>
-                            <td><code class="text-muted small">${p.pattern || '—'}</code></td>
+                            <td><code class="text-muted small">${p.pattern || "—"}</code></td>
                             <td>${accessBadge}</td>
                             <td>
                               <button class="btn btn-xs btn-warning me-1" onclick="openEditPerm(${p.id})" data-bs-toggle="modal" data-bs-target="#editPermissionModal"><i class="bi bi-pencil"></i></button>
                               <button class="btn btn-xs btn-danger" onclick="deletePerm(${p.id})"><i class="bi bi-trash"></i></button>
                             </td>
                           </tr>`;
-                        }
-                      }).join('')}
+                }
+              })
+              .join("")}
                     </tbody>
                   </table>
                 </div>
               </div>
             </div>`;
-        }).join('');
+        })
+        .join("");
+    }
+
+    // ─── Render all views ────────────────────────────────────────────────
+    function renderPermissions(list) {
+      // Stats
+      const menuList = list.filter(
+        (p) => (p.type || "").toUpperCase() === "MENU",
+      );
+      const apiList = list.filter(
+        (p) => (p.type || "").toUpperCase() === "API",
+      );
+      document.getElementById("statMenu").textContent =
+        `MENU: ${menuList.length}`;
+      document.getElementById("statApi").textContent =
+        `API: ${apiList.length}`;
+      document.getElementById("tabMenuCount").textContent = menuList.length;
+      document.getElementById("tabApiCount").textContent = apiList.length;
+      document.getElementById("allCountBadge").textContent =
+        `${list.length} total`;
+
+      // All table (paginated)
+      const totalPages = Math.ceil(list.length / permPageSize) || 1;
+      if (permCurrentPage > totalPages) permCurrentPage = totalPages;
+      const start = (permCurrentPage - 1) * permPageSize;
+      const pagedList = list.slice(start, start + permPageSize);
+
+      const tbody = document.getElementById("all-tbody");
+      if (!pagedList.length) {
+        tbody.innerHTML =
+          '<tr><td colspan="8" class="text-center text-muted py-4">No permissions found.</td></tr>';
+      } else {
+        tbody.innerHTML = pagedList.map((p, i) => buildTableRow(p, start + i)).join("");
       }
 
-      // ─── Render all views ────────────────────────────────────────────────
-      function renderPermissions(list) {
-        // Stats
-        const menuList = list.filter(p => (p.type || '').toUpperCase() === 'MENU');
-        const apiList  = list.filter(p => (p.type || '').toUpperCase() === 'API');
-        document.getElementById('statMenu').textContent = `MENU: ${menuList.length}`;
-        document.getElementById('statApi').textContent  = `API: ${apiList.length}`;
-        document.getElementById('tabMenuCount').textContent = menuList.length;
-        document.getElementById('tabApiCount').textContent  = apiList.length;
-        document.getElementById('allCountBadge').textContent = `${list.length} total`;
+      renderPermPagination(list.length, totalPages);
 
-        // All table
-        const tbody = document.getElementById('all-tbody');
-        if (!list.length) {
-          tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No permissions found.</td></tr>';
-        } else {
-          tbody.innerHTML = list.map((p, i) => buildTableRow(p, i)).join('');
-        }
+      // MENU cards
+      buildGroupCards(menuList, "menu-groups-container");
+      // API cards
+      buildGroupCards(apiList, "api-groups-container");
+    }
 
-        // MENU cards
-        buildGroupCards(menuList, 'menu-groups-container');
-        // API cards
-        buildGroupCards(apiList, 'api-groups-container');
+    function renderPermPagination(total, totalPages) {
+      const ul = document.getElementById("perm-pagination");
+      if (!ul) return;
+      if (total === 0 || totalPages <= 1) {
+        ul.innerHTML = '';
+        return;
       }
-
-      // ─── Open Edit ───────────────────────────────────────────────────────
-      function openEditPerm(id) {
-        const p = allPermissions.find(x => x.id === id);
-        if (!p) return;
-        editingPermId = id;
-        document.getElementById('editPermName').value = p.name || '';
-        document.getElementById('editPermType').value = (p.type || 'API').toUpperCase();
-        document.getElementById('editPermTag').value  = p.tag || p.description || '';
-        document.getElementById('editPermPattern').value = p.pattern || '';
-        document.getElementById('editPermMethod').value  = p.method || '';
-        document.getElementById('editPermIsWhiteList').checked = p.isWhiteList === 1 || p.isWhiteList === true;
+      let html = `<li class="page-item ${permCurrentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="changePermPage(1, event)">«</a></li>`;
+      for (let i = 1; i <= totalPages; i++) {
+        html += `<li class="page-item ${permCurrentPage === i ? 'active' : ''}"><a class="page-link" href="#" onclick="changePermPage(${i}, event)">${i}</a></li>`;
       }
+      html += `<li class="page-item ${permCurrentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" onclick="changePermPage(${totalPages}, event)">»</a></li>`;
+      ul.innerHTML = html;
+    }
 
-      // ─── Delete ──────────────────────────────────────────────────────────
-      async function deletePerm(id) {
-        if (!UI.confirm('Delete this permission?')) return;
-        try {
-          await PermissionService.delete(id);
-          UI.toast('Permission deleted.');
-          allPermissions = allPermissions.filter(p => p.id !== id);
-          renderPermissions(allPermissions);
-        } catch (err) { UI.toast(err.message, 'danger'); }
+    function changePermPage(page, e) {
+      if (e) e.preventDefault();
+      permCurrentPage = page;
+      renderPermissions(getFilteredList());
+    }
+
+    // ─── Open Edit ───────────────────────────────────────────────────────
+    function openEditPerm(id) {
+      const p = allPermissions.find((x) => x.id === id);
+      if (!p) return;
+      editingPermId = id;
+      document.getElementById("editPermName").value = p.name || "";
+      document.getElementById("editPermType").value = (
+        p.type || "API"
+      ).toUpperCase();
+      document.getElementById("editPermTag").value =
+        p.tag || p.description || "";
+      document.getElementById("editPermPattern").value = p.pattern || "";
+      document.getElementById("editPermMethod").value = p.method || "";
+      document.getElementById("editPermIsWhiteList").checked =
+        p.isWhiteList === 1 || p.isWhiteList === true;
+    }
+
+    // ─── Delete ──────────────────────────────────────────────────────────
+    async function deletePerm(id) {
+      if (!UI.confirm("Delete this permission?")) return;
+      try {
+        await PermissionService.delete(id);
+        UI.toast("Permission deleted.");
+        allPermissions = allPermissions.filter((p) => p.id !== id);
+        renderPermissions(allPermissions);
+      } catch (err) {
+        UI.toast(err.message, "danger");
       }
+    }
 
-      // ─── Load ────────────────────────────────────────────────────────────
-      async function loadPermissions() {
-        try {
-          const data = await PermissionService.getAll();
-          allPermissions = Array.isArray(data) ? data : [];
-          renderPermissions(allPermissions);
-        } catch (err) { UI.toast('Failed to load permissions: ' + err.message, 'danger'); }
+    // ─── Load ────────────────────────────────────────────────────────────
+    async function loadPermissions() {
+      try {
+        const data = await PermissionService.getAll();
+        allPermissions = Array.isArray(data) ? data : [];
+        renderPermissions(allPermissions);
+      } catch (err) {
+        UI.toast("Failed to load permissions: " + err.message, "danger");
       }
+    }
 
-      // ─── Filtered view helper ────────────────────────────────────────────
-      function getFilteredList() {
-        const kw = document.getElementById('searchInput').value.toLowerCase();
-        const grp = document.getElementById('filterGroup').value;
-        return allPermissions.filter(p => {
-          const matchKw  = !kw  || p.name.toLowerCase().includes(kw) || (p.tag || '').toLowerCase().includes(kw);
-          const matchGrp = !grp || p.name.startsWith(grp + ':') || (grp === 'menu' && (p.type || '').toUpperCase() === 'MENU');
-          return matchKw && matchGrp;
+    // ─── Filtered view helper ────────────────────────────────────────────
+    function getFilteredList() {
+      const kw = document.getElementById("searchInput").value.toLowerCase();
+      const grp = document.getElementById("filterGroup").value;
+      console.log(grp);
+      console.log('allPermissions', allPermissions);
+      return allPermissions.filter((p) => {
+        const matchKw =
+          !kw ||
+          p.tag.toLowerCase().includes(kw) ||
+          (p.name || "").toLowerCase().includes(kw);
+        const matchGrp =
+          !grp ||
+          p.tag.startsWith(grp + ":") ||
+          (grp === "menu" && (p.type || "").toUpperCase() === "MENU");
+        return matchKw && matchGrp;
+      });
+    }
+
+    // ─── DOMContentLoaded ────────────────────────────────────────────────
+    document.addEventListener("DOMContentLoaded", async function () {
+      // Sidebar scrollbars
+      const sidebarWrapper = document.querySelector(".sidebar-wrapper");
+      if (
+        sidebarWrapper &&
+        OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined &&
+        window.innerWidth > 992
+      ) {
+        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+          scrollbars: {
+            theme: "os-theme-light",
+            autoHide: "leave",
+            clickScroll: true,
+          },
         });
       }
 
-      // ─── DOMContentLoaded ────────────────────────────────────────────────
-      document.addEventListener('DOMContentLoaded', async function () {
-        // Sidebar scrollbars
-        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-          });
-        }
+      // Filter / Search
+      document
+        .getElementById("filterGroup")
+        .addEventListener("change", () => {
+          permCurrentPage = 1;
+          renderPermissions(getFilteredList());
+        });
+      document
+        .getElementById("searchInput")
+        .addEventListener("input", () => {
+          permCurrentPage = 1;
+          renderPermissions(getFilteredList());
+        });
 
-        // Filter / Search
-        document.getElementById('filterGroup').addEventListener('change', () => renderPermissions(getFilteredList()));
-        document.getElementById('searchInput').addEventListener('input', () => renderPermissions(getFilteredList()));
-
-        // Add Permission form submit
-        document.getElementById('addPermissionForm').addEventListener('submit', async function (e) {
+      // Add Permission form submit
+      document
+        .getElementById("addPermissionForm")
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
-          const type = document.getElementById('permType').value;
-          if (!type) { UI.toast('Please select a type (MENU or API).', 'warning'); return; }
+          const type = document.getElementById("permType").value;
+          if (!type) {
+            UI.toast("Please select a type (MENU or API).", "warning");
+            return;
+          }
           try {
             await PermissionService.create({
-              name:        document.getElementById('permName').value.trim(),
-              tag:         document.getElementById('permTag').value.trim(),
-              type:        type,
-              method:      type === 'API' ? (document.getElementById('permMethod').value || null) : null,
-              pattern:     document.getElementById('permPattern').value.trim() || null,
-              isWhiteList: document.getElementById('permIsWhiteList').checked ? 1 : 0,
+              name: document.getElementById("permName").value.trim(),
+              tag: document.getElementById("permTag").value.trim(),
+              type: type,
+              method:
+                type === "API"
+                  ? document.getElementById("permMethod").value || null
+                  : null,
+              pattern:
+                document.getElementById("permPattern").value.trim() || null,
+              isWhiteList: document.getElementById("permIsWhiteList").checked
+                ? 1
+                : 0,
             });
-            UI.toast('Permission created successfully.');
-            bootstrap.Modal.getInstance(document.getElementById('addPermissionModal'))?.hide();
+            UI.toast("Permission created successfully.");
+            bootstrap.Modal.getInstance(
+              document.getElementById("addPermissionModal"),
+            )?.hide();
             this.reset();
             loadPermissions();
-          } catch (err) { UI.toast(err.message, 'danger'); }
+          } catch (err) {
+            UI.toast(err.message, "danger");
+          }
         });
 
-        // Edit Permission form submit
-        document.getElementById('editPermissionForm').addEventListener('submit', async function (e) {
+      // Edit Permission form submit
+      document
+        .getElementById("editPermissionForm")
+        .addEventListener("submit", async function (e) {
           e.preventDefault();
           try {
-            const type = document.getElementById('editPermType').value;
+            const type = document.getElementById("editPermType").value;
             await PermissionService.update(editingPermId, {
-              name:        document.getElementById('editPermName').value.trim(),
-              tag:         document.getElementById('editPermTag').value.trim(),
-              type:        type,
-              method:      type === 'API' ? (document.getElementById('editPermMethod').value || null) : null,
-              pattern:     document.getElementById('editPermPattern').value.trim() || null,
-              isWhiteList: document.getElementById('editPermIsWhiteList').checked ? 1 : 0,
+              name: document.getElementById("editPermName").value.trim(),
+              tag: document.getElementById("editPermTag").value.trim(),
+              type: type,
+              method:
+                type === "API"
+                  ? document.getElementById("editPermMethod").value || null
+                  : null,
+              pattern:
+                document.getElementById("editPermPattern").value.trim() ||
+                null,
+              isWhiteList: document.getElementById("editPermIsWhiteList")
+                .checked
+                ? 1
+                : 0,
             });
-            UI.toast('Permission updated successfully.');
-            bootstrap.Modal.getInstance(document.getElementById('editPermissionModal'))?.hide();
+            UI.toast("Permission updated successfully.");
+            bootstrap.Modal.getInstance(
+              document.getElementById("editPermissionModal"),
+            )?.hide();
             loadPermissions();
-          } catch (err) { UI.toast(err.message, 'danger'); }
+          } catch (err) {
+            UI.toast(err.message, "danger");
+          }
         });
 
-        await loadPermissions();
-        await UI.renderCurrentUser();
-      });
-    </script>
-  </body>
+      await loadPermissions();
+      await UI.renderCurrentUser();
+    });
+  </script>
+</body>
+
 </html>

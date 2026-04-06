@@ -37,4 +37,6 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
     @org.springframework.data.jpa.repository.Modifying
     @Query("DELETE FROM UserRole ur WHERE ur.user.id = :userId")
     void deleteByUserId(@Param("userId") Long userId);
+
+    long countByRoleId(Long roleId);
 }

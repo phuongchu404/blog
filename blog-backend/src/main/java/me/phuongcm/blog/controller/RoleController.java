@@ -2,7 +2,9 @@ package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import me.phuongcm.blog.dto.ApiResponse;
 import me.phuongcm.blog.dto.RoleDTO;
+import me.phuongcm.blog.dto.RoleResponseDTO;
 import me.phuongcm.blog.entity.Role;
 import me.phuongcm.blog.service.RoleService;
 import org.springframework.http.HttpStatus;
@@ -21,40 +23,40 @@ public class RoleController {
 
     @PostMapping("/init")
     @PreAuthorize("hasAuthority('role:create')")
-    public ResponseEntity<Void> initRoles() {
+    public ResponseEntity<ApiResponse<Void>> initRoles() {
         roleService.initRole();
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Roles initialized", null));
     }
 
     @GetMapping
     @PreAuthorize("hasAuthority('role:read')")
-    public ResponseEntity<List<Role>> getAllRoles() {
-        return ResponseEntity.ok(roleService.getAllRoles());
+    public ResponseEntity<ApiResponse<List<RoleResponseDTO>>> getAllRoles() {
+        return ResponseEntity.ok(ApiResponse.ok(roleService.getAllRoles()));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('role:create')")
-    public ResponseEntity<Role> createRole(@Valid @RequestBody RoleDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(roleService.createRole(dto));
+    public ResponseEntity<ApiResponse<Role>> createRole(@Valid @RequestBody RoleDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Role created", roleService.createRole(dto)));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('role:update')")
-    public ResponseEntity<Role> updateRole(@PathVariable Long id, @Valid @RequestBody RoleDTO dto) {
-        return ResponseEntity.ok(roleService.updateRole(id, dto));
+    public ResponseEntity<ApiResponse<Role>> updateRole(@PathVariable Long id, @Valid @RequestBody RoleDTO dto) {
+        return ResponseEntity.ok(ApiResponse.ok("Role updated", roleService.updateRole(id, dto)));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('role:delete')")
-    public ResponseEntity<Void> deleteRole(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable Long id) {
         roleService.deleteRole(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.ok("Role deleted", null));
     }
 
     @PostMapping("/{id}/permissions")
     @PreAuthorize("hasAuthority('role:assign')")
-    public ResponseEntity<Void> assignPermissions(@PathVariable Long id, @RequestBody List<Long> permissionIds) {
+    public ResponseEntity<ApiResponse<Void>> assignPermissions(@PathVariable Long id, @RequestBody List<Long> permissionIds) {
         roleService.assignPermissionsToRole(id, permissionIds);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(ApiResponse.ok("Permissions assigned successfully", null));
     }
 }

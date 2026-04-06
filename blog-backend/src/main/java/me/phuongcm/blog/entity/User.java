@@ -75,4 +75,7 @@ public class User extends AuditEntity{
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostComment> comments;
+
+    @Transient
+    private List<String> roles;
 }
