@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Trang chủ</title>
+  <meta name="description" content="Blog chia sẻ kiến thức, công nghệ và cuộc sống">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ── Header ────────────────────────────────────────────── -->
+<header class="site-header">
+  <nav class="container nav-inner">
+    <a href="index.html" class="nav-logo">My<span>Blog</span></a>
+
+    <div class="nav-links" id="nav-links">
+      <a href="index.html" class="active">Trang chủ</a>
+      <a href="blog.html">Bài viết</a>
+    </div>
+
+    <form class="nav-search" onsubmit="handleNavSearch(event)">
+      <svg class="search-icon" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+      </svg>
+      <input type="search" placeholder="Tìm kiếm bài viết..." id="nav-search-input">
+    </form>
+
+    <div id="nav-auth" class="nav-auth"></div>
+
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<!-- ── Hero ──────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="container">
+    <h1>Khám phá kiến thức mới mỗi ngày</h1>
+    <p>Chia sẻ bài viết về công nghệ, lập trình và cuộc sống từ cộng đồng</p>
+    <form class="hero-search" onsubmit="handleHeroSearch(event)">
+      <input type="search" id="hero-search-input" placeholder="Tìm kiếm bài viết, chủ đề...">
+      <button type="submit">Tìm kiếm</button>
+    </form>
+  </div>
+</section>
+
+<!-- ── Main Content ───────────────────────────────────────── -->
+<main class="container layout">
+  <!-- ── Posts column ── -->
+  <div>
+    <!-- Featured post -->
+    <section id="featured-section" style="margin-bottom:2rem">
+      <div id="featured-post"></div>
+    </section>
+
+    <!-- Recent posts -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Bài viết mới nhất</h2>
+        <a href="blog.html" class="view-all">Xem tất cả →</a>
+      </div>
+      <div id="recent-posts" class="post-grid"></div>
+    </section>
+  </div>
+
+  <!-- ── Sidebar ── -->
+  <aside class="sidebar">
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Danh mục</div>
+      <div class="sidebar-widget-body" id="sidebar-categories">
+        <div class="spinner" style="margin:1rem auto;display:block"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Bài viết nổi bật</div>
+      <div class="sidebar-widget-body" id="sidebar-recent">
+        <div class="spinner" style="margin:1rem auto;display:block"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Tags</div>
+      <div class="sidebar-widget-body" id="sidebar-tags">
+        <div class="spinner" style="margin:1rem auto;display:block"></div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- ── Footer ────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="footer-brand">My<span>Blog</span></a>
+        <p class="footer-desc">Blog chia sẻ kiến thức về công nghệ, lập trình và cuộc sống. Cùng nhau học hỏi và phát triển.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Khám phá</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="blog.html">Tất cả bài viết</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Tài khoản</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Đăng nhập</a></li>
+          <li><a href="register.html">Đăng ký</a></li>
+          <li><a href="profile.html">Trang cá nhân</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Liên hệ</h4>
+        <ul class="footer-links">
+          <li><a href="#">Email</a></li>
+          <li><a href="#">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2024 MyBlog. All rights reserved.</span>
+      <span>Made with ❤️</span>
+    </div>
+  </div>
+</footer>
+
+<script src="js/http.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/post.service.js"></script>
+<script src="js/category.service.js"></script>
+<script src="js/tag.service.js"></script>
+<script src="js/index.js"></script>
+</body>
+</html>

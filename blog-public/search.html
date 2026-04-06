@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tìm kiếm</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="container nav-inner">
+    <a href="index.html" class="nav-logo">My<span>Blog</span></a>
+    <div class="nav-links" id="nav-links">
+      <a href="index.html">Trang chủ</a>
+      <a href="blog.html">Bài viết</a>
+    </div>
+    <form class="nav-search" onsubmit="handleNavSearch(event)">
+      <svg class="search-icon" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+      </svg>
+      <input type="search" placeholder="Tìm kiếm..." id="nav-search-input">
+    </form>
+    <div id="nav-auth" class="nav-auth"></div>
+    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+      <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
+      </svg>
+    </button>
+  </nav>
+</header>
+
+<div class="page-header">
+  <div class="container">
+    <p style="font-size:.85rem;opacity:.6;margin-bottom:.35rem">🔍 Tìm kiếm</p>
+    <h1 id="page-title">Kết quả tìm kiếm</h1>
+    <!-- Inline search bar -->
+    <form style="display:flex;max-width:500px;margin-top:1rem;background:rgba(255,255,255,.15);border-radius:99px;overflow:hidden" onsubmit="handleSearchForm(event)">
+      <input id="search-input" type="search" placeholder="Nhập từ khóa..." style="flex:1;padding:.7rem 1.25rem;background:transparent;border:none;color:white;font-size:1rem;outline:none">
+      <button type="submit" style="padding:.7rem 1.5rem;background:white;color:var(--primary);border:none;font-weight:700;cursor:pointer">Tìm</button>
+    </form>
+  </div>
+</div>
+
+<main class="container layout">
+  <div>
+    <p id="result-count" style="color:var(--text-muted);font-size:.9rem;margin-bottom:1.25rem"></p>
+    <div id="posts-grid" class="post-grid"></div>
+    <div id="pagination"></div>
+  </div>
+  <aside class="sidebar">
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Danh mục</div>
+      <div class="sidebar-widget-body" id="sidebar-categories"></div>
+    </div>
+    <div class="sidebar-widget">
+      <div class="sidebar-widget-title">Tags</div>
+      <div class="sidebar-widget-body" id="sidebar-tags"></div>
+    </div>
+  </aside>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <span>© 2024 MyBlog.</span>
+      <a href="blog.html" style="color:#94a3b8">← Tất cả bài viết</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/http.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/post.service.js"></script>
+<script src="js/category.service.js"></script>
+<script src="js/tag.service.js"></script>
+<script src="js/search.js"></script>
+</body>
+</html>
