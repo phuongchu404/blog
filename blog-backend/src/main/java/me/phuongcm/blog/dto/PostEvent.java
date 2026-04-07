@@ -21,5 +21,5 @@ public class PostEvent {
     private String summary;
     private String content;
     private String authorName;
-    private Boolean published;
+    private Integer status;
 }

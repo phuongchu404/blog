@@ -18,16 +18,16 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
-public class User extends AuditEntity{
+public class User extends AuditEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "username", length = 100, nullable = false)
-    private String username; //chưa có
+    private String username; // chưa có
 
     @Column(name = "password", length = 100, nullable = true)
-    private String password; //passwordHash
+    private String password; // passwordHash
 
     @Column(name = "full_name", length = 100)
     private String fullName;
@@ -45,13 +45,13 @@ public class User extends AuditEntity{
     private String email;
 
     @Column(name = "status", length = 1, nullable = false)
-    private Integer status; //chưa có
+    private Integer status; // chưa có
 
     @Column(name = "mobile", length = 10)
     private String mobile;
 
-    @Column(name = "image_url")
-    private String imageUrl; //chưa có
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private String imageUrl; // chưa có
 
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
@@ -65,10 +65,10 @@ public class User extends AuditEntity{
     @NotNull
     @Column(name = "provider")
     @Enumerated(EnumType.STRING)
-    private AuthProvider provider; //chưa có
+    private AuthProvider provider; // chưa có
 
     @Column(name = "provider_id")
-    private String providerId; //chưa có
+    private String providerId; // chưa có
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Post> posts;

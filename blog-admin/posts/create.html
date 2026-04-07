@@ -1,577 +1,751 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Blog Admin | Create Post</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-    <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
-    <link rel="stylesheet" href="../css/custom.css" />
-    <!-- Tom Select (multi-select, vanilla JS) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
-    <style>
-      /* CKEditor chiều cao tối thiểu */
-      .ck-editor__editable_inline { min-height: 400px !important; font-size: 1rem; }
-      .ck.ck-editor { border-radius: 0.375rem; overflow: hidden; }
-      /* Tom Select tag multi-select */
-      .ts-wrapper.form-control, .ts-wrapper.form-select { padding: 0; }
-      /* Char counter */
-      #metaDescCount { font-size: 0.75rem; }
-      /* Image preview */
-      #imgPreview { max-height: 180px; object-fit: cover; border-radius: 0.375rem; }
-    </style>
-  </head>
-  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-    <div class="app-wrapper">
 
-      <!-- ======= Header ======= -->
-      <nav class="app-header navbar navbar-expand bg-body">
-        <div class="container-fluid">
-          <ul class="navbar-nav">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Blog Admin | Create Post</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+    crossorigin="anonymous" media="print" onload="this.media='all'" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+  <link rel="stylesheet" href="../css/custom.css" />
+  <!-- Tom Select (multi-select, vanilla JS) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
+  <style>
+    /* CKEditor chiều cao tối thiểu */
+    .ck-editor__editable_inline {
+      min-height: 400px !important;
+      font-size: 1rem;
+    }
+
+    .ck.ck-editor {
+      border-radius: 0.375rem;
+      overflow: hidden;
+    }
+
+    /* Tom Select tag multi-select */
+    .ts-wrapper.form-control,
+    .ts-wrapper.form-select {
+      padding: 0;
+    }
+
+    .ts-dropdown {
+      z-index: 1050 !important;
+    }
+
+    /* Char counter */
+    #metaDescCount {
+      font-size: 0.75rem;
+    }
+
+    /* Image preview */
+    #imgPreview {
+      max-height: 180px;
+      object-fit: cover;
+      border-radius: 0.375rem;
+    }
+
+    /* ── CKEditor image resize handle – làm nổi bật hơn ── */
+    .ck-widget__resizer__handle {
+      width: 14px !important;
+      height: 14px !important;
+      border: 2px solid #1976d2 !important;
+      background: #fff !important;
+      border-radius: 3px !important;
+    }
+    .ck-widget__resizer__handle:hover {
+      background: #1976d2 !important;
+    }
+  </style>
+</head>
+
+<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+  <div class="app-wrapper">
+
+    <!-- ======= Header ======= -->
+    <nav class="app-header navbar navbar-expand bg-body">
+      <div class="container-fluid">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+          </li>
+          <li class="nav-item d-none d-md-block">
+            <a href="../index.html" class="nav-link">Dashboard</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+              <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+              <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+            </a>
+          </li>
+          <li class="nav-item dropdown user-menu">
+            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+              <img id="headerUserAvatar"
+                src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
+                class="user-image rounded-circle shadow" alt="Admin" />
+              <span class="d-none d-md-inline" id="headerUserName">Admin</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+              <li class="user-header text-bg-primary">
+                <img id="menuUserAvatar"
+                  src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
+                  class="rounded-circle shadow" alt="Admin" />
+                <p id="menuUserName">Admin <small>Blog Administrator</small></p>
+              </li>
+              <li class="user-footer">
+                <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
+                <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ======= Sidebar ======= -->
+    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+      <div class="sidebar-brand">
+        <a href="../index.html" class="brand-link">
+          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo"
+            class="brand-image opacity-75 shadow" />
+          <span class="brand-text fw-light">Blog Admin</span>
+        </a>
+      </div>
+      <div class="sidebar-wrapper">
+        <nav class="mt-2">
+          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+            <li class="nav-header">MAIN MENU</li>
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
-            </li>
-            <li class="nav-item d-none d-md-block">
-              <a href="../index.html" class="nav-link">Dashboard</a>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+              <a href="../index.html" class="nav-link">
+                <i class="nav-icon bi bi-speedometer2"></i>
+                <p>Dashboard</p>
               </a>
             </li>
-            <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img id="headerUserAvatar" src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
-                <span class="d-none d-md-inline" id="headerUserName">Admin</span>
+            <li class="nav-item menu-open">
+              <a href="#" class="nav-link active">
+                <i class="nav-icon bi bi-file-earmark-text"></i>
+                <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
               </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <li class="user-header text-bg-primary">
-                  <img id="menuUserAvatar" src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
-                  <p id="menuUserName">Admin <small>Blog Administrator</small></p>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <a href="index.html" class="nav-link">
+                    <i class="nav-icon bi bi-circle"></i>
+                    <p>All Posts</p>
+                  </a>
                 </li>
-                <li class="user-footer">
-                  <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
-                  <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                <li class="nav-item">
+                  <a href="create.html" class="nav-link active">
+                    <i class="nav-icon bi bi-circle"></i>
+                    <p>Create Post</p>
+                  </a>
                 </li>
               </ul>
             </li>
+            <li class="nav-item">
+              <a href="../categories/index.html" class="nav-link">
+                <i class="nav-icon bi bi-tags"></i>
+                <p>Categories</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../tags/index.html" class="nav-link">
+                <i class="nav-icon bi bi-hash"></i>
+                <p>Tags</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../comments/index.html" class="nav-link">
+                <i class="nav-icon bi bi-chat-dots"></i>
+                <p>Comments</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../users/index.html" class="nav-link">
+                <i class="nav-icon bi bi-people"></i>
+                <p>Users</p>
+              </a>
+            </li>
+            <li class="nav-header">ACCESS CONTROL</li>
+            <li class="nav-item">
+              <a href="../roles/index.html" class="nav-link">
+                <i class="nav-icon bi bi-shield-check"></i>
+                <p>Roles</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../permissions/index.html" class="nav-link">
+                <i class="nav-icon bi bi-key"></i>
+                <p>Permissions</p>
+              </a>
+            </li>
+            <li class="nav-header">SETTINGS</li>
+            <li class="nav-item">
+              <a href="../settings.html" class="nav-link">
+                <i class="nav-icon bi bi-gear"></i>
+                <p>Settings</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="../login.html" class="nav-link">
+                <i class="nav-icon bi bi-box-arrow-right"></i>
+                <p>Logout</p>
+              </a>
+            </li>
           </ul>
-        </div>
-      </nav>
+        </nav>
+      </div>
+    </aside>
 
-      <!-- ======= Sidebar ======= -->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <div class="sidebar-brand">
-          <a href="../index.html" class="brand-link">
-            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
-            <span class="brand-text fw-light">Blog Admin</span>
-          </a>
-        </div>
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
-              <li class="nav-header">MAIN MENU</li>
-              <li class="nav-item">
-                <a href="../index.html" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p>
-                </a>
-              </li>
-              <li class="nav-item menu-open">
-                <a href="#" class="nav-link active">
-                  <i class="nav-icon bi bi-file-earmark-text"></i>
-                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="index.html" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i><p>All Posts</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="create.html" class="nav-link active">
-                      <i class="nav-icon bi bi-circle"></i><p>Create Post</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a href="../categories/index.html" class="nav-link">
-                  <i class="nav-icon bi bi-tags"></i><p>Categories</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="../tags/index.html" class="nav-link">
-                  <i class="nav-icon bi bi-hash"></i><p>Tags</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="../comments/index.html" class="nav-link">
-                  <i class="nav-icon bi bi-chat-dots"></i><p>Comments</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="../users/index.html" class="nav-link">
-                  <i class="nav-icon bi bi-people"></i><p>Users</p>
-                </a>
-              </li>
-              <li class="nav-header">ACCESS CONTROL</li>
-              <li class="nav-item">
-                <a href="../roles/index.html" class="nav-link">
-                  <i class="nav-icon bi bi-shield-check"></i><p>Roles</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="../permissions/index.html" class="nav-link">
-                  <i class="nav-icon bi bi-key"></i><p>Permissions</p>
-                </a>
-              </li>
-              <li class="nav-header">SETTINGS</li>
-              <li class="nav-item">
-                <a href="../settings.html" class="nav-link">
-                  <i class="nav-icon bi bi-gear"></i><p>Settings</p>
-                </a>
-              </li>
-              <li class="nav-item">
-                <a href="../login.html" class="nav-link">
-                  <i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p>
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </aside>
-
-      <!-- ======= Main Content ======= -->
-      <main class="app-main">
-        <div class="app-content-header">
-          <div class="container-fluid">
-            <div class="row">
-              <div class="col-sm-6"><h3 class="mb-0" id="pageTitle">Create Post</h3></div>
-              <div class="col-sm-6">
-                <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
-                  <li class="breadcrumb-item"><a href="index.html">Posts</a></li>
-                  <li class="breadcrumb-item active" id="breadcrumbAction">Create</li>
-                </ol>
-              </div>
+    <!-- ======= Main Content ======= -->
+    <main class="app-main">
+      <div class="app-content-header">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-6">
+              <h3 class="mb-0" id="pageTitle">Create Post</h3>
+            </div>
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-end">
+                <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="index.html">Posts</a></li>
+                <li class="breadcrumb-item active" id="breadcrumbAction">Create</li>
+              </ol>
             </div>
           </div>
         </div>
+      </div>
 
-        <div class="app-content">
-          <div class="container-fluid">
-            <form id="postForm">
-              <div class="row">
-                <!-- ===== Left Column: Main Content ===== -->
-                <div class="col-md-8">
-                  <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title"><i class="bi bi-pencil-square me-2"></i>Post Content</h3>
-                    </div>
-                    <div class="card-body">
-                      <!-- Title -->
-                      <div class="mb-3">
-                        <label for="postTitle" class="form-label">Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control form-control-lg" id="postTitle" placeholder="Enter post title..." required />
-                      </div>
-                      <!-- Slug -->
-                      <div class="mb-3">
-                        <label for="postSlug" class="form-label">Slug</label>
-                        <div class="input-group">
-                          <span class="input-group-text text-muted">/blog/</span>
-                          <input type="text" class="form-control" id="postSlug" placeholder="post-slug-here" />
-                        </div>
-                        <small class="text-muted">Leave blank to auto-generate from title.</small>
-                      </div>
-                      <!-- Excerpt -->
-                      <div class="mb-3">
-                        <label for="postExcerpt" class="form-label">Excerpt</label>
-                        <textarea class="form-control" id="postExcerpt" rows="2" placeholder="Short description of the post..."></textarea>
-                      </div>
-                      <!-- Content — CKEditor 5 -->
-                      <div class="mb-3">
-                        <label class="form-label">Content <span class="text-danger">*</span></label>
-                        <!-- CKEditor sẽ replace textarea này -->
-                        <div id="editor">
-                          <p>Write your post content here...</p>
-                        </div>
-                        <!-- Hidden textarea để submit form -->
-                        <textarea id="postContent" name="postContent" style="display:none"></textarea>
-                        <small class="text-muted mt-1 d-block"><i class="bi bi-info-circle me-1"></i>Rich text editor — supports bold, italic, headings, links, images, tables, code blocks, etc.</small>
-                      </div>
-                    </div>
+      <div class="app-content">
+        <div class="container-fluid">
+          <form id="postForm">
+            <div class="row">
+              <!-- ===== Left Column: Main Content ===== -->
+              <div class="col-md-8">
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-pencil-square me-2"></i>Post Content</h3>
                   </div>
-
-                  <!-- SEO Card -->
-                  <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title"><i class="bi bi-search me-2"></i>SEO Settings</h3>
-                      <div class="card-tools">
-                        <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
-                          <i class="bi bi-dash-lg"></i>
-                        </button>
-                      </div>
+                  <div class="card-body">
+                    <!-- Title -->
+                    <div class="mb-3">
+                      <label for="postTitle" class="form-label">Title <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control form-control-lg" id="postTitle"
+                        placeholder="Enter post title..." required />
                     </div>
-                    <div class="card-body">
-                      <div class="mb-3">
-                        <label for="metaTitle" class="form-label">Meta Title</label>
-                        <input type="text" class="form-control" id="metaTitle" placeholder="SEO title (leave blank to use post title)" />
+                    <!-- Slug -->
+                    <div class="mb-3">
+                      <label for="postSlug" class="form-label">Slug</label>
+                      <div class="input-group">
+                        <span class="input-group-text text-muted">/blog/</span>
+                        <input type="text" class="form-control" id="postSlug" placeholder="post-slug-here" />
                       </div>
-                      <div class="mb-3">
-                        <label for="metaDescription" class="form-label">
-                          Meta Description
-                          <small class="text-muted ms-1" id="metaDescCount">(0/160)</small>
-                        </label>
-                        <textarea class="form-control" id="metaDescription" rows="2" placeholder="SEO description (max 160 characters)" maxlength="160"></textarea>
+                      <small class="text-muted">Leave blank to auto-generate from title.</small>
+                    </div>
+                    <!-- Excerpt -->
+                    <div class="mb-3">
+                      <label for="postExcerpt" class="form-label">Excerpt</label>
+                      <textarea class="form-control" id="postExcerpt" rows="2"
+                        placeholder="Short description of the post..."></textarea>
+                    </div>
+                    <!-- Content — CKEditor 5 -->
+                    <div class="mb-3">
+                      <label class="form-label">Content <span class="text-danger">*</span></label>
+                      <!-- CKEditor sẽ replace textarea này -->
+                      <div id="editor">
+                        <p>Write your post content here...</p>
                       </div>
-                      <div class="mb-0">
-                        <label for="metaKeywords" class="form-label">Keywords</label>
-                        <input type="text" class="form-control" id="metaKeywords" placeholder="keyword1, keyword2, keyword3" />
-                      </div>
+                      <!-- Hidden textarea để submit form -->
+                      <textarea id="postContent" name="postContent" style="display:none"></textarea>
+                      <small class="text-muted mt-1 d-block"><i class="bi bi-info-circle me-1"></i>Rich text editor —
+                        supports bold, italic, headings, links, images, tables, code blocks, etc.</small>
                     </div>
                   </div>
                 </div>
 
-                <!-- ===== Right Column: Settings ===== -->
-                <div class="col-md-4">
-                  <!-- Publish Card -->
-                  <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title"><i class="bi bi-send me-2"></i>Publish</h3>
-                    </div>
-                    <div class="card-body">
-                      <div class="mb-3">
-                        <label for="postStatus" class="form-label">Status</label>
-                        <select class="form-select" id="postStatus">
-                          <option value="DRAFT">Draft</option>
-                          <option value="PUBLISHED">Published</option>
-                          <option value="ARCHIVED">Archived</option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label for="publishDate" class="form-label">Publish Date</label>
-                        <input type="datetime-local" class="form-control" id="publishDate" />
-                      </div>
-                    </div>
-                    <div class="card-footer d-grid gap-2">
-                      <button type="submit" class="btn btn-primary" id="btnPublish">
-                        <i class="bi bi-check-circle me-1"></i> Publish Post
+                <!-- SEO Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-search me-2"></i>SEO Settings</h3>
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
+                        <i class="bi bi-dash-lg"></i>
                       </button>
-                      <button type="button" class="btn btn-outline-secondary" id="btnDraft">
-                        <i class="bi bi-save me-1"></i> Save as Draft
-                      </button>
-                      <a href="index.html" class="btn btn-outline-danger">
-                        <i class="bi bi-x-circle me-1"></i> Cancel
-                      </a>
                     </div>
                   </div>
-
-                  <!-- Category Card -->
-                  <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title"><i class="bi bi-tags me-2"></i>Category</h3>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label for="metaTitle" class="form-label">Meta Title</label>
+                      <input type="text" class="form-control" id="metaTitle"
+                        placeholder="SEO title (leave blank to use post title)" />
                     </div>
-                    <div class="card-body">
-                      <div class="mb-3">
-                        <label for="postCategory" class="form-label">Select Category <span class="text-danger">*</span></label>
-                        <!-- Populated dynamically from API -->
-                        <select class="form-select" id="postCategory" required>
-                          <option value="">-- Choose Category --</option>
-                        </select>
-                      </div>
-                      <div class="mb-0">
-                        <label for="postTags" class="form-label">Tags</label>
-                        <!-- Select2 multi-select — populated from API -->
-                        <select class="form-select" id="postTags" multiple>
-                        </select>
-                        <small class="text-muted">Select existing tags or type to add new ones.</small>
-                      </div>
+                    <div class="mb-3">
+                      <label for="metaDescription" class="form-label">
+                        Meta Description
+                        <small class="text-muted ms-1" id="metaDescCount">(0/160)</small>
+                      </label>
+                      <textarea class="form-control" id="metaDescription" rows="2"
+                        placeholder="SEO description (max 160 characters)" maxlength="160"></textarea>
                     </div>
-                  </div>
-
-                  <!-- Featured Image Card -->
-                  <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title"><i class="bi bi-image me-2"></i>Featured Image</h3>
-                    </div>
-                    <div class="card-body">
-                      <div class="mb-3">
-                        <div id="imgDropZone" class="border rounded p-3 text-center bg-body-secondary" style="min-height:120px; cursor:pointer;" onclick="document.getElementById('featuredImageFile').click()">
-                          <i class="bi bi-cloud-upload fs-2 text-muted d-block mb-2"></i>
-                          <span class="text-muted">Click to upload or drag &amp; drop</span>
-                          <br><small class="text-muted">PNG, JPG, GIF up to 5MB</small>
-                        </div>
-                        <img id="imgPreview" class="img-fluid w-100 mt-2 d-none" alt="Preview" />
-                        <input type="file" id="featuredImageFile" class="form-control mt-2" accept="image/*" />
-                      </div>
-                      <div class="mb-0">
-                        <label for="imageAlt" class="form-label">Alt Text</label>
-                        <input type="text" class="form-control" id="imageAlt" placeholder="Image description for SEO" />
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Author Card -->
-                  <div class="card">
-                    <div class="card-header">
-                      <h3 class="card-title"><i class="bi bi-person me-2"></i>Author</h3>
-                    </div>
-                    <div class="card-body">
-                      <!-- Populated dynamically from API -->
-                      <select class="form-select" id="postAuthor">
-                        <option value="">-- Loading authors... --</option>
-                      </select>
+                    <div class="mb-0">
+                      <label for="metaKeywords" class="form-label">Keywords</label>
+                      <input type="text" class="form-control" id="metaKeywords"
+                        placeholder="keyword1, keyword2, keyword3" />
                     </div>
                   </div>
                 </div>
               </div>
-            </form>
-          </div>
+
+              <!-- ===== Right Column: Settings ===== -->
+              <div class="col-md-4">
+                <!-- Publish Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-send me-2"></i>Publish</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label for="postStatus" class="form-label">Status</label>
+                      <select class="form-select" id="postStatus">
+                        <option value="DRAFT">Draft</option>
+                        <option value="PUBLISHED">Published</option>
+                        <option value="ARCHIVED">Archived</option>
+                      </select>
+                    </div>
+                    <div class="mb-3 d-none" id="publishDateContainer">
+                      <label for="publishDate" class="form-label">Publish Date</label>
+                      <input type="datetime-local" class="form-control" id="publishDate" disabled />
+                    </div>
+                  </div>
+                  <div class="card-footer d-grid gap-2">
+                    <button type="submit" class="btn btn-primary" id="btnPublish">
+                      <i class="bi bi-check-circle me-1"></i> Publish Post
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="btnDraft">
+                      <i class="bi bi-save me-1"></i> Save as Draft
+                    </button>
+                    <a href="index.html" class="btn btn-outline-danger">
+                      <i class="bi bi-x-circle me-1"></i> Cancel
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Category Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-tags me-2"></i>Category</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <label for="postCategory" class="form-label">Select Category <span
+                          class="text-danger">*</span></label>
+                      <!-- Populated dynamically from API -->
+                      <select class="form-select" id="postCategory" required>
+                        <option value="">-- Choose Category --</option>
+                      </select>
+                    </div>
+                    <div class="mb-0">
+                      <label for="postTags" class="form-label">Tags</label>
+                      <!-- Select2 multi-select — populated from API -->
+                      <select class="form-select" id="postTags" multiple>
+                      </select>
+                      <small class="text-muted">Select existing tags or type to add new ones.</small>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Featured Image Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-image me-2"></i>Featured Image</h3>
+                  </div>
+                  <div class="card-body">
+                    <div class="mb-3">
+                      <div id="imgDropZone" class="border rounded p-3 text-center bg-body-secondary"
+                        style="min-height:120px; cursor:pointer;"
+                        onclick="document.getElementById('featuredImageFile').click()">
+                        <i class="bi bi-cloud-upload fs-2 text-muted d-block mb-2"></i>
+                        <span class="text-muted">Click to upload or drag &amp; drop</span>
+                        <br><small class="text-muted">PNG, JPG, GIF up to 5MB</small>
+                      </div>
+                      <img id="imgPreview" class="img-fluid w-100 mt-2 d-none" alt="Preview" />
+                      <input type="file" id="featuredImageFile" class="form-control mt-2" accept="image/*" />
+                    </div>
+                    <div class="mb-0">
+                      <label for="imageAlt" class="form-label">Alt Text</label>
+                      <input type="text" class="form-control" id="imageAlt" placeholder="Image description for SEO" />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Author Card -->
+                <div class="card">
+                  <div class="card-header">
+                    <h3 class="card-title"><i class="bi bi-person me-2"></i>Author</h3>
+                  </div>
+                  <div class="card-body">
+                    <!-- Populated dynamically from API -->
+                    <select class="form-select" id="postAuthor">
+                      <option value="">-- Loading authors... --</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
-      </main>
+      </div>
+    </main>
 
-      <footer class="app-footer">
-        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
-      </footer>
-    </div>
+    <footer class="app-footer">
+      <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+      <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+    </footer>
+  </div>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
-    <!-- CKEditor 5 ClassicEditor (full build via CDN) -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
-    <!-- Tom Select (vanilla JS multi-select) -->
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-    <!-- App JS -->
-    <script src="../js/http.js"></script>
-    <script src="../js/auth.js"></script>
-    <script src="../js/ui.js"></script>
-    <script src="../js/post.service.js"></script>
-    <script src="../js/category.service.js"></script>
-    <script src="../js/tag.service.js"></script>
-    <script>
-      Auth.guard();
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+  <!-- CKEditor 5 ClassicEditor (full build via CDN) -->
+  <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+  <!-- Tom Select (vanilla JS multi-select) -->
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  <!-- App JS -->
+  <script src="../js/http.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/ui.js"></script>
+  <script src="../js/post.service.js"></script>
+  <script src="../js/category.service.js"></script>
+  <script src="../js/tag.service.js"></script>
+  <script>
+    Auth.guard();
 
-      // Lấy postId từ URL nếu đang edit: posts/create.html?id=123
-      const urlParams  = new URLSearchParams(window.location.search);
-      const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
+    // Lấy postId từ URL nếu đang edit: posts/create.html?id=123
+    const urlParams = new URLSearchParams(window.location.search);
+    const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
 
-      let ckEditor = null; // sẽ giữ instance CKEditor
+    let ckEditor = null; // sẽ giữ instance CKEditor
 
-      document.addEventListener('DOMContentLoaded', async function () {
-        // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
-        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-          });
+    document.addEventListener('DOMContentLoaded', async function () {
+      // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
+      const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+      if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
+        OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+          scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
+        });
+      }
+
+      /**
+       * Custom Upload Adapter for CKEditor 5
+       * Handles sending the file to our backend /api/files/upload
+       */
+      class MyUploadAdapter {
+        constructor(loader) {
+          this.loader = loader;
         }
+        upload() {
+          return this.loader.file.then(file => new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append('upload', file);
 
-        // ── CKEditor 5 ──────────────────────────────────────────────────────
-        ckEditor = await ClassicEditor.create(document.getElementById('editor'), {
-          toolbar: {
-            items: [
-              'heading', '|',
-              'bold', 'italic', 'underline', 'strikethrough', '|',
-              'link', 'blockQuote', 'code', 'codeBlock', '|',
-              'bulletedList', 'numberedList', 'todoList', '|',
-              'insertTable', '|',
-              'imageUpload', 'mediaEmbed', '|',
-              'horizontalLine', '|',
-              'outdent', 'indent', '|',
-              'undo', 'redo',
-            ],
-            shouldNotGroupWhenFull: true,
-          },
-          placeholder: 'Write your post content here...',
-          language: 'en',
-        });
-
-        // ── Tom Select (Tags) ────────────────────────────────────────────
-        window.tomSelectTags = new TomSelect('#postTags', {
-          plugins: ['remove_button', 'caret_position'],
-          create: true,           // cho phép tạo tag mới bằng cách gõ
-          placeholder: 'Select or type tags...',
-          maxOptions: 200,
-          delimiter: ',',
-        });
-
-        // ── Auto slug từ title ──────────────────────────────────────────────
-        document.getElementById('postTitle').addEventListener('input', function () {
-          document.getElementById('postSlug').value = UI.toSlug(this.value);
-        });
-
-        // ── Meta description char counter ───────────────────────────────────
-        document.getElementById('metaDescription').addEventListener('input', function () {
-          document.getElementById('metaDescCount').textContent = `(${this.value.length}/160)`;
-        });
-
-        // ── Image preview khi chọn file ─────────────────────────────────────
-        document.getElementById('featuredImageFile').addEventListener('change', function () {
-          const file = this.files[0];
-          if (!file) return;
-          const reader = new FileReader();
-          reader.onload = e => {
-            const preview = document.getElementById('imgPreview');
-            preview.src = e.target.result;
-            preview.classList.remove('d-none');
-            document.getElementById('imgDropZone').classList.add('d-none');
-          };
-          reader.readAsDataURL(file);
-        });
-
-        // ── Load Categories ─────────────────────────────────────────────────
-        try {
-          const cats = await CategoryService.getAll();
-          const sel  = document.getElementById('postCategory');
-          sel.innerHTML = '<option value="">-- Choose Category --</option>' +
-            (Array.isArray(cats) ? cats : []).map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-        } catch (_) {
-          UI.toast('Could not load categories.', 'warning');
+            Http.upload('/api/files/upload', formData)
+              .then(result => {
+                if (result && result.url) {
+                  resolve({ default: result.url });
+                } else {
+                  reject('Upload failed');
+                }
+              })
+              .catch(error => {
+                reject(error.message || 'Upload failed');
+              });
+          }));
         }
-
-        // ── Load Tags into Tom Select ────────────────────────────────────
-        try {
-          const tags = await TagService.getAll();
-          const ts = window.tomSelectTags;
-          (Array.isArray(tags) ? tags : []).forEach(t => {
-            ts.addOption({ value: String(t.id), text: t.name });
-          });
-          ts.refreshOptions(false);
-        } catch (_) {}
-
-        // ── Load Authors ────────────────────────────────────────────────────
-        try {
-          const users  = await Http.get('/api/users') || [];
-          const list   = Array.isArray(users) ? users : (users.content ?? []);
-          const selAut = document.getElementById('postAuthor');
-          selAut.innerHTML = list.map(u => `<option value="${u.id}">${u.username || u.name}</option>`).join('');
-        } catch (_) {
-          document.getElementById('postAuthor').innerHTML = '<option value="">-- Could not load --</option>';
+        abort() {
         }
+      }
 
-        // ── Edit mode: load existing post ───────────────────────────────────
+      function MyCustomUploadAdapterPlugin(editor) {
+        editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+          return new MyUploadAdapter(loader);
+        };
+      }
+
+      // ── CKEditor 5 ──────────────────────────────────────────────────────
+      ckEditor = await ClassicEditor.create(document.getElementById('editor'), {
+        extraPlugins: [MyCustomUploadAdapterPlugin],
+        toolbar: {
+          items: [
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'link', 'blockQuote', 'code', 'codeBlock', '|',
+            'bulletedList', 'numberedList', 'todoList', '|',
+            'insertTable', '|',
+            'imageUpload', 'mediaEmbed', '|',
+            'horizontalLine', '|',
+            'outdent', 'indent', '|',
+            'undo', 'redo',
+          ],
+          shouldNotGroupWhenFull: true,
+        },
+        image: {
+          resizeUnit: '%',
+          resizeOptions: [
+            { name: 'resizeImage:original', value: null,  label: 'Original' },
+            { name: 'resizeImage:25',       value: '25',  label: '25%' },
+            { name: 'resizeImage:50',       value: '50',  label: '50%' },
+            { name: 'resizeImage:75',       value: '75',  label: '75%' },
+            { name: 'resizeImage:100',      value: '100', label: '100%' },
+          ],
+          // Dùng từng nút riêng lẻ thay vì dropdown 'resizeImage' để tương thích CDN build
+          toolbar: [
+            'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
+            'toggleImageCaption', 'imageTextAlternative', '|',
+            'resizeImage:25', 'resizeImage:50', 'resizeImage:75', 'resizeImage:original',
+          ],
+        },
+        placeholder: 'Write your post content here...',
+        language: 'en',
+      });
+
+      // ── Tom Select (Tags) ────────────────────────────────────────────
+      window.tomSelectTags = new TomSelect('#postTags', {
+        plugins: ['remove_button', 'caret_position'],
+        create: true,
+        placeholder: 'Select or type tags...',
+        maxOptions: 200,
+        delimiter: ',',
+        dropdownParent: 'body'  // Fix lỗi dropdown bị ẩn do overflow:hidden của card
+      });
+
+      // ── Auto slug từ title ──────────────────────────────────────────────
+      document.getElementById('postTitle').addEventListener('input', function () {
+        document.getElementById('postSlug').value = UI.toSlug(this.value);
+      });
+
+      // ── Meta description char counter ───────────────────────────────────
+      document.getElementById('metaDescription').addEventListener('input', function () {
+        document.getElementById('metaDescCount').textContent = `(${this.value.length}/160)`;
+      });
+
+      // ── Image preview & upload khi chọn file ─────────────────────────────────────
+      document.getElementById('featuredImageFile').addEventListener('change', async function () {
+        const file = this.files[0];
+        if (!file) return;
+        
+        // Show preview
+        const reader = new FileReader();
+        reader.onload = e => {
+          const preview = document.getElementById('imgPreview');
+          preview.src = e.target.result;
+          preview.classList.remove('d-none');
+          document.getElementById('imgDropZone').classList.add('d-none');
+        };
+        reader.readAsDataURL(file);
+
+        // Upload to get URL
+        const formData = new FormData();
+        formData.append('upload', file);
+        try {
+          const res = await Http.upload('/api/files/upload', formData);
+          if (res && res.url) {
+            window.featuredImageUrl = res.url;
+            UI.toast('Featured image uploaded.');
+          }
+        } catch (err) {
+          UI.toast('Failed to upload featured image: ' + err.message, 'danger');
+        }
+      });
+
+      // ── Load Categories ─────────────────────────────────────────────────
+      try {
+        const res = await CategoryService.getAll();
+        const cats = Array.isArray(res) ? res : (res.content ?? []);
+        const sel = document.getElementById('postCategory');
+        sel.innerHTML = '<option value="">-- Choose Category --</option>' +
+          cats.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+      } catch (_) {
+        UI.toast('Could not load categories.', 'warning');
+      }
+
+      // ── Load Tags into Tom Select ────────────────────────────────────
+      try {
+        const res = await TagService.getAll();
+        const tags = Array.isArray(res) ? res : (res.content ?? []);
+        const ts = window.tomSelectTags;
+        tags.forEach(t => {
+          const text = t.title || t.name || t;
+          ts.addOption({ value: t.id, text: text }); // Use ID as value
+        });
+        ts.refreshOptions(false);
+      } catch (_) { }
+
+      // ── Load Authors & Set Default ──────────────────────────────────────
+      try {
+        const users = await Http.get('/api/users/all') || [];
+        const list = Array.isArray(users) ? users : (users.content ?? []);
+        const selAut = document.getElementById('postAuthor');
+
+        selAut.innerHTML = list.map(u =>
+          `<option value="${u.id}">${u.username || u.name || ('User ' + u.id)}</option>`
+        ).join('');
+
+        // Set default to current user
+        const me = await Auth.me();
+        if (me && me.id) selAut.value = me.id;
+
+      } catch (_) {
+        document.getElementById('postAuthor').innerHTML = '<option value="">-- Could not load --</option>';
+      }
+
+      // ── Edit mode: load existing post ───────────────────────────────────
         if (editPostId) {
           document.getElementById('pageTitle').textContent = 'Edit Post';
           document.getElementById('breadcrumbAction').textContent = 'Edit';
           document.getElementById('btnPublish').innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Post';
+          document.getElementById('publishDate').disabled = true;
           try {
-            const post = await PostService.getById(editPostId);
-            document.getElementById('postTitle').value   = post.title || '';
-            document.getElementById('postSlug').value    = post.slug  || '';
-            document.getElementById('postExcerpt').value = post.excerpt || '';
-            document.getElementById('postStatus').value  = post.status || 'DRAFT';
+          const post = await PostService.getById(editPostId);
+          document.getElementById('postTitle').value = post.title || '';
+          document.getElementById('postSlug').value = post.slug || '';
+          document.getElementById('postExcerpt').value = post.excerpt || '';
+          document.getElementById('postStatus').value = post.status || 'DRAFT';
 
-            // Set CKEditor content
-            ckEditor.setData(post.content || '');
+          // Set CKEditor content
+          ckEditor.setData(post.content || '');
 
-            // Category
-            if (post.categoryId) document.getElementById('postCategory').value = post.categoryId;
+          // Category
+          if (post.categories && post.categories.length > 0) {
+              document.getElementById('postCategory').value = post.categories[0].id;
+          }
 
-            // Tags — restore into Tom Select
-            if (post.tags && post.tags.length) {
-              const ts = window.tomSelectTags;
-              post.tags.forEach(t => {
-                const val  = String(t.id || t.name);
-                const text = t.name || t;
-                if (!ts.options[val]) ts.addOption({ value: val, text });
-                ts.addItem(val, true);
-              });
+          // Tags
+          if (post.tags && post.tags.length) {
+            const ts = window.tomSelectTags;
+            post.tags.forEach(t => {
+              const val = t.id;
+              const text = t.title || t.name;
+              if (!ts.options[val]) ts.addOption({ value: val, text });
+              ts.addItem(val, true);
+            });
+          }
+
+          // Featured Image
+          if (post.imageUrl) {
+            window.featuredImageUrl = post.imageUrl;
+            const preview = document.getElementById('imgPreview');
+            preview.src = post.imageUrl;
+            preview.classList.remove('d-none');
+            document.getElementById('imgDropZone').classList.add('d-none');
+          }
+
+          // Excerpt & SEO
+          document.getElementById('postExcerpt').value = post.summary || '';
+          document.getElementById('metaTitle').value = post.metaTitle || '';
+          document.getElementById('metaDescription').value = post.metaDescription || '';
+          document.getElementById('metaKeywords').value = post.metaKeywords || '';
+          if (post.metaDescription) {
+            document.getElementById('metaDescCount').textContent = `(${post.metaDescription.length}/160)`;
+          }
+
+          // Status
+          document.getElementById('postStatus').value = post.status;
+
+          // Publish Date
+          if (post.publishedAt) {
+            const container = document.getElementById('publishDateContainer');
+            const pubDate = document.getElementById('publishDate');
+            container.classList.remove('d-none');
+            pubDate.value = post.publishedAt.substring(0, 16);
+            pubDate.disabled = true;
+          }
+          // SEO meta
+          try {
+            const meta = await PostService.getMeta(editPostId);
+            const metaMap = {};
+            (Array.isArray(meta) ? meta : []).forEach(m => metaMap[m.key] = m.value);
+            if (metaMap.metaTitle) document.getElementById('metaTitle').value = metaMap.metaTitle;
+            if (metaMap.metaDescription) {
+              document.getElementById('metaDescription').value = metaMap.metaDescription;
+              document.getElementById('metaDescCount').textContent = `(${metaMap.metaDescription.length}/160)`;
             }
+            if (metaMap.metaKeywords) document.getElementById('metaKeywords').value = metaMap.metaKeywords;
+          } catch (_) { }
 
-            // SEO meta
-            try {
-              const meta   = await PostService.getMeta(editPostId);
-              const metaMap = {};
-              (Array.isArray(meta) ? meta : []).forEach(m => metaMap[m.key] = m.value);
-              if (metaMap.metaTitle)       document.getElementById('metaTitle').value       = metaMap.metaTitle;
-              if (metaMap.metaDescription) {
-                document.getElementById('metaDescription').value = metaMap.metaDescription;
-                document.getElementById('metaDescCount').textContent = `(${metaMap.metaDescription.length}/160)`;
-              }
-              if (metaMap.metaKeywords)    document.getElementById('metaKeywords').value    = metaMap.metaKeywords;
-            } catch (_) {}
+        } catch (err) { UI.toast('Failed to load post: ' + err.message, 'danger'); }
+      }
 
-          } catch (err) { UI.toast('Failed to load post: ' + err.message, 'danger'); }
-        }
-
-        // ── Form submit — Publish ────────────────────────────────────────────
-        document.getElementById('postForm').addEventListener('submit', async function (e) {
-          e.preventDefault();
-          await savePost(document.getElementById('postStatus').value || 'PUBLISHED');
-        });
-
-        // ── Save as Draft ────────────────────────────────────────────────────
-        document.getElementById('btnDraft').addEventListener('click', async function () {
-          await savePost('DRAFT');
-        });
-
-        await UI.renderCurrentUser();
+      // ── Form submit — Publish ────────────────────────────────────────────
+      document.getElementById('postForm').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        await savePost(document.getElementById('postStatus').value || 'PUBLISHED');
       });
 
-      // ── savePost ─────────────────────────────────────────────────────────
-      async function savePost(status) {
-        const title = document.getElementById('postTitle').value.trim();
+      // ── Save as Draft ────────────────────────────────────────────────────
+      document.getElementById('btnDraft').addEventListener('click', async function () {
+        await savePost('DRAFT');
+      });
 
-        // Lấy nội dung từ CKEditor (HTML string)
-        const content = ckEditor ? ckEditor.getData() : '';
+      await UI.renderCurrentUser();
+    });
 
-        if (!title)   { UI.toast('Title is required.', 'warning');   return; }
-        if (!content || content === '<p>&nbsp;</p>') {
-          UI.toast('Content cannot be empty.', 'warning');
-          return;
-        }
+    // ── savePost ─────────────────────────────────────────────────────────
+    async function savePost(status) {
+      const title = document.getElementById('postTitle').value.trim();
 
-        // Tags: Tom Select trả về array of value (id string hoặc tên mới do user gõ)
-        const selectedTags = window.tomSelectTags ? window.tomSelectTags.getValue() : [];
+      // Lấy nội dung từ CKEditor (HTML string)
+      const content = ckEditor ? ckEditor.getData() : '';
 
-        const payload = {
-          title,
-          slug:       document.getElementById('postSlug').value.trim() || UI.toSlug(title),
-          excerpt:    document.getElementById('postExcerpt').value.trim(),
-          content,           // HTML từ CKEditor
-          status,
-          categoryId: document.getElementById('postCategory').value || null,
-          // Nếu value là số → tagId, nếu là chuỗi → tagName mới
-          tagNames:   selectedTags.filter(v => isNaN(Number(v))),
-          tagIds:     selectedTags.filter(v => !isNaN(Number(v))).map(Number),
-        };
-
-        try {
-          let post;
-          if (editPostId) {
-            post = await PostService.update(editPostId, payload);
-            UI.toast('Post updated successfully.');
-          } else {
-            post = await PostService.create(payload);
-            UI.toast('Post created successfully.');
-            // Redirect to edit mode
-            if (post?.id) window.location.href = `create.html?id=${post.id}`;
-          }
-
-          // Lưu SEO meta
-          const metaTitle = document.getElementById('metaTitle').value.trim();
-          const metaDesc  = document.getElementById('metaDescription').value.trim();
-          const metaKw    = document.getElementById('metaKeywords').value.trim();
-          const pid = post?.id || editPostId;
-          if (pid) {
-            await Promise.allSettled([
-              metaTitle && PostService.setMeta(pid, 'metaTitle',       metaTitle),
-              metaDesc  && PostService.setMeta(pid, 'metaDescription', metaDesc),
-              metaKw    && PostService.setMeta(pid, 'metaKeywords',    metaKw),
-            ]);
-          }
-        } catch (err) { UI.toast(err.message, 'danger'); }
+      if (!title) { UI.toast('Title is required.', 'warning'); return; }
+      if (!content || content === '<p>&nbsp;</p>') {
+        UI.toast('Content cannot be empty.', 'warning');
+        return;
       }
-    </script>
-  </body>
+
+      // Tags: Tom Select trả về array of value (id string hoặc tên mới do user gõ)
+      const selectedTags = window.tomSelectTags ? window.tomSelectTags.getValue() : [];
+
+      const payload = {
+        title,
+        slug: document.getElementById('postSlug').value.trim() || UI.toSlug(title),
+        summary: document.getElementById('postExcerpt').value.trim(),
+        content,
+        status: status === 'PUBLISHED' ? 1 : (status === 'ARCHIVED' ? 2 : 0),
+        imageUrl: window.featuredImageUrl || null,
+        metaTitle: document.getElementById('metaTitle').value.trim(),
+        metaDescription: document.getElementById('metaDescription').value.trim(),
+        metaKeywords: document.getElementById('metaKeywords').value.trim(),
+        authorId: document.getElementById('postAuthor').value || null,
+        tagIds: selectedTags,
+        categoryIds: document.getElementById('postCategory').value ? [Number(document.getElementById('postCategory').value)] : [],
+      };
+
+      try {
+        let post;
+        if (editPostId) {
+          post = await PostService.update(editPostId, payload);
+          UI.toast('Post updated successfully.');
+        } else {
+          post = await PostService.create(payload);
+          UI.toast('Post created successfully.');
+          // Redirect to edit mode for new posts
+          if (post?.id) window.location.href = `create.html?id=${post.id}`;
+        }
+      } catch (err) {
+        UI.toast('Failed to save post: ' + err.message, 'danger');
+      }
+    }
+  </script>
+</body>
+
 </html>

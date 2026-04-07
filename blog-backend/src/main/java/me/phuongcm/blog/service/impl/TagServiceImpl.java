@@ -1,10 +1,13 @@
 package me.phuongcm.blog.service.impl;
 
+import me.phuongcm.blog.dto.TagDTO;
+import me.phuongcm.blog.dto.TagMapper;
 import me.phuongcm.blog.entity.Post;
 import me.phuongcm.blog.entity.PostTag;
 import me.phuongcm.blog.entity.Tag;
 import me.phuongcm.blog.repository.PostTagRepository;
 import me.phuongcm.blog.repository.TagRepository;
+import me.phuongcm.blog.common.utils.SlugUtils;
 import me.phuongcm.blog.service.TagService;
 import org.springframework.stereotype.Service;
 
@@ -17,45 +20,48 @@ public class TagServiceImpl implements TagService {
 
     private final PostTagRepository postTagRepository;
 
-    public TagServiceImpl(TagRepository tagRepository, PostTagRepository postTagRepository) {
+    private final TagMapper tagMapper;
+
+    public TagServiceImpl(TagRepository tagRepository, PostTagRepository postTagRepository, TagMapper tagMapper) {
         this.tagRepository = tagRepository;
         this.postTagRepository = postTagRepository;
+        this.tagMapper = tagMapper;
     }
 
     @Override
-    public List<Tag> getAllTags() {
-        return tagRepository.findAll();
+    public List<TagDTO> getAllTags() {
+        return tagMapper.toDTOs(tagRepository.findAll());
     }
 
     @Override
-    public Optional<Tag> getTagById(long id) {
-        return tagRepository.findById(id);
+    public Optional<TagDTO> getTagById(long id) {
+        return tagRepository.findById(id).map(tagMapper::toDTO);
     }
 
     @Override
-    public Optional<Tag> getTagBySlug(String slug) {
-        return tagRepository.findBySlug(slug);
+    public Optional<TagDTO> getTagBySlug(String slug) {
+        return tagRepository.findBySlug(slug).map(tagMapper::toDTO);
     }
 
     @Override
-    public Tag createTag(String title, String content) {
+    public TagDTO createTag(TagDTO tagDTO) {
         Tag tag = new Tag();
-        tag.setTitle(title);
-        tag.setContent(content);
-        tag.setSlug(generateSlug(tag.getTitle()));
-        tag.setMetaTitle(title);
-        return tagRepository.save(tag);
+        tag.setTitle(tagDTO.getTitle());
+        tag.setContent(tagDTO.getContent());
+        tag.setSlug(tagDTO.getSlug() != null && !tagDTO.getSlug().isBlank() ? tagDTO.getSlug() : generateSlug(tag.getTitle()));
+        tag.setMetaTitle(tagDTO.getTitle());
+        return tagMapper.toDTO(tagRepository.save(tag));
     }
 
     @Override
-    public Tag updateTag(long id, String title, String content) {
+    public TagDTO updateTag(long id, TagDTO tagDTO) {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag not found with id: " + id));
-        tag.setTitle(title);
-        tag.setContent(content);
-        tag.setSlug(generateSlug(tag.getTitle()));
-        tag.setMetaTitle(title);
-        return tagRepository.save(tag);
+        tag.setTitle(tagDTO.getTitle());
+        tag.setContent(tagDTO.getContent());
+        tag.setSlug(tagDTO.getSlug() != null && !tagDTO.getSlug().isBlank() ? tagDTO.getSlug() : generateSlug(tag.getTitle()));
+        tag.setMetaTitle(tagDTO.getTitle());
+        return tagMapper.toDTO(tagRepository.save(tag));
     }
 
     @Override
@@ -66,9 +72,11 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void addTagsToPost(Post post, List<String> tagNames) {
-        for(String tagName : tagNames){
-            Tag tag = tagRepository.findBySlug(generateSlug(tagName)).orElse(createTag(tagName, ""));
+    public void addTagsToPost(Post post, List<Long> tagIds) {
+        if (tagIds == null) return;
+        for(Long tagId : tagIds){
+            Tag tag = tagRepository.findById(tagId)
+                    .orElseThrow(() -> new RuntimeException("Tag not found with id: " + tagId));
             PostTag postTag = new PostTag();
             postTag.setPost(post);
             postTag.setTag(tag);
@@ -76,11 +84,12 @@ public class TagServiceImpl implements TagService {
         }
     }
 
+    @Override
+    public void clearTagsFromPost(Post post) {
+        postTagRepository.deleteByPostId(post.getId());
+    }
+
     private String generateSlug(String title) {
-        return title.toLowerCase()
-                .replaceAll("[^a-z0-9\\s-]", "")
-                .replaceAll("\\s+", "-")
-                .replaceAll("-+", "-")
-                .replaceAll("^-|-$", "");
+        return SlugUtils.toSlug(title);
     }
 }

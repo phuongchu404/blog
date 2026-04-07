@@ -6,11 +6,11 @@ import me.phuongcm.blog.entity.Permission;
 import java.util.List;
 
 public interface PermissionService {
-    List<Permission> getAllPermissions();
+    List<PermissionDTO> getAllPermissions();
 
-    Permission createPermission(PermissionDTO dto);
+    PermissionDTO createPermission(PermissionDTO dto);
 
-    Permission updatePermission(Long id, PermissionDTO dto);
+    PermissionDTO updatePermission(Long id, PermissionDTO dto);
 
     void deletePermission(Long id);
 }

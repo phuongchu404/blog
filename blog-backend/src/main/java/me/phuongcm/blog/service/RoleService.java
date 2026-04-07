@@ -2,7 +2,7 @@ package me.phuongcm.blog.service;
 
 import me.phuongcm.blog.dto.RoleDTO;
 import me.phuongcm.blog.dto.RoleResponseDTO;
-import me.phuongcm.blog.entity.Role;
+import jakarta.validation.Valid;
 import java.util.List;
 
 public interface RoleService {
@@ -10,9 +10,9 @@ public interface RoleService {
     
     List<RoleResponseDTO> getAllRoles();
     
-    Role createRole(RoleDTO dto);
+    RoleResponseDTO createRole(@Valid RoleDTO dto);
     
-    Role updateRole(Long id, RoleDTO dto);
+    RoleResponseDTO updateRole(Long id, @Valid RoleDTO dto);
     
     void deleteRole(Long id);
     

@@ -23,6 +23,7 @@ public class PostDTO {
     private Long authorId;
 
     private String authorName;
+    private String categoryName;
 
     private Long parentId;
 
@@ -37,7 +38,10 @@ public class PostDTO {
 
     private String summary;
 
-    private Boolean published;
+    private String metaDescription;
+    private String metaKeywords;
+    private String imageUrl;
+    private Integer status; // 0: Draft, 1: Published, 2: Archived
 
     private LocalDateTime createdAt;
 
@@ -48,7 +52,9 @@ public class PostDTO {
     @NotBlank(message = "Content is required")
     private String content;
 
-    private List<String> tags;
+    private List<Long> tagIds;
+    private List<Long> categoryIds;
 
-    private List<String> categories;
+    private List<TagDTO> tags;
+    private List<CategoryDTO> categories;
 }

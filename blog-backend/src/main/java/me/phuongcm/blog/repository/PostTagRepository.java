@@ -2,9 +2,11 @@ package me.phuongcm.blog.repository;
 
 import me.phuongcm.blog.entity.PostTag;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,7 +16,13 @@ public interface PostTagRepository extends JpaRepository<PostTag, Long> {
 
     List<PostTag> findByTagId(Long tagId);
 
+    @Transactional
+    @Modifying
     void deleteByPostIdAndTagId(Long postId, Long tagId);
+
+    @Transactional
+    @Modifying
+    void deleteByPostId(Long postId);
 
     @Query(value = "SELECT pt FROM PostTag pt WHERE pt.post.id = :postId")
     List<PostTag> findTagsByPostId(@Param("postId") Long postId);

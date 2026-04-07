@@ -1,11 +1,10 @@
 package me.phuongcm.blog.service;
 
-import co.elastic.clients.elasticsearch.security.ChangePasswordRequest;
 import me.phuongcm.blog.dto.ChangePasswordRequestDTO;
 import me.phuongcm.blog.dto.LoginRequest;
 import me.phuongcm.blog.dto.LoginResponse;
 import me.phuongcm.blog.dto.RegisterRequest;
-import me.phuongcm.blog.entity.User;
+import me.phuongcm.blog.dto.UserDTO;
 
 public interface AuthService {
 
@@ -21,13 +20,13 @@ public interface AuthService {
      * @param registerRequest thông tin đăng ký
      * @return User vừa được tạo
      */
-    User register(RegisterRequest registerRequest);
+    UserDTO register(RegisterRequest registerRequest);
 
     /**
      * Lấy thông tin người dùng hiện tại từ SecurityContext.
      * @return User đang đăng nhập
      */
-    User getCurrentUser();
+    UserDTO getCurrentUser();
 
-    User changePassword(ChangePasswordRequestDTO changePasswordRequest);
+    UserDTO changePassword(ChangePasswordRequestDTO changePasswordRequest);
 }

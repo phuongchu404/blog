@@ -2,7 +2,6 @@ package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
 import me.phuongcm.blog.dto.UserDTO;
-import me.phuongcm.blog.entity.User;
 import me.phuongcm.blog.service.AuthService;
 import me.phuongcm.blog.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,9 +26,13 @@ public class UserController {
      * GET /api/users/me — Thông tin bản thân (bất kỳ user đã đăng nhập).
      * WebSecurityConfig đã yêu cầu authenticated(), không cần @PreAuthorize riêng.
      */
+    /**
+     * GET /api/users/me — Thông tin bản thân (bất kỳ user đã đăng nhập).
+     * WebSecurityConfig đã yêu cầu authenticated(), không cần @PreAuthorize riêng.
+     */
     @GetMapping("/me")
-    public ResponseEntity<User> getCurrentUser() {
-        User user = authService.getCurrentUser();
+    public ResponseEntity<UserDTO> getCurrentUser() {
+        UserDTO user = authService.getCurrentUser();
         return ResponseEntity.ok(user);
     }
 
@@ -39,8 +41,8 @@ public class UserController {
      * Đã đăng nhập là đủ (thông tin cơ bản).
      */
     @GetMapping
-    public ResponseEntity<User> getUserByUsername(@RequestParam String username) {
-        User user = userService.getCurrentUser(username);
+    public ResponseEntity<UserDTO> getUserByUsername(@RequestParam String username) {
+        UserDTO user = userService.getCurrentUser(username);
         return ResponseEntity.ok(user);
     }
 
@@ -50,7 +52,7 @@ public class UserController {
      */
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('user:read:all')")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
@@ -59,9 +61,10 @@ public class UserController {
      * Đã đăng nhập là đủ.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
+        return userService.getUserById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -69,9 +72,10 @@ public class UserController {
      * Đã đăng nhập là đủ.
      */
     @GetMapping("/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        Optional<User> user = userService.getUserByEmail(email);
-        return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<UserDTO> getUserByEmail(@PathVariable String email) {
+        return userService.getUserByEmail(email)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -80,7 +84,7 @@ public class UserController {
      */
     @GetMapping("/search")
     @PreAuthorize("hasAuthority('user:read:all')")
-    public ResponseEntity<List<User>> searchUsers(@RequestParam String keyword) {
+    public ResponseEntity<List<UserDTO>> searchUsers(@RequestParam String keyword) {
         return ResponseEntity.ok(userService.searchUsers(keyword));
     }
 
@@ -90,8 +94,8 @@ public class UserController {
      * Dùng "user:update:any" nếu sửa người khác (sẽ kiểm tra ở service layer).
      */
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
-        User updatedUser = userService.updateUser(id, userDTO);
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
+        UserDTO updatedUser = userService.updateUser(id, userDTO);
         return ResponseEntity.ok(updatedUser);
     }
 

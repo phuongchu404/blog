@@ -8,6 +8,7 @@ import me.phuongcm.blog.common.utils.Error;
 import me.phuongcm.blog.common.utils.Status;
 import me.phuongcm.blog.dto.RegisterRequest;
 import me.phuongcm.blog.dto.UserDTO;
+import me.phuongcm.blog.dto.UserMapper;
 import me.phuongcm.blog.entity.Role;
 import me.phuongcm.blog.entity.User;
 import me.phuongcm.blog.entity.UserRole;
@@ -39,15 +40,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private UserMapper userMapper;
+
     @Override
-    public User getCurrentUser(String username) {
+    public UserDTO getCurrentUser(String username) {
 
         User user = userRepository.findByUsername(username).orElseThrow(()-> new ServiceException(Error.USER_NOT_FOUND));
-        return user;
+        return userMapper.toDTO(user);
     }
 
     @Override
-    public User register(RegisterRequest registerRequest) {
+    public UserDTO register(RegisterRequest registerRequest) {
         if(userRepository.existsByUsername(registerRequest.getUsername())) {
             log.error("Username already exists: {}", registerRequest.getUsername());
             throw new ServiceException(Error.USERNAME_ALREADY_EXIST);
@@ -71,13 +75,13 @@ public class UserServiceImpl implements UserService {
         UserRole userRole = new UserRole();
         userRole.setRole(role);
         userRole.setUser(user);
-        userRole = userRoleRepository.save(userRole);
+        userRoleRepository.save(userRole);
 
-        return user;
+        return userMapper.toDTO(user);
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
         List<UserRole> allUserRoles = userRoleRepository.findAll();
         java.util.Map<Long, List<String>> userRolesMap = allUserRoles.stream()
@@ -86,21 +90,21 @@ public class UserServiceImpl implements UserService {
         for (User user : users) {
              user.setRoles(userRolesMap.getOrDefault(user.getId(), java.util.Collections.emptyList()));
         }
-        return users;
+        return userMapper.toDTOs(users);
     }
 
     @Override
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserDTO> getUserById(Long id) {
+        return userRepository.findById(id).map(userMapper::toDTO);
     }
 
     @Override
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<UserDTO> getUserByEmail(String email) {
+        return userRepository.findByEmail(email).map(userMapper::toDTO);
     }
 
     @Override
-    public User createUser(UserDTO userDTO, String password) {
+    public UserDTO createUser(UserDTO userDTO, String password) {
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
         user.setMiddleName(userDTO.getMiddleName());
@@ -114,11 +118,11 @@ public class UserServiceImpl implements UserService {
         user.setProvider(AuthProvider.local);
         user.setStatus(Status.ACTIVE.getValue());
 
-        return userRepository.save(user);
+        return userMapper.toDTO(userRepository.save(user));
     }
 
     @Override
-    public User updateUser(Long id, UserDTO userDTO) {
+    public UserDTO updateUser(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
@@ -130,7 +134,7 @@ public class UserServiceImpl implements UserService {
         user.setIntro(userDTO.getIntro());
         user.setProfile(userDTO.getProfile());
 
-        return userRepository.save(user);
+        return userMapper.toDTO(userRepository.save(user));
     }
 
     @Override
@@ -141,8 +145,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> searchUsers(String name) {
-        return userRepository.findByNameContaining(name);
+    public List<UserDTO> searchUsers(String name) {
+        return userMapper.toDTOs(userRepository.findByNameContaining(name));
     }
 
     @Override

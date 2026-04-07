@@ -54,12 +54,16 @@ const UI = {
    * @param {'PUBLISHED'|'DRAFT'|'ARCHIVED'} status
    */
   statusBadge(status) {
-    const map = {
-      PUBLISHED: 'text-bg-success',
-      DRAFT:     'text-bg-warning',
-      ARCHIVED:  'text-bg-secondary',
+    const statusMap = {
+      0: { label: 'DRAFT', class: 'text-bg-warning' },
+      1: { label: 'PUBLISHED', class: 'text-bg-success' },
+      2: { label: 'ARCHIVED', class: 'text-bg-secondary' },
+      'DRAFT': { label: 'DRAFT', class: 'text-bg-warning' },
+      'PUBLISHED': { label: 'PUBLISHED', class: 'text-bg-success' },
+      'ARCHIVED': { label: 'ARCHIVED', class: 'text-bg-secondary' }
     };
-    return `<span class="badge ${map[status] || 'text-bg-secondary'}">${status || 'DRAFT'}</span>`;
+    const s = statusMap[status] || { label: status || 'DRAFT', class: 'text-bg-secondary' };
+    return `<span class="badge ${s.class}">${s.label}</span>`;
   },
 
   /**
@@ -157,17 +161,30 @@ const UI = {
 
   /**
    * Chuyển chuỗi thành slug URL-friendly.
-   * Hỗ trợ bỏ dấu tiếng Việt.
+   * Hỗ trợ đầy đủ tiếng Việt.
    * @param {string} str
    */
   toSlug(str) {
-    return str
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9\s-]/g, '')
+    if (!str) return '';
+    let slug = str.toLowerCase();
+
+    // Thay thế các ký tự tiếng Việt đặc biệt
+    slug = slug.replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ặ|ẵ|â|ấ|ầ|ẩ|ậ|ẫ/g, 'a');
+    slug = slug.replace(/é|è|ẻ|ẹ|ẽ|ê|ế|ề|ể|ệ|ễ/g, 'e');
+    slug = slug.replace(/i|í|ì|ỉ|ị|ĩ/g, 'i');
+    slug = slug.replace(/ó|ò|ỏ|ọ|õ|ô|ố|ồ|ổ|ộ|ỗ|ơ|ớ|ờ|ở|ợ|ỡ/g, 'o');
+    slug = slug.replace(/ú|ù|ủ|ụ|ũ|ư|ứ|ừ|ử|ự|ữ/g, 'u');
+    slug = slug.replace(/ý|ỳ|ỷ|ỵ|ỹ/g, 'y');
+    slug = slug.replace(/đ/g, 'd');
+
+    return slug
+      .normalize('NFD')                     // Chuẩn hóa Unicode
+      .replace(/[\u0300-\u036f]/g, '')      // Xóa các dấu phụ còn sót lại
+      .replace(/[^a-z0-9\s-]/g, '')         // Xóa ký tự đặc biệt
       .trim()
-      .replace(/\s+/g, '-');
+      .replace(/\s+/g, '-')                 // Thay khoảng trắng bằng gạch ngang
+      .replace(/-+/g, '-')                  // Nén nhiều gạch ngang thành một
+      .replace(/^-+|-+$/g, '');             // Xóa gạch ngang ở đầu và cuối
   },
 };
 

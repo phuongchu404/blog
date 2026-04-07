@@ -10,6 +10,8 @@ import me.phuongcm.blog.dto.ChangePasswordRequestDTO;
 import me.phuongcm.blog.dto.LoginRequest;
 import me.phuongcm.blog.dto.LoginResponse;
 import me.phuongcm.blog.dto.RegisterRequest;
+import me.phuongcm.blog.dto.UserDTO;
+import me.phuongcm.blog.dto.UserMapper;
 import me.phuongcm.blog.entity.Role;
 import me.phuongcm.blog.entity.User;
 import me.phuongcm.blog.entity.UserRole;
@@ -35,19 +37,22 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
+    private final UserMapper userMapper;
 
     public AuthServiceImpl(UserRepository userRepository,
                            RoleRepository roleRepository,
                            UserRoleRepository userRoleRepository,
                            PasswordEncoder passwordEncoder,
                            JwtUtil jwtUtil,
-                           RefreshTokenService refreshTokenService) {
+                           RefreshTokenService refreshTokenService,
+                           UserMapper userMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -74,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public User register(RegisterRequest registerRequest) {
+    public UserDTO register(RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             log.error("Username already exists: {}", registerRequest.getUsername());
             throw new ServiceException(Error.USERNAME_ALREADY_EXIST);
@@ -101,11 +106,11 @@ public class AuthServiceImpl implements AuthService {
         userRole.setUser(user);
         userRoleRepository.save(userRole);
 
-        return user;
+        return userMapper.toDTO(user);
     }
 
     @Override
-    public User getCurrentUser() {
+    public UserDTO getCurrentUser() {
         String username = SecurityUtil.getCurrentUsername()
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
         User user = userRepository.findByUsername(username)
@@ -116,14 +121,14 @@ public class AuthServiceImpl implements AuthService {
             user.setRoles(roles.stream().map(Role::getName).collect(java.util.stream.Collectors.toList()));
         }
         
-        return user;
+        return userMapper.toDTO(user);
     }
 
     @Override
-    public User changePassword(ChangePasswordRequestDTO changePasswordRequest) {
+    public UserDTO changePassword(ChangePasswordRequestDTO changePasswordRequest) {
         User user = userRepository.findByUsername(changePasswordRequest.getUserName()).orElseThrow(()-> new ServiceException(Error.USER_NOT_FOUND));
         user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
         userRepository.save(user);
-        return user;
+        return userMapper.toDTO(user);
     }
 }

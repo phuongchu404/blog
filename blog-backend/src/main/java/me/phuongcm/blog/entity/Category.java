@@ -35,6 +35,9 @@ public class Category {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private String imageUrl;
+
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostCategory> postCategories;
 }

@@ -9,7 +9,12 @@ import java.util.List;
 @Repository
 public interface PostSearchRepository extends ElasticsearchRepository<PostDocument, String> {
     
-    List<PostDocument> findByTitleOrContentAndPublishedTrue(String title, String content);
+    List<PostDocument> findByTitleOrContentAndStatus(String title, String content, Integer status);
+    
+    // Default search for published posts
+    default List<PostDocument> findPublishedByKeyword(String keyword) {
+        return findByTitleOrContentAndStatus(keyword, keyword, 1);
+    }
     
     void deleteByPostId(Long postId);
 }

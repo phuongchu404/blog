@@ -1,25 +1,26 @@
 package me.phuongcm.blog.service;
 
+import me.phuongcm.blog.dto.TagDTO;
 import me.phuongcm.blog.entity.Post;
-import me.phuongcm.blog.entity.Tag;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface TagService {
 
-    List<Tag> getAllTags();
+    List<TagDTO> getAllTags();
 
-    Optional<Tag> getTagById(long id);
+    Optional<TagDTO> getTagById(long id);
 
-    Optional<Tag> getTagBySlug(String slug);
+    Optional<TagDTO> getTagBySlug(String slug);
 
-    Tag createTag(String title, String content);
+    TagDTO createTag(TagDTO tagDTO);
 
-    Tag updateTag(long id, String title, String content);
+    TagDTO updateTag(long id, TagDTO tagDTO);
 
     void deleteTag(long id);
 
-    void addTagsToPost(Post post, List<String> tagNames);
+    void addTagsToPost(Post post, List<Long> tagIds);
 
+    void clearTagsFromPost(Post post);
 }

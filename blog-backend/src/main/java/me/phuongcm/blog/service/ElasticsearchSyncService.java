@@ -33,7 +33,7 @@ public class ElasticsearchSyncService {
                     document.setSummary(event.getSummary());
                     document.setContent(event.getContent());
                     document.setAuthorName(event.getAuthorName());
-                    document.setPublished(event.getPublished());
+                    document.setStatus(event.getStatus());
                     
                     postSearchRepository.save(document);
                     log.info("✅ Đã đồng bộ bài viết [{}] lên Elasticsearch thành công!", document.getTitle());

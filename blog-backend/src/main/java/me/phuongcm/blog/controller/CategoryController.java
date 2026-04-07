@@ -2,7 +2,6 @@ package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
 import me.phuongcm.blog.dto.CategoryDTO;
-import me.phuongcm.blog.entity.Category;
 import me.phuongcm.blog.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -24,19 +22,19 @@ public class CategoryController {
 
     /** GET /api/categories — PUBLIC: tất cả danh mục. */
     @GetMapping
-    public ResponseEntity<List<Category>> getAllCategories() {
+    public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
     /** GET /api/categories/root — PUBLIC: danh mục gốc. */
     @GetMapping("/root")
-    public ResponseEntity<List<Category>> getRootCategories() {
+    public ResponseEntity<List<CategoryDTO>> getRootCategories() {
         return ResponseEntity.ok(categoryService.getRootCategories());
     }
 
     /** GET /api/categories/{id} — PUBLIC. */
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<CategoryDTO> getCategoryById(@PathVariable Long id) {
         return categoryService.getCategoryById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -44,7 +42,7 @@ public class CategoryController {
 
     /** GET /api/categories/slug/{slug} — PUBLIC. */
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<Category> getCategoryBySlug(@PathVariable String slug) {
+    public ResponseEntity<CategoryDTO> getCategoryBySlug(@PathVariable String slug) {
         return categoryService.getCategoryBySlug(slug)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -52,7 +50,7 @@ public class CategoryController {
 
     /** GET /api/categories/{id}/subcategories — PUBLIC. */
     @GetMapping("/{id}/subcategories")
-    public ResponseEntity<List<Category>> getSubcategories(@PathVariable Long id) {
+    public ResponseEntity<List<CategoryDTO>> getSubcategories(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getSubcategories(id));
     }
 
@@ -62,9 +60,8 @@ public class CategoryController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('category:create')")
-    public ResponseEntity<Category> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
-        Category created = categoryService.createCategory(
-                categoryDTO.getTitle(), categoryDTO.getContent(), categoryDTO.getParentId());
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
+        CategoryDTO created = categoryService.createCategory(categoryDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -74,10 +71,9 @@ public class CategoryController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('category:update')")
-    public ResponseEntity<Category> updateCategory(
+    public ResponseEntity<CategoryDTO> updateCategory(
             @PathVariable Long id, @Valid @RequestBody CategoryDTO categoryDTO) {
-        Category updated = categoryService.updateCategory(
-                id, categoryDTO.getTitle(), categoryDTO.getContent(), categoryDTO.getParentId());
+        CategoryDTO updated = categoryService.updateCategory(id, categoryDTO);
         return ResponseEntity.ok(updated);
     }
 

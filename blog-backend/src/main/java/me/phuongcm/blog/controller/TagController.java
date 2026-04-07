@@ -2,7 +2,6 @@ package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
 import me.phuongcm.blog.dto.TagDTO;
-import me.phuongcm.blog.entity.Tag;
 import me.phuongcm.blog.service.TagService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,13 +22,13 @@ public class TagController {
 
     /** GET /api/tags — PUBLIC. */
     @GetMapping
-    public ResponseEntity<List<Tag>> getAllTags() {
+    public ResponseEntity<List<TagDTO>> getAllTags() {
         return ResponseEntity.ok(tagService.getAllTags());
     }
 
     /** GET /api/tags/{id} — PUBLIC. */
     @GetMapping("/{id}")
-    public ResponseEntity<Tag> getTagById(@PathVariable Long id) {
+    public ResponseEntity<TagDTO> getTagById(@PathVariable Long id) {
         return tagService.getTagById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -37,7 +36,7 @@ public class TagController {
 
     /** GET /api/tags/slug/{slug} — PUBLIC. */
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<Tag> getTagBySlug(@PathVariable String slug) {
+    public ResponseEntity<TagDTO> getTagBySlug(@PathVariable String slug) {
         return tagService.getTagBySlug(slug)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -49,10 +48,8 @@ public class TagController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('tag:create')")
-    public ResponseEntity<Tag> createTag(@Valid @RequestBody TagDTO tagDTO) {
-        Tag created = tagService.createTag(
-                tagDTO.getTitle(),
-                tagDTO.getContent() != null ? tagDTO.getContent() : "");
+    public ResponseEntity<TagDTO> createTag(@Valid @RequestBody TagDTO tagDTO) {
+        TagDTO created = tagService.createTag(tagDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -62,11 +59,8 @@ public class TagController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('tag:update')")
-    public ResponseEntity<Tag> updateTag(@PathVariable Long id, @Valid @RequestBody TagDTO tagDTO) {
-        Tag updated = tagService.updateTag(
-                id,
-                tagDTO.getTitle(),
-                tagDTO.getContent() != null ? tagDTO.getContent() : "");
+    public ResponseEntity<TagDTO> updateTag(@PathVariable Long id, @Valid @RequestBody TagDTO tagDTO) {
+        TagDTO updated = tagService.updateTag(id, tagDTO);
         return ResponseEntity.ok(updated);
     }
 

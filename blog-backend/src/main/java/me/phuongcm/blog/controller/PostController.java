@@ -2,7 +2,6 @@ package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
 import me.phuongcm.blog.dto.PostDTO;
-import me.phuongcm.blog.entity.Post;
 import me.phuongcm.blog.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -28,26 +26,27 @@ public class PostController {
      */
     @GetMapping
     @PreAuthorize("hasAuthority('post:read:all')")
-    public ResponseEntity<List<Post>> getAllPosts() {
+    public ResponseEntity<List<PostDTO>> getAllPosts() {
         return ResponseEntity.ok(postService.getAllPosts());
     }
 
     /** GET /api/posts/published — PUBLIC: lấy bài đã đăng. */
     @GetMapping("/published")
-    public ResponseEntity<List<Post>> getAllPublishedPosts() {
+    public ResponseEntity<List<PostDTO>> getAllPublishedPosts() {
         return ResponseEntity.ok(postService.getPublishedPosts());
     }
 
     /** GET /api/posts/{id} — PUBLIC. */
     @GetMapping("/{id}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long id) {
-        Optional<Post> post = postService.getPostById(id);
-        return post.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<PostDTO> getPostById(@PathVariable Long id) {
+        return postService.getPostById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /** GET /api/posts/slug/{slug} — PUBLIC. */
     @GetMapping("/slug/{slug}")
-    public ResponseEntity<Post> getPostBySlug(@PathVariable String slug) {
+    public ResponseEntity<PostDTO> getPostBySlug(@PathVariable String slug) {
         return postService.getPostBySlug(slug)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -55,25 +54,25 @@ public class PostController {
 
     /** GET /api/posts/search?keyword=... — PUBLIC. */
     @GetMapping("/search")
-    public ResponseEntity<List<Post>> searchPosts(@RequestParam String keyword) {
+    public ResponseEntity<List<PostDTO>> searchPosts(@RequestParam String keyword) {
         return ResponseEntity.ok(postService.searchPosts(keyword));
     }
 
     /** GET /api/posts/author/{authorId} — PUBLIC: bài đã đăng theo tác giả. */
     @GetMapping("/author/{authorId}")
-    public ResponseEntity<List<Post>> getPostsByAuthor(@PathVariable Long authorId) {
+    public ResponseEntity<List<PostDTO>> getPostsByAuthor(@PathVariable Long authorId) {
         return ResponseEntity.ok(postService.getPublishedPostsByAuthor(authorId));
     }
 
     /** GET /api/posts/category/{slug} — PUBLIC. */
     @GetMapping("/category/{categorySlug}")
-    public ResponseEntity<List<Post>> getPostsByCategorySlug(@PathVariable String categorySlug) {
+    public ResponseEntity<List<PostDTO>> getPostsByCategorySlug(@PathVariable String categorySlug) {
         return ResponseEntity.ok(postService.getPostsByCategorySlug(categorySlug));
     }
 
     /** GET /api/posts/tag/{slug} — PUBLIC. */
     @GetMapping("/tag/{tagSlug}")
-    public ResponseEntity<List<Post>> getPostsByTagSlug(@PathVariable String tagSlug) {
+    public ResponseEntity<List<PostDTO>> getPostsByTagSlug(@PathVariable String tagSlug) {
         return ResponseEntity.ok(postService.getPostsByTagSlug(tagSlug));
     }
 
@@ -83,8 +82,8 @@ public class PostController {
      */
     @PostMapping
     @PreAuthorize("hasAuthority('post:create')")
-    public ResponseEntity<Post> createPost(@Valid @RequestBody PostDTO postDTO) {
-        Post createdPost = postService.createPost(postDTO);
+    public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO postDTO) {
+        PostDTO createdPost = postService.createPost(postDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPost);
     }
 
@@ -94,8 +93,8 @@ public class PostController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('post:update:any')")
-    public ResponseEntity<Post> updatePost(@PathVariable Long id, @Valid @RequestBody PostDTO postDTO) {
-        Post updatedPost = postService.updatePost(id, postDTO);
+    public ResponseEntity<PostDTO> updatePost(@PathVariable Long id, @Valid @RequestBody PostDTO postDTO) {
+        PostDTO updatedPost = postService.updatePost(id, postDTO);
         return ResponseEntity.ok(updatedPost);
     }
 
@@ -116,8 +115,8 @@ public class PostController {
      */
     @PutMapping("/{id}/publish")
     @PreAuthorize("hasAuthority('post:publish')")
-    public ResponseEntity<Post> publishPost(@PathVariable Long id) {
-        Post publishedPost = postService.publishPost(id);
+    public ResponseEntity<PostDTO> publishPost(@PathVariable Long id) {
+        PostDTO publishedPost = postService.publishPost(id);
         return ResponseEntity.ok(publishedPost);
     }
 
@@ -127,8 +126,8 @@ public class PostController {
      */
     @PutMapping("/{id}/unpublish")
     @PreAuthorize("hasAuthority('post:publish')")
-    public ResponseEntity<Post> unpublishPost(@PathVariable Long id) {
-        Post unpublishedPost = postService.unpublishPost(id);
+    public ResponseEntity<PostDTO> unpublishPost(@PathVariable Long id) {
+        PostDTO unpublishedPost = postService.unpublishPost(id);
         return ResponseEntity.ok(unpublishedPost);
     }
 }

@@ -1,27 +1,29 @@
 package me.phuongcm.blog.service;
 
-import me.phuongcm.blog.entity.Category;
+import me.phuongcm.blog.dto.CategoryDTO;
 import me.phuongcm.blog.entity.Post;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface CategoryService {
-    List<Category> getAllCategories();
+    List<CategoryDTO> getAllCategories();
 
-    List<Category> getRootCategories();
+    List<CategoryDTO> getRootCategories();
 
-    Optional<Category> getCategoryById(Long id);
+    Optional<CategoryDTO> getCategoryById(Long id);
 
-    Optional<Category> getCategoryBySlug(String slug);
+    Optional<CategoryDTO> getCategoryBySlug(String slug);
 
-    List<Category> getSubcategories(Long parentId);
+    List<CategoryDTO> getSubcategories(Long parentId);
 
-    Category createCategory(String title, String content, Long parentId);
+    CategoryDTO createCategory(CategoryDTO categoryDTO);
 
-    Category updateCategory(Long id, String title, String content, Long parentId);
+    CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO);
 
     void deleteCategory(Long id);
 
-    void addCategoriesToPost(Post post, List<String> categoryNames);
+    void addCategoriesToPost(Post post, List<Long> categoryIds);
+
+    void clearCategoriesFromPost(Post post);
 }

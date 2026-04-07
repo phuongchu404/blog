@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import me.phuongcm.blog.dto.ApiResponse;
 import me.phuongcm.blog.dto.RoleDTO;
 import me.phuongcm.blog.dto.RoleResponseDTO;
-import me.phuongcm.blog.entity.Role;
 import me.phuongcm.blog.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +35,13 @@ public class RoleController {
 
     @PostMapping
     @PreAuthorize("hasAuthority('role:create')")
-    public ResponseEntity<ApiResponse<Role>> createRole(@Valid @RequestBody RoleDTO dto) {
+    public ResponseEntity<ApiResponse<RoleResponseDTO>> createRole(@Valid @RequestBody RoleDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Role created", roleService.createRole(dto)));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('role:update')")
-    public ResponseEntity<ApiResponse<Role>> updateRole(@PathVariable Long id, @Valid @RequestBody RoleDTO dto) {
+    public ResponseEntity<ApiResponse<RoleResponseDTO>> updateRole(@PathVariable Long id, @Valid @RequestBody RoleDTO dto) {
         return ResponseEntity.ok(ApiResponse.ok("Role updated", roleService.updateRole(id, dto)));
     }
 

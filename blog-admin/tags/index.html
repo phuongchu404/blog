@@ -159,19 +159,9 @@
                   <div class="card-header">
                     <h3 class="card-title"><i class="bi bi-cloud me-2"></i>Tag Cloud</h3>
                   </div>
-                  <div class="card-body">
-                    <a href="#" class="badge text-bg-primary me-1 mb-1 fs-6">spring-boot</a>
-                    <a href="#" class="badge text-bg-success me-1 mb-1 fs-6">java</a>
-                    <a href="#" class="badge text-bg-info me-1 mb-1 fs-6">react</a>
-                    <a href="#" class="badge text-bg-warning text-dark me-1 mb-1 fs-6">javascript</a>
-                    <a href="#" class="badge text-bg-danger me-1 mb-1 fs-6">docker</a>
-                    <a href="#" class="badge text-bg-secondary me-1 mb-1 fs-6">kubernetes</a>
-                    <a href="#" class="badge text-bg-primary me-1 mb-1 fs-6">postgresql</a>
-                    <a href="#" class="badge text-bg-success me-1 mb-1 fs-6">mysql</a>
-                    <a href="#" class="badge text-bg-info me-1 mb-1 fs-6">git</a>
-                    <a href="#" class="badge text-bg-secondary me-1 mb-1 fs-6">ci-cd</a>
-                    <a href="#" class="badge text-bg-danger me-1 mb-1 fs-6">redis</a>
-                    <a href="#" class="badge text-bg-warning text-dark me-1 mb-1 fs-6">kafka</a>
+                  <div class="card-body" id="tag-cloud">
+                    <!-- Dynamic tags will be loaded here -->
+                    <div class="text-center py-3 text-muted"><small>Loading tags...</small></div>
                   </div>
                 </div>
               </div>
@@ -190,7 +180,7 @@
                   <div class="card-header">
                     <h3 class="card-title"><i class="bi bi-hash me-2"></i>All Tags</h3>
                     <div class="card-tools">
-                      <span class="badge text-bg-primary">24 total</span>
+                      <span class="badge text-bg-primary"><span id="tag-count">0</span> total</span>
                     </div>
                   </div>
                   <div class="card-body p-0">
@@ -204,85 +194,11 @@
                           <th>Actions</th>
                         </tr>
                       </thead>
-                      <tbody>
+                      <tbody id="tags-tbody">
                         <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-primary fs-6">spring-boot</span></td>
-                          <td><code>spring-boot</code></td>
-                          <td><span class="badge text-bg-secondary">18</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-success fs-6">java</span></td>
-                          <td><code>java</code></td>
-                          <td><span class="badge text-bg-secondary">15</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-info fs-6">react</span></td>
-                          <td><code>react</code></td>
-                          <td><span class="badge text-bg-secondary">12</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-warning text-dark fs-6">javascript</span></td>
-                          <td><code>javascript</code></td>
-                          <td><span class="badge text-bg-secondary">11</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-danger fs-6">docker</span></td>
-                          <td><code>docker</code></td>
-                          <td><span class="badge text-bg-secondary">9</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-secondary fs-6">kubernetes</span></td>
-                          <td><code>kubernetes</code></td>
-                          <td><span class="badge text-bg-secondary">7</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-primary fs-6">postgresql</span></td>
-                          <td><code>postgresql</code></td>
-                          <td><span class="badge text-bg-secondary">6</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox" class="form-check-input" /></td>
-                          <td><span class="badge text-bg-success fs-6">redis</span></td>
-                          <td><code>redis</code></td>
-                          <td><span class="badge text-bg-secondary">4</span></td>
-                          <td>
-                            <button class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                          <td colspan="5" class="text-center py-4 text-muted">
+                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                            Loading tags...
                           </td>
                         </tr>
                       </tbody>
@@ -358,14 +274,21 @@
       const colors = ['text-bg-primary','text-bg-success','text-bg-info','text-bg-warning','text-bg-danger','text-bg-secondary'];
 
       function renderTags(list) {
-        const tbody = document.querySelector('#tags-tbody, tbody');
-        tbody.id = 'tags-tbody';
-        document.querySelector('.card-tools .badge').textContent = list.length + ' total';
+        const tbody = document.getElementById('tags-tbody');
+        const countSpan = document.getElementById('tag-count');
+        const cloud = document.getElementById('tag-cloud');
+        
+        if (countSpan) countSpan.textContent = list.length;
 
         // Tag cloud
-        const cloud = document.querySelector('.card-body a.badge')?.parentElement;
-        if (cloud) cloud.innerHTML = list.map((t, i) =>
-          `<a href="#" class="badge ${colors[i % colors.length]} me-1 mb-1 fs-6">${t.name}</a>`).join('');
+        if (cloud) {
+          if (!list.length) {
+            cloud.innerHTML = '<div class="text-center py-3 text-muted"><small>No tags.</small></div>';
+          } else {
+            cloud.innerHTML = list.map((t, i) =>
+              `<a href="#" class="badge ${colors[i % colors.length]} me-1 mb-1 fs-6">${t.title}</a>`).join('');
+          }
+        }
 
         if (!list.length) {
           tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-4">No tags found.</td></tr>';
@@ -374,11 +297,11 @@
         tbody.innerHTML = list.map((t, i) => `
           <tr>
             <td><input type="checkbox" class="form-check-input row-check" /></td>
-            <td><span class="badge ${colors[i % colors.length]} fs-6">${t.name}</span></td>
+            <td><span class="badge ${colors[i % colors.length]} fs-6">${t.title}</span></td>
             <td><code>${t.slug}</code></td>
             <td><span class="badge text-bg-secondary">${t.postCount ?? 0}</span></td>
             <td>
-              <button class="btn btn-sm btn-warning" onclick="openEditTag(${t.id},'${t.name}','${t.slug}')" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
+              <button class="btn btn-sm btn-warning" onclick="openEditTag(${t.id},'${t.title}','${t.slug}')" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
               <button class="btn btn-sm btn-danger" onclick="deleteTag(${t.id})"><i class="bi bi-trash"></i></button>
             </td>
           </tr>`).join('');
@@ -434,7 +357,7 @@
         document.getElementById('addTagForm').addEventListener('submit', async function (e) {
           e.preventDefault();
           const payload = {
-            name: document.getElementById('tagName').value.trim(),
+            title: document.getElementById('tagName').value.trim(),
             slug: document.getElementById('tagSlug').value.trim() || UI.toSlug(document.getElementById('tagName').value),
           };
           try {
@@ -449,7 +372,7 @@
         document.getElementById('editTagForm').addEventListener('submit', async function (e) {
           e.preventDefault();
           const payload = {
-            name: document.getElementById('editTagName').value.trim(),
+            title: document.getElementById('editTagName').value.trim(),
             slug: document.getElementById('editTagSlug').value.trim(),
           };
           try {

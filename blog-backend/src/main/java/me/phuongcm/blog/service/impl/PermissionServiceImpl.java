@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import me.phuongcm.blog.common.exception.ServiceException;
 import me.phuongcm.blog.common.utils.Error;
 import me.phuongcm.blog.dto.PermissionDTO;
+import me.phuongcm.blog.dto.PermissionMapper;
 import me.phuongcm.blog.entity.Permission;
 import me.phuongcm.blog.repository.PermissionRepository;
 import me.phuongcm.blog.service.PermissionService;
@@ -17,15 +18,16 @@ import java.util.List;
 public class PermissionServiceImpl implements PermissionService {
 
     private final PermissionRepository permissionRepository;
+    private final PermissionMapper permissionMapper;
 
     @Override
-    public List<Permission> getAllPermissions() {
-        return permissionRepository.findAll();
+    public List<PermissionDTO> getAllPermissions() {
+        return permissionMapper.toDTOs(permissionRepository.findAll());
     }
 
     @Override
     @Transactional
-    public Permission createPermission(PermissionDTO dto) {
+    public PermissionDTO createPermission(PermissionDTO dto) {
         if (permissionRepository.existsByName(dto.getName())) {
             throw new ServiceException(Error.PERMISSION_ALREADY_EXIST);
         }
@@ -36,12 +38,12 @@ public class PermissionServiceImpl implements PermissionService {
         p.setMethod(dto.getMethod());
         p.setPattern(dto.getPattern());
         p.setIsWhiteList(dto.getIsWhiteList());
-        return permissionRepository.save(p);
+        return permissionMapper.toDTO(permissionRepository.save(p));
     }
 
     @Override
     @Transactional
-    public Permission updatePermission(Long id, PermissionDTO dto) {
+    public PermissionDTO updatePermission(Long id, PermissionDTO dto) {
         Permission p = permissionRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(Error.PERMISSION_NOT_FOUND));
         
@@ -59,7 +61,7 @@ public class PermissionServiceImpl implements PermissionService {
         p.setPattern(dto.getPattern());
         p.setIsWhiteList(dto.getIsWhiteList());
         
-        return permissionRepository.save(p);
+        return permissionMapper.toDTO(permissionRepository.save(p));
     }
 
     @Override

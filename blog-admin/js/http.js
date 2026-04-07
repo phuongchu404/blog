@@ -18,11 +18,42 @@ const Http = {
     return h;
   },
 
+  async _fetch(path, options) {
+    let res = await fetch(`${API_BASE}${path}`, options);
+
+    // Xử lý tự động dùng Refresh Token khi hết hạn (401)
+    if (res.status === 401 && typeof Auth !== 'undefined' && !path.includes('/auth/refresh')) {
+      try {
+        const newData = await Auth.refresh(); // Thử gọi lấy token mới
+        if (options.headers && options.headers['Authorization']) {
+          options.headers['Authorization'] = `Bearer ${newData.accessToken}`;
+        }
+        // Gọi lại original request
+        res = await fetch(`${API_BASE}${path}`, options);
+      } catch (err) {
+        // Hết cứu (refresh token hỏng/hết hạn), đá ra login
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        window.location.href = Auth._loginPath();
+        return;
+      }
+    }
+
+    return this._handle(res);
+  },
+
   async _handle(res) {
+    if (!res) return null;
+
     if (res.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      window.location.href = Auth._loginPath();
+      if (typeof Auth !== 'undefined') {
+        window.location.href = Auth._loginPath();
+      } else {
+        window.location.href = '../login.html';
+      }
       return;
     }
     if (!res.ok) {
@@ -40,33 +71,40 @@ const Http = {
   },
 
   async get(path) {
-    const res = await fetch(`${API_BASE}${path}`, { headers: this._headers(false) });
-    return this._handle(res);
+    return this._fetch(path, { method: 'GET', headers: this._headers(false) });
   },
 
   async post(path, data) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    return this._fetch(path, {
       method: 'POST',
       headers: this._headers(),
       body: JSON.stringify(data),
     });
-    return this._handle(res);
   },
 
   async put(path, data) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    return this._fetch(path, {
       method: 'PUT',
       headers: this._headers(),
       body: JSON.stringify(data),
     });
-    return this._handle(res);
   },
 
   async delete(path) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    return this._fetch(path, {
       method: 'DELETE',
       headers: this._headers(false),
     });
-    return this._handle(res);
+  },
+
+  async upload(path, formData) {
+    return this._fetch(path, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${this._token()}`
+        // Do NOT set Content-Type here; browser will automatically set multipart/form-data with boundaries
+      },
+      body: formData,
+    });
   },
 };

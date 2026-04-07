@@ -36,6 +36,6 @@ public class PostDocument {
     @Field(type = FieldType.Keyword)
     private String authorName;
     
-    @Field(type = FieldType.Boolean)
-    private Boolean published;
+    @Field(type = FieldType.Integer)
+    private Integer status; // 0: Draft, 1: Published, 2: Archived
 }

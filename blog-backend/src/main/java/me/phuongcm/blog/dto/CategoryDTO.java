@@ -13,6 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 public class CategoryDTO {
 
+    private Long id;
+
     @NotBlank(message = "Title is required")
     @Size(max = 75, message = "Title must be at most 75 characters")
     private String title;
@@ -20,4 +22,8 @@ public class CategoryDTO {
     private String content;
 
     private Long parentId;
+
+    private String slug;
+
+    private String imageUrl;
 }

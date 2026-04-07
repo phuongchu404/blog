@@ -1,5 +1,6 @@
 package me.phuongcm.blog.service.impl;
 
+import me.phuongcm.blog.dto.PostMapper;
 import me.phuongcm.blog.dto.PostDTO;
 import me.phuongcm.blog.entity.Post;
 import me.phuongcm.blog.entity.User;
@@ -10,8 +11,10 @@ import me.phuongcm.blog.dto.PostEvent;
 import me.phuongcm.blog.entity.PostDocument;
 import me.phuongcm.blog.repository.PostSearchRepository;
 import me.phuongcm.blog.service.KafkaProducerService;
+import me.phuongcm.blog.common.utils.SlugUtils;
 import me.phuongcm.blog.service.PostService;
 import me.phuongcm.blog.service.TagService;
+import me.phuongcm.blog.service.UploadTrackerService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,7 +41,11 @@ public class PostServiceImpl implements PostService {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService, CategoryService categoryService, RedisTemplate<String, Object> redisTemplate, KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository) {
+    private final UploadTrackerService uploadTrackerService;
+
+    private final PostMapper postMapper;
+
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService, CategoryService categoryService, RedisTemplate<String, Object> redisTemplate, KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository, UploadTrackerService uploadTrackerService, PostMapper postMapper) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.tagService = tagService;
@@ -46,33 +53,35 @@ public class PostServiceImpl implements PostService {
         this.redisTemplate = redisTemplate;
         this.kafkaProducerService = kafkaProducerService;
         this.postSearchRepository = postSearchRepository;
+        this.uploadTrackerService = uploadTrackerService;
+        this.postMapper = postMapper;
     }
     @Override
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public List<PostDTO> getAllPosts() {
+        return postMapper.toDTOs(postRepository.findAll());
     }
 
     @Override
     @Cacheable(value = "posts", key = "'published'")
-    public List<Post> getPublishedPosts() {
-        return postRepository.findByPublishedTrue();
+    public List<PostDTO> getPublishedPosts() {
+        return postMapper.toDTOs(postRepository.findByStatus(1));
     }
 
     @Override
-    public Optional<Post> getPostById(Long id) {
+    public Optional<PostDTO> getPostById(Long id) {
         Optional<Post> post = postRepository.findById(id);
         if (post.isPresent()) {
             incrementViewCountInRedis(id);
         }
-        return post;
+        return post.map(postMapper::toDTO);
     }
 
     @Override
     @Cacheable(value = "posts", key = "#slug")
-    public Optional<Post> getPostBySlug(String slug) {
+    public Optional<PostDTO> getPostBySlug(String slug) {
         Optional<Post> post = postRepository.findBySlug(slug);
         post.ifPresent(p -> incrementViewCountInRedis(p.getId()));
-        return post;
+        return post.map(postMapper::toDTO);
     }
 
     private void incrementViewCountInRedis(Long postId) {
@@ -85,28 +94,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> getPostsByAuthor(Long authorId) {
-        return postRepository.findByAuthorId(authorId);
+    public List<PostDTO> getPostsByAuthor(Long authorId) {
+        return postMapper.toDTOs(postRepository.findByAuthorId(authorId));
     }
 
     @Override
-    public List<Post> getPublishedPostsByAuthor(Long authorId) {
-        return postRepository.findPublishedByAuthorId(authorId);
+    public List<PostDTO> getPublishedPostsByAuthor(Long authorId) {
+        return postMapper.toDTOs(postRepository.findPublishedByAuthorId(authorId));
     }
 
     @Override
-    public List<Post> getPostsByCategorySlug(String categorySlug) {
-        return postRepository.findPublishedByCategorySlug(categorySlug);
+    public List<PostDTO> getPostsByCategorySlug(String categorySlug) {
+        return postMapper.toDTOs(postRepository.findPublishedByCategorySlug(categorySlug));
     }
 
     @Override
-    public List<Post> getPostsByTagSlug(String tagSlug) {
-        return postRepository.findPublishedByTagSlug(tagSlug);
+    public List<PostDTO> getPostsByTagSlug(String tagSlug) {
+        return postMapper.toDTOs(postRepository.findPublishedByTagSlug(tagSlug));
     }
 
     @Override
     @CacheEvict(value = "posts", allEntries = true)
-    public Post createPost(PostDTO postDTO) {
+    public PostDTO createPost(PostDTO postDTO) {
         User author = userRepository.findById(postDTO.getAuthorId())
                 .orElseThrow(() -> new RuntimeException("Author not found with id: " + postDTO.getAuthorId()));
 
@@ -117,21 +126,24 @@ public class PostServiceImpl implements PostService {
         post.setMetaTitle(postDTO.getMetaTitle());
         post.setSlug(generateSlug(postDTO.getTitle()));
         post.setSummary(postDTO.getSummary());
-        post.setPublished(postDTO.getPublished() != null ? postDTO.getPublished() : false);
+        post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : 0);
+        post.setImageUrl(postDTO.getImageUrl());
+        post.setMetaDescription(postDTO.getMetaDescription());
+        post.setMetaKeywords(postDTO.getMetaKeywords());
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
 
-        if(post.getPublished()) {
+        if (post.getStatus() == 1) {
             post.setPublishedAt(LocalDateTime.now());
         }
 
         Post savedPost = postRepository.save(post);
 
-        if(postDTO.getTags() != null && !postDTO.getTags().isEmpty()) {
-            tagService.addTagsToPost(savedPost, postDTO.getTags());
+        if(postDTO.getTagIds() != null && !postDTO.getTagIds().isEmpty()) {
+            tagService.addTagsToPost(savedPost, postDTO.getTagIds());
         }
-        if(postDTO.getCategories() != null && !postDTO.getCategories().isEmpty()) {
-            categoryService.addCategoriesToPost(savedPost, postDTO.getCategories());
+        if(postDTO.getCategoryIds() != null && !postDTO.getCategoryIds().isEmpty()) {
+            categoryService.addCategoriesToPost(savedPost, postDTO.getCategoryIds());
         }
 
         // Send Kafka Event for Elasticsearch Sync
@@ -143,16 +155,19 @@ public class PostServiceImpl implements PostService {
                 savedPost.getSummary(),
                 savedPost.getContent(),
                 savedPost.getAuthor().getUsername(),
-                savedPost.getPublished()
+                savedPost.getStatus()
         );
         kafkaProducerService.sendPostSyncEvent(event);
 
-        return savedPost;
+        // Mark any uploaded files in content as explicitly USED
+        uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
+
+        return postMapper.toDTO(savedPost);
     }
 
     @Override
     @CacheEvict(value = "posts", allEntries = true)
-    public Post updatePost(Long id, PostDTO postDTO) {
+    public PostDTO updatePost(Long id, PostDTO postDTO) {
         Post post =  postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
@@ -161,16 +176,34 @@ public class PostServiceImpl implements PostService {
         post.setSlug(generateSlug(postDTO.getTitle()));
         post.setSummary(postDTO.getSummary());
         post.setContent(postDTO.getContent());
+        post.setImageUrl(postDTO.getImageUrl());
+        post.setMetaDescription(postDTO.getMetaDescription());
+        post.setMetaKeywords(postDTO.getMetaKeywords());
 
-        Boolean wasPublished = post.getPublished();
-        post.setPublished(postDTO.getPublished() != null ? postDTO.getPublished() : false);
+        Integer oldStatus = post.getStatus();
+        post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : 0);
         post.setUpdatedAt(LocalDateTime.now());
 
-        if(!wasPublished && post.getPublished()){
+        if (oldStatus != 1 && post.getStatus() == 1) {
             post.setPublishedAt(LocalDateTime.now());
         }
 
         Post savedPost = postRepository.save(post);
+
+        // Sync Tags (Clear and re-add)
+        if (postDTO.getTagIds() != null) {
+            tagService.clearTagsFromPost(savedPost);
+            if (!postDTO.getTagIds().isEmpty()) {
+                tagService.addTagsToPost(savedPost, postDTO.getTagIds());
+            }
+        }
+        // Sync Categories (Clear and re-add)
+        if (postDTO.getCategoryIds() != null) {
+            categoryService.clearCategoriesFromPost(savedPost);
+            if (!postDTO.getCategoryIds().isEmpty()) {
+                categoryService.addCategoriesToPost(savedPost, postDTO.getCategoryIds());
+            }
+        }
 
         // Send Kafka Event for Elasticsearch Sync
         PostEvent event = new PostEvent(
@@ -181,11 +214,14 @@ public class PostServiceImpl implements PostService {
                 savedPost.getSummary(),
                 savedPost.getContent(),
                 savedPost.getAuthor().getUsername(),
-                savedPost.getPublished()
+                savedPost.getStatus()
         );
         kafkaProducerService.sendPostSyncEvent(event);
 
-        return savedPost;
+        // Mark any uploaded files in content as explicitly USED
+        uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
+
+        return postMapper.toDTO(savedPost);
     }
 
     @Override
@@ -204,23 +240,24 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<Post> searchPosts(String keyword) {
+    public List<PostDTO> searchPosts(String keyword) {
         // Query Elasticsearch instead of MySQL
-        List<PostDocument> documents = postSearchRepository.findByTitleOrContentAndPublishedTrue(keyword, keyword);
+        List<PostDocument> documents = postSearchRepository.findPublishedByKeyword(keyword);
         if (documents == null || documents.isEmpty()) {
             // Fallback to MySQL if ES has no results (or indexing pending)
-            return postRepository.searchByKeyword(keyword);
+            return postMapper.toDTOs(postRepository.searchByKeyword(keyword));
         }
         
         List<Long> postIds = documents.stream().map(PostDocument::getPostId).collect(Collectors.toList());
-        return postRepository.findAllById(postIds).stream()
-                   .filter(Post::getPublished) // Ensure they are published since we might fetch mixed
+        List<Post> posts = postRepository.findAllById(postIds).stream()
+                   .filter(p -> p.getStatus() == 1) // Ensure they are published since we might fetch mixed
                    .collect(Collectors.toList());
+        return postMapper.toDTOs(posts);
     }
 
     @Override
     @CacheEvict(value = "posts", allEntries = true)
-    public Post publishPost(Long id) {
+    public PostDTO publishPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
@@ -237,15 +274,15 @@ public class PostServiceImpl implements PostService {
         event.setSummary(savedPost.getSummary());
         event.setContent(savedPost.getContent());
         event.setAuthorName(savedPost.getAuthor().getUsername());
-        event.setPublished(true);
+        event.setStatus(1);
         kafkaProducerService.sendPostSyncEvent(event);
 
-        return savedPost;
+        return postMapper.toDTO(savedPost);
     }
 
     @Override
     @CacheEvict(value = "posts", allEntries = true)
-    public Post unpublishPost(Long id) {
+    public PostDTO unpublishPost(Long id) {
         Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
@@ -261,17 +298,13 @@ public class PostServiceImpl implements PostService {
         event.setSummary(savedPost.getSummary());
         event.setContent(savedPost.getContent());
         event.setAuthorName(savedPost.getAuthor().getUsername());
-        event.setPublished(false);
+        event.setStatus(0);
         kafkaProducerService.sendPostSyncEvent(event);
 
-        return savedPost;
+        return postMapper.toDTO(savedPost);
     }
 
     private String generateSlug(String title) {
-        return title.toLowerCase()
-                .replaceAll("[^a-z0-9\\s-]", "")
-                .replaceAll("\\s+", "-")
-                .replaceAll("-+", "-")
-                .replaceAll("^-|-$", "");
+        return SlugUtils.toSlug(title);
     }
 }

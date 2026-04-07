@@ -1,10 +1,13 @@
 package me.phuongcm.blog.service.impl;
 
+import me.phuongcm.blog.dto.CategoryDTO;
+import me.phuongcm.blog.dto.CategoryMapper;
 import me.phuongcm.blog.entity.Category;
 import me.phuongcm.blog.entity.Post;
 import me.phuongcm.blog.entity.PostCategory;
 import me.phuongcm.blog.repository.CategoryRepository;
 import me.phuongcm.blog.repository.PostCategoryRepository;
+import me.phuongcm.blog.common.utils.SlugUtils;
 import me.phuongcm.blog.service.CategoryService;
 import org.springframework.stereotype.Service;
 
@@ -17,70 +20,73 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final PostCategoryRepository postCategoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, PostCategoryRepository postCategoryRepository) {
+    private final CategoryMapper categoryMapper;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository, PostCategoryRepository postCategoryRepository, CategoryMapper categoryMapper) {
         this.categoryRepository = categoryRepository;
         this.postCategoryRepository = postCategoryRepository;
+        this.categoryMapper = categoryMapper;
     }
 
     @Override
-    public List<Category> getAllCategories() {
-        return categoryRepository.findAll();
+    public List<CategoryDTO> getAllCategories() {
+        return categoryMapper.toDTOs(categoryRepository.findAll());
     }
 
     @Override
-    public List<Category> getRootCategories() {
+    public List<CategoryDTO> getRootCategories() {
 
-        return categoryRepository.findRootCategories();
+        return categoryMapper.toDTOs(categoryRepository.findRootCategories());
     }
 
     @Override
-    public Optional<Category> getCategoryById(Long id) {
+    public Optional<CategoryDTO> getCategoryById(Long id) {
 
-        return categoryRepository.findById(id);
+        return categoryRepository.findById(id).map(categoryMapper::toDTO);
     }
 
     @Override
-    public Optional<Category> getCategoryBySlug(String slug) {
+    public Optional<CategoryDTO> getCategoryBySlug(String slug) {
 
-        return categoryRepository.findBySlug(slug);
+        return categoryRepository.findBySlug(slug).map(categoryMapper::toDTO);
     }
 
     @Override
-    public List<Category> getSubcategories(Long parentId) {
-        return categoryRepository.findByParentId(parentId);
+    public List<CategoryDTO> getSubcategories(Long parentId) {
+        return categoryMapper.toDTOs(categoryRepository.findByParentId(parentId));
     }
 
     @Override
-    public Category createCategory(String title, String content, Long parentId) {
+    public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         Category category = new Category();
-        category.setTitle(title);
-        category.setContent(content);
-        category.setMetaTitle(title);
-        category.setSlug(generateSlug(title));
+        category.setTitle(categoryDTO.getTitle());
+        category.setContent(categoryDTO.getContent());
+        category.setMetaTitle(categoryDTO.getTitle());
+        category.setSlug(categoryDTO.getSlug() != null ? categoryDTO.getSlug() : generateSlug(categoryDTO.getTitle()));
 
-        if(parentId != null) {
-            Category parent = categoryRepository.findById(parentId).orElseThrow(() -> new RuntimeException("Parent category not found with id: " + parentId));
+        if(categoryDTO.getParentId() != null) {
+            Category parent = categoryRepository.findById(categoryDTO.getParentId()).orElseThrow(() -> new RuntimeException("Parent category not found with id: " + categoryDTO.getParentId()));
             category.setParent(parent);
         }
-        return categoryRepository.save(category);
+        return categoryMapper.toDTO(categoryRepository.save(category));
     }
 
     @Override
-    public Category updateCategory(Long id, String title, String content, Long parentId) {
+    public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
         Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
 
-        category.setTitle(title);
-        category.setContent(content);
-        category.setMetaTitle(title);
-        category.setSlug(generateSlug(title));
+        category.setTitle(categoryDTO.getTitle());
+        category.setContent(categoryDTO.getContent());
+        category.setMetaTitle(categoryDTO.getTitle());
+        category.setSlug(categoryDTO.getSlug() != null ? categoryDTO.getSlug() : generateSlug(categoryDTO.getTitle()));
 
-        if(parentId != null) {
-            Category parent = categoryRepository.findById(parentId).orElseThrow(() -> new RuntimeException("Parent category not found with id: " + parentId));
+        if(categoryDTO.getParentId() != null) {
+            Category parent = categoryRepository.findById(categoryDTO.getParentId()).orElseThrow(() -> new RuntimeException("Parent category not found with id: " + categoryDTO.getParentId()));
             category.setParent(parent);
         } else {
             category.setParent(null);
         }
-        return categoryRepository.save(category);
+        return categoryMapper.toDTO(categoryRepository.save(category));
     }
 
     @Override
@@ -98,11 +104,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void addCategoriesToPost(Post post, List<String> categoryNames) {
-        for (String categoryName : categoryNames) {
-            Category category = categoryRepository.findBySlug(generateSlug(categoryName))
-                    .orElse(createCategory(categoryName, "", null));
-
+    public void addCategoriesToPost(Post post, List<Long> categoryIds) {
+        if (categoryIds == null) return;
+        for (Long categoryId : categoryIds) {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
+            
             PostCategory postCategory = new PostCategory();
             postCategory.setPost(post);
             postCategory.setCategory(category);
@@ -111,12 +118,12 @@ public class CategoryServiceImpl implements CategoryService {
         }
     }
 
+    @Override
+    public void clearCategoriesFromPost(Post post) {
+        postCategoryRepository.deleteByPostId(post.getId());
+    }
+
     private String generateSlug(String title) {
-        // Implement slug generation logic here
-        return title.toLowerCase()
-                .replaceAll("[^a-z0-9\\s-]", "")
-                .replaceAll("\\s+", "-")
-                .replaceAll("-+", "-")
-                .replaceAll("^-|-$", "");
+        return SlugUtils.toSlug(title);
     }
 }

@@ -7,32 +7,32 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PostService {
-    List<Post> getAllPosts();
+    List<PostDTO> getAllPosts();
 
-    List<Post> getPublishedPosts();
+    List<PostDTO> getPublishedPosts();
 
-    Optional<Post> getPostById(Long id);
+    Optional<PostDTO> getPostById(Long id);
 
-    Optional<Post> getPostBySlug(String slug);
+    Optional<PostDTO> getPostBySlug(String slug);
 
-    List<Post> getPostsByAuthor(Long authorId);
+    List<PostDTO> getPostsByAuthor(Long authorId);
 
-    List<Post> getPublishedPostsByAuthor(Long authorId);
+    List<PostDTO> getPublishedPostsByAuthor(Long authorId);
 
-    List<Post> getPostsByCategorySlug(String categorySlug);
+    List<PostDTO> getPostsByCategorySlug(String categorySlug);
 
-    List<Post> getPostsByTagSlug(String tagSlug);
+    List<PostDTO> getPostsByTagSlug(String tagSlug);
 
-    Post createPost(PostDTO postDTO);
+    PostDTO createPost(PostDTO postDTO);
 
-    Post updatePost(Long id, PostDTO postDTO);
+    PostDTO updatePost(Long id, PostDTO postDTO);
 
     void deletePost(Long id);
 
-    List<Post> searchPosts(String keyword);
+    List<PostDTO> searchPosts(String keyword);
 
-    Post publishPost(Long id);
+    PostDTO publishPost(Long id);
 
-    Post unpublishPost(Long id);
+    PostDTO unpublishPost(Long id);
 }
 

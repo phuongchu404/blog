@@ -13,9 +13,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TagDTO {
 
+    private Long id;
+
     @NotBlank(message = "Tag title is required")
     @Size(max = 75, message = "Title must be at most 75 characters")
     private String title;
 
     private String content;
+    
+    private String slug;
+    
+    private String imageUrl;
 }

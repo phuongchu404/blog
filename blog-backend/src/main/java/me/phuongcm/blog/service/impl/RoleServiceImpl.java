@@ -5,6 +5,7 @@ import me.phuongcm.blog.common.exception.ServiceException;
 import me.phuongcm.blog.common.utils.ERole;
 import me.phuongcm.blog.common.utils.Error;
 import me.phuongcm.blog.dto.RoleDTO;
+import me.phuongcm.blog.dto.RoleMapper;
 import me.phuongcm.blog.dto.RoleResponseDTO;
 import me.phuongcm.blog.entity.Permission;
 import me.phuongcm.blog.entity.Role;
@@ -16,6 +17,7 @@ import me.phuongcm.blog.repository.UserRoleRepository;
 import me.phuongcm.blog.service.RoleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.validation.Valid;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +31,7 @@ public class RoleServiceImpl implements RoleService {
     private final RolePermissionRepository rolePermissionRepository;
     private final PermissionRepository permissionRepository;
     private final UserRoleRepository userRoleRepository;
+    private final RoleMapper roleMapper;
 
     @Override
     public void initRole() {
@@ -43,41 +46,39 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public List<RoleResponseDTO> getAllRoles() {
-        List<Role> roles = roleRepository.findAll();
-        return roles.stream().map(role -> {
-            RoleResponseDTO dto = new RoleResponseDTO();
-            dto.setId(role.getId());
-            dto.setName(role.getName());
-            dto.setDescription(role.getDescription());
-            dto.setCreatedAt(role.getCreatedAt());
-            dto.setUpdatedAt(role.getUpdatedAt());
-            
-            java.util.Set<Permission> perms = permissionRepository.findByRoleId(role.getId());
-            dto.setPermissions(new java.util.ArrayList<>(perms));
-            dto.setPermissionCount(perms.size());
-            
-            long count = userRoleRepository.countByRoleId(role.getId());
-            dto.setUserCount(count);
-            
-            return dto;
-        }).collect(Collectors.toList());
+        return roleRepository.findAll().stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private RoleResponseDTO mapToResponseDTO(Role role) {
+        RoleResponseDTO dto = roleMapper.toResponseDTO(role);
+        
+        java.util.Set<Permission> perms = permissionRepository.findByRoleId(role.getId());
+        dto.setPermissions(new java.util.ArrayList<>(perms));
+        dto.setPermissionCount(perms.size());
+        
+        long count = userRoleRepository.countByRoleId(role.getId());
+        dto.setUserCount(count);
+        
+        return dto;
     }
 
     @Override
     @Transactional
-    public Role createRole(RoleDTO dto) {
+    public RoleResponseDTO createRole(@Valid RoleDTO dto) {
         if (roleRepository.existsByName(dto.getName())) {
             throw new ServiceException(Error.ROLE_ALREADY_EXIST);
         }
         Role r = new Role();
         r.setName(dto.getName());
         r.setDescription(dto.getDescription());
-        return roleRepository.save(r);
+        return mapToResponseDTO(roleRepository.save(r));
     }
 
     @Override
     @Transactional
-    public Role updateRole(Long id, RoleDTO dto) {
+    public RoleResponseDTO updateRole(Long id, @Valid RoleDTO dto) {
         Role r = roleRepository.findById(id)
                 .orElseThrow(() -> new ServiceException(Error.ROLE_NOT_FOUND));
         
@@ -89,7 +90,7 @@ public class RoleServiceImpl implements RoleService {
         }
         
         r.setDescription(dto.getDescription());
-        return roleRepository.save(r);
+        return mapToResponseDTO(roleRepository.save(r));
     }
 
     @Override

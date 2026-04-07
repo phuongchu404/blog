@@ -26,7 +26,7 @@ public class Post {
     private User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name ="parent_id", referencedColumnName = "id")
+    @JoinColumn(name = "parent_id", referencedColumnName = "id")
     private Post parent;
 
     @Column(name = "title", length = 75, nullable = false)
@@ -38,11 +38,28 @@ public class Post {
     @Column(name = "slug", length = 100, nullable = false)
     private String slug;
 
-    @Column(name = "summary", columnDefinition = "TINYTEXT")
+    @Column(name = "summary", columnDefinition = "TEXT")
     private String summary;
 
-    @Column(name = "published")
-    private Boolean published;
+    @Column(name = "status", nullable = false)
+    private Integer status = 0; // 0: DRAFT, 1: PUBLISHED, 2: ARCHIVED
+
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private String imageUrl;
+
+    @Column(name = "meta_description", columnDefinition = "TEXT")
+    private String metaDescription;
+
+    @Column(name = "meta_keywords", columnDefinition = "TEXT")
+    private String metaKeywords;
+
+    public Boolean getPublished() {
+        return status != null && status == 1;
+    }
+
+    public void setPublished(Boolean published) {
+        this.status = (published != null && published) ? 1 : 0;
+    }
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

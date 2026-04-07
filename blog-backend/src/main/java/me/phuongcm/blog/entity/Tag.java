@@ -31,6 +31,9 @@ public class Tag {
     @Column(name = "content")
     private String content;
 
+    @Column(name = "image_url", columnDefinition = "TEXT")
+    private String imageUrl;
+
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostTag> postTags;
 

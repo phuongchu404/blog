@@ -4,7 +4,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.phuongcm.blog.dto.ApiResponse;
 import me.phuongcm.blog.dto.PermissionDTO;
-import me.phuongcm.blog.entity.Permission;
 import me.phuongcm.blog.service.PermissionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,19 +21,19 @@ public class PermissionController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('permission:read')")
-    public ResponseEntity<ApiResponse<List<Permission>>> getAllPermissions() {
+    public ResponseEntity<ApiResponse<List<PermissionDTO>>> getAllPermissions() {
         return ResponseEntity.ok(ApiResponse.ok(permissionService.getAllPermissions()));
     }
 
     @PostMapping
     @PreAuthorize("hasAuthority('permission:create')")
-    public ResponseEntity<ApiResponse<Permission>> createPermission(@Valid @RequestBody PermissionDTO dto) {
+    public ResponseEntity<ApiResponse<PermissionDTO>> createPermission(@Valid @RequestBody PermissionDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Permission created successfully", permissionService.createPermission(dto)));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('permission:update')")
-    public ResponseEntity<ApiResponse<Permission>> updatePermission(@PathVariable Long id, @Valid @RequestBody PermissionDTO dto) {
+    public ResponseEntity<ApiResponse<PermissionDTO>> updatePermission(@PathVariable Long id, @Valid @RequestBody PermissionDTO dto) {
         return ResponseEntity.ok(ApiResponse.ok("Permission updated successfully", permissionService.updatePermission(id, dto)));
     }
 

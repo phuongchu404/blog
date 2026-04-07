@@ -1,10 +1,8 @@
 package me.phuongcm.blog.controller;
 
-import co.elastic.clients.elasticsearch.security.ChangePasswordRequest;
 import jakarta.validation.Valid;
 import me.phuongcm.blog.dto.*;
 import me.phuongcm.blog.entity.RefreshToken;
-import me.phuongcm.blog.entity.User;
 import me.phuongcm.blog.common.exception.TokenRefreshException;
 import me.phuongcm.blog.security.jwt.JwtUtil;
 import me.phuongcm.blog.security.service.RefreshTokenService;
@@ -48,8 +46,8 @@ public class AuthController {
      * Response: { "success": true, "message": "Registered successfully", "data": { ...userInfo } }
      */
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<User>> register(@Valid @RequestBody RegisterRequest registerRequest) {
-        User user = authService.register(registerRequest);
+    public ResponseEntity<ApiResponse<UserDTO>> register(@Valid @RequestBody RegisterRequest registerRequest) {
+        UserDTO user = authService.register(registerRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(ApiResponse.ok("Registered successfully", user));
     }
@@ -62,8 +60,8 @@ public class AuthController {
      * Response: { "success": true, "data": { ...userInfo } }
      */
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse<User>> getCurrentUser() {
-        User user = authService.getCurrentUser();
+    public ResponseEntity<ApiResponse<UserDTO>> getCurrentUser() {
+        UserDTO user = authService.getCurrentUser();
         return ResponseEntity.ok(ApiResponse.ok(user));
     }
 
@@ -97,14 +95,14 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logoutUser() {
-        User user = authService.getCurrentUser();
+        UserDTO user = authService.getCurrentUser();
         refreshTokenService.deleteByUserId(user.getId());
         return ResponseEntity.ok(ApiResponse.ok("Log out successful", null));
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<ApiResponse<User>> changePassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest) {
-        User user = authService.changePassword(changePasswordRequest);
+    public ResponseEntity<ApiResponse<UserDTO>> changePassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest) {
+        UserDTO user = authService.changePassword(changePasswordRequest);
         return ResponseEntity.ok(ApiResponse.ok("Password changed successfully", user));
     }
 }

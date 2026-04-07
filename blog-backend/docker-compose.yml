@@ -47,6 +47,21 @@ services:
       - es_data:/usr/share/elasticsearch/data
     restart: unless-stopped
 
+  minio:
+    image: minio/minio
+    container_name: blog_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: phuongchu404
+      MINIO_ROOT_PASSWORD: Phuong1590@
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    restart: unless-stopped
+
 volumes:
   redis_data:
   es_data:
+  minio_data:
