@@ -415,46 +415,7 @@
     <script src="js/ui.js"></script>
     <script>
       Auth.guard();
-      document.addEventListener('DOMContentLoaded', function () {
-        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-          });
-        }
-
-        // Character counters for SEO fields
-        const metaTitle = document.getElementById('metaTitle');
-        const metaDesc = document.getElementById('metaDescription');
-        const updateCount = (el, countId, max) => {
-          const count = el.value.length;
-          const span = document.getElementById(countId);
-          span.textContent = count;
-          span.className = count > max ? 'text-danger fw-bold' : '';
-        };
-        if (metaTitle) {
-          metaTitle.addEventListener('input', () => updateCount(metaTitle, 'metaTitleCount', 60));
-          updateCount(metaTitle, 'metaTitleCount', 60);
-        }
-        if (metaDesc) {
-          metaDesc.addEventListener('input', () => updateCount(metaDesc, 'metaDescCount', 160));
-          updateCount(metaDesc, 'metaDescCount', 160);
-        }
-
-        // Test API connection
-        document.getElementById('testApiBtn').addEventListener('click', function () {
-          const result = document.getElementById('apiTestResult');
-          result.classList.remove('d-none');
-          result.innerHTML = '<span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Connected</span>';
-        });
-
-        // Activate tab from hash
-        const hash = window.location.hash;
-        if (hash) {
-          const tab = document.querySelector(`[href="${hash}"]`);
-          if (tab) new bootstrap.Tab(tab).show();
-        }
-      });
     </script>
+    <script src="js/pages/settings.js"></script>
   </body>
 </html>

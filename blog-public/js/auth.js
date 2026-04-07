@@ -17,8 +17,11 @@ const Auth = {
   /** Đăng nhập — lưu token vào localStorage */
   async login(username, password) {
     const data = await Http.post('/auth/login', { username, password });
+    if (!data?.accessToken) throw new Error('Đăng nhập thất bại: không nhận được token.');
+    
     localStorage.setItem('token', data.accessToken);
     if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
+    
     // Lấy thông tin user
     const user = await Http.get('/auth/me');
     localStorage.setItem('user', JSON.stringify(user));
@@ -40,7 +43,7 @@ const Auth = {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) throw new Error('No refresh token');
     const data = await Http.post('/auth/refresh', { refreshToken });
-    localStorage.setItem('token', data.accessToken);
+    if (data?.accessToken) localStorage.setItem('token', data.accessToken);
     return data;
   },
 
@@ -53,7 +56,7 @@ const Auth = {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
-    window.location.href = 'login.html';
+    window.location.href = 'index.html'; // Chuyển về home sau khi logout ở public site
   },
 
   /** Yêu cầu đăng nhập để thực hiện hành động (không redirect, trả về false) */

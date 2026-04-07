@@ -26,11 +26,12 @@ function renderFeatured(post) {
     `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
   ).join('');
 
+  const thumbUrl = post.imageUrl || post.thumbnailUrl;
   el.innerHTML = `
     <article class="featured-post">
       <a href="post.html?slug=${post.slug}" class="featured-post-thumb">
-        ${post.thumbnailUrl
-          ? `<img src="${post.thumbnailUrl}" alt="${post.title}" loading="eager">`
+        ${thumbUrl
+          ? `<img src="${thumbUrl}" alt="${post.title}" loading="eager">`
           : `<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--primary-light),#dbeafe);display:flex;align-items:center;justify-content:center;font-size:4rem">📝</div>`
         }
       </a>

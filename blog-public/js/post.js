@@ -46,9 +46,10 @@ function renderPostHeader(post) {
       </div>
     </div>`;
 
-  if (post.thumbnailUrl) {
+  const thumbUrl = post.imageUrl || post.thumbnailUrl;
+  if (thumbUrl) {
     document.getElementById('post-cover').innerHTML =
-      `<div class="post-cover"><img src="${post.thumbnailUrl}" alt="${post.title}"></div>`;
+      `<div class="post-cover"><img src="${thumbUrl}" alt="${post.title}"></div>`;
   }
 }
 

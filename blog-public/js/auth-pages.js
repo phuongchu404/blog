@@ -3,7 +3,7 @@
  * Phụ thuộc: http.js, auth.js, ui.js
  */
 
-const API_BASE_URL = localStorage.getItem('apiBaseUrl') || 'http://localhost:8080';
+const API_BASE_URL = localStorage.getItem('apiBaseUrl') || 'http://localhost:8055';
 
 /* ══════════════════════════════════════════════════════
    SHARED HELPERS

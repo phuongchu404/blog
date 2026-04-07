@@ -2,7 +2,7 @@
  * http.js — HTTP client dùng chung cho blog-public
  */
 
-const API_BASE = localStorage.getItem('apiBaseUrl') || 'http://localhost:8080';
+const API_BASE = localStorage.getItem('apiBaseUrl') || 'http://localhost:8055';
 
 const Http = {
   _token() {
@@ -17,14 +17,41 @@ const Http = {
     return h;
   },
 
+  async _fetch(path, options) {
+    let res = await fetch(`${API_BASE}${path}`, options);
+
+    // Auto-refresh token if 401 and not already a refresh request
+    if (res.status === 401 && typeof Auth !== 'undefined' && !path.includes('/auth/refresh')) {
+      try {
+        const newData = await Auth.refresh();
+        if (options.headers && options.headers['Authorization']) {
+          options.headers['Authorization'] = `Bearer ${newData.accessToken}`;
+        }
+        // Retry original request
+        res = await fetch(`${API_BASE}${path}`, options);
+      } catch (err) {
+        // Refresh failed, clear session
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        // Let UI handle redirect if needed
+        throw new Error('Session expired');
+      }
+    }
+
+    return this._handle(res);
+  },
+
   async _handle(res) {
+    if (!res) return null;
+
     if (res.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
       localStorage.removeItem('user');
-      // Không redirect tự động — để auth.js xử lý
       throw new Error('Unauthorized');
     }
+
     if (!res.ok) {
       let msg = `HTTP ${res.status}`;
       try {
@@ -33,40 +60,41 @@ const Http = {
       } catch (_) {}
       throw new Error(msg);
     }
+
     if (res.status === 204) return null;
-    return res.json();
+    const json = await res.json();
+
+    // Unwrap ApiResponse wrapper: { success, message, data } → return data
+    if (json && typeof json === 'object' && 'success' in json && 'data' in json) {
+      return json.data;
+    }
+    return json;
   },
 
   async get(path) {
-    const res = await fetch(`${API_BASE}${path}`, {
-      headers: this._headers(false),
-    });
-    return this._handle(res);
+    return this._fetch(path, { method: 'GET', headers: this._headers(false) });
   },
 
   async post(path, data) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    return this._fetch(path, {
       method: 'POST',
       headers: this._headers(),
       body: JSON.stringify(data),
     });
-    return this._handle(res);
   },
 
   async put(path, data) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    return this._fetch(path, {
       method: 'PUT',
       headers: this._headers(),
       body: JSON.stringify(data),
     });
-    return this._handle(res);
   },
 
   async delete(path) {
-    const res = await fetch(`${API_BASE}${path}`, {
+    return this._fetch(path, {
       method: 'DELETE',
       headers: this._headers(false),
     });
-    return this._handle(res);
   },
 };

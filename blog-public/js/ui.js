@@ -138,8 +138,9 @@ const UI = {
       `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
     ).join('');
 
-    const thumb = post.thumbnailUrl
-      ? `<div class="post-card-thumb"><img src="${post.thumbnailUrl}" alt="${post.title}" loading="lazy"></div>`
+    const thumbUrl = post.imageUrl || post.thumbnailUrl;
+    const thumb = thumbUrl
+      ? `<div class="post-card-thumb"><img src="${thumbUrl}" alt="${post.title}" loading="lazy"></div>`
       : `<div class="post-card-no-thumb">📝</div>`;
 
     const authorName = post.author?.fullName || post.author?.username || 'Ẩn danh';
@@ -218,11 +219,13 @@ const UI = {
       const list = (posts || []).filter(p => p.slug !== excludeSlug).slice(0, 5);
       if (!list.length) { el.innerHTML = '<p class="text-muted" style="font-size:.875rem">Chưa có bài viết</p>'; return; }
       el.innerHTML = `<ul class="recent-list">
-        ${list.map(p => `
+        ${list.map(p => {
+          const thumbUrl = p.imageUrl || p.thumbnailUrl;
+          return `
           <li class="recent-item">
             <div class="recent-thumb">
-              ${p.thumbnailUrl
-                ? `<img src="${p.thumbnailUrl}" alt="${p.title}" loading="lazy">`
+              ${thumbUrl
+                ? `<img src="${thumbUrl}" alt="${p.title}" loading="lazy">`
                 : `<div style="width:100%;height:100%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.2rem">📝</div>`
               }
             </div>
@@ -230,7 +233,8 @@ const UI = {
               <a href="post.html?slug=${p.slug}">${p.title}</a>
               <div class="recent-date">${this.formatDateShort(p.publishedAt || p.createdAt)}</div>
             </div>
-          </li>`).join('')}
+          </li>`;
+        }).join('')}
       </ul>`;
     } catch (_) {}
   },

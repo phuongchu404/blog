@@ -404,70 +404,7 @@
     <script src="js/user.service.js"></script>
     <script>
       Auth.guard();
-      document.addEventListener('DOMContentLoaded', async function () {
-        // Sidebar scrollbar
-        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-          });
-        }
-
-        // Load thống kê
-        try {
-          const [posts, categories, tags, users] = await Promise.allSettled([
-            PostService.getAll(),
-            CategoryService.getAll(),
-            TagService.getAll(),
-            UserService.getAll(),
-          ]);
-          if (posts.value)      document.getElementById('stat-posts').textContent      = Array.isArray(posts.value) ? posts.value.length : (posts.value.totalElements ?? '—');
-          if (categories.value) document.getElementById('stat-categories').textContent = Array.isArray(categories.value) ? categories.value.length : '—';
-          if (users.value)      document.getElementById('stat-users').textContent      = Array.isArray(users.value) ? users.value.length : '—';
-        } catch (_) {}
-
-        // Load recent posts
-        try {
-          const posts = await PostService.getAll();
-          const list = Array.isArray(posts) ? posts : (posts.content ?? []);
-          const tbody = document.getElementById('recent-posts-body');
-          if (list.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No posts found.</td></tr>';
-            return;
-          }
-          tbody.innerHTML = list.slice(0, 5).map((p, i) => `
-            <tr>
-              <td>${i + 1}</td>
-              <td>${p.title || '—'}</td>
-              <td><span class="badge text-bg-info">${p.categoryName || '—'}</span></td>
-              <td>${UI.statusBadge(p.status)}</td>
-              <td>${UI.formatDate(p.createdAt || p.publishedAt)}</td>
-              <td>
-                <a href="posts/create.html?id=${p.id}" class="btn btn-xs btn-warning"><i class="bi bi-pencil"></i></a>
-                <button class="btn btn-xs btn-danger" onclick="deletePost(${p.id})"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>`).join('');
-        } catch (_) {}
-
-        // Hiển thị user hiện tại
-        await UI.renderCurrentUser();
-
-        // Logout
-        document.querySelectorAll('[data-action="logout"]').forEach(el =>
-          el.addEventListener('click', e => { e.preventDefault(); Auth.logout(); })
-        );
-      });
-
-      async function deletePost(id) {
-        if (!UI.confirm('Delete this post?')) return;
-        try {
-          await PostService.delete(id);
-          UI.toast('Post deleted.');
-          location.reload();
-        } catch (err) {
-          UI.toast(err.message, 'danger');
-        }
-      }
     </script>
+    <script src="js/pages/dashboard.js"></script>
   </body>
 </html>

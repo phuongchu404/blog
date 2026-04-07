@@ -297,82 +297,9 @@
         new bootstrap.Modal(modal).show();
       }
 
-      async function deleteUser(id) {
-        if (!UI.confirm('Delete this user?')) return;
-        try {
-          await UserService.delete(id);
-          UI.toast('User deleted.');
-          allUsers = allUsers.filter(u => u.id !== id);
-          renderUsers(allUsers);
-        } catch (err) { UI.toast(err.message, 'danger'); }
-      }
-
-      document.addEventListener('DOMContentLoaded', async function () {
-        const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-        if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-          OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-            scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-          });
-        }
-
-        // Filter by role
-        document.getElementById('filterRole').addEventListener('change', function () {
-          const role = this.value.toUpperCase();
-          const filtered = role
-            ? allUsers.filter(u => (u.roles || []).some(r => r.toUpperCase() === role))
-            : allUsers;
-          renderUsers(filtered);
-        });
-
-        // Search
-        document.querySelector('.input-group input').addEventListener('input', function () {
-          const kw = this.value.trim().toLowerCase();
-          if (!kw) { renderUsers(allUsers); return; }
-          renderUsers(allUsers.filter(u =>
-            (u.username || '').toLowerCase().includes(kw) ||
-            (u.email || '').toLowerCase().includes(kw)
-          ));
-        });
-
-        // Create / update user form
-        document.getElementById('addUserForm').addEventListener('submit', async function (e) {
-          e.preventDefault();
-          const modal = document.getElementById('addUserModal');
-          const editId = modal.dataset.editId;
-          const payload = {
-            username: document.getElementById('newUserName').value.trim(),
-            email: document.getElementById('newUserEmail').value.trim(),
-          };
-          const password = document.getElementById('newUserPassword').value;
-          if (password) payload.password = password;
-          try {
-            if (editId) {
-              await UserService.update(Number(editId), payload);
-              UI.toast('User updated.');
-              delete modal.dataset.editId;
-            } else {
-              await Http.post('/auth/register', { ...payload, password });
-              UI.toast('User created.');
-            }
-            bootstrap.Modal.getInstance(modal)?.hide();
-            loadUsers();
-          } catch (err) { UI.toast(err.message, 'danger'); }
-        });
-
-        // Load roles into filter + modal dropdown
-        try {
-          const roles = await Http.get('/api/roles') || [];
-          const filterSel = document.getElementById('filterRole');
-          const modalSel  = document.getElementById('newUserRole');
-          roles.forEach(r => {
-            filterSel.insertAdjacentHTML('beforeend', `<option value="${r.name}">${r.name}</option>`);
-            modalSel.insertAdjacentHTML('beforeend',  `<option value="${r.name}">${r.name}</option>`);
-          });
-        } catch (_) { /* roles optional */ }
-
-        await loadUsers();
-        await UI.renderCurrentUser();
-      });
+    <script>
+      Auth.guard();
     </script>
+    <script src="../js/pages/users.js"></script>
   </body>
 </html>
