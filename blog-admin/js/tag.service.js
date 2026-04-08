@@ -8,6 +8,7 @@ const TagService = {
   getAll()            { return Http.get('/api/tags'); },
   getById(id)         { return Http.get(`/api/tags/${id}`); },
   getBySlug(slug)     { return Http.get(`/api/tags/slug/${slug}`); },
+  search(keyword)     { return Http.get(`/api/tags/search?q=${encodeURIComponent(keyword)}`); },
 
   create(data)        { return Http.post('/api/tags', data); },
   update(id, data)    { return Http.put(`/api/tags/${id}`, data); },

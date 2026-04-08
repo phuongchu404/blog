@@ -4,39 +4,39 @@
 
 let allUsers = [];
 
+const roleColors = { ADMIN: 'text-bg-danger', MODERATOR: 'text-bg-primary', AUTHOR: 'text-bg-info', USER: 'text-bg-secondary' };
+
 function renderUsers(list) {
   const tbody = document.getElementById('users-tbody');
-  const countEl = document.querySelector('.card-tools .badge');
+  const countEl = document.getElementById('users-count-badge');
   if (countEl) countEl.textContent = list.length + ' total';
-  
+
   if (!list.length) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No users found.</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>';
     return;
   }
-  
+
   if (tbody) {
-    tbody.innerHTML = list.map(u => `
-      <tr>
-        <td><input type="checkbox" class="form-check-input" /></td>
-        <td>
-          <div class="d-flex align-items-center">
-            <img src="${u.imageUrl || 'https://via.placeholder.com/40'}" class="rounded-circle me-2" width="32" height="32" alt="Avatar" />
-            <div>
-              <div class="fw-bold text-dark">${u.username || '—'}</div>
-              <small class="text-muted">${u.email || '—'}</small>
-            </div>
-          </div>
-        </td>
-        <td>
-          ${(u.roles || []).map(r => `<span class="badge text-bg-primary me-1">${r}</span>`).join('') || '—'}
-        </td>
-        <td><span class="badge text-bg-success">Active</span></td>
-        <td>${UI.formatDate(u.createdAt)}</td>
-        <td>
-          <button class="btn btn-sm btn-warning" onclick="editUser(${u.id},'${u.username}','${u.email}')"><i class="bi bi-pencil"></i></button>
-          <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button>
-        </td>
-      </tr>`).join('');
+    tbody.innerHTML = list.map(u => {
+      const roles = (u.roles || []).map(r => `<span class="badge ${roleColors[r] || 'text-bg-secondary'} me-1">${r}</span>`).join('') || '<span class="text-muted">—</span>';
+      const avatar = u.avatarUrl
+        ? `<img src="${u.avatarUrl}" class="rounded-circle me-2" width="36" height="36" alt="${u.username}" />`
+        : `<div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;flex-shrink:0"><i class="bi bi-person text-white"></i></div>`;
+      return `
+        <tr>
+          <td><input type="checkbox" class="form-check-input" /></td>
+          <td><div class="d-flex align-items-center">${avatar}<strong>${u.username || u.name || '—'}</strong></div></td>
+          <td>${u.email || '—'}</td>
+          <td>${roles}</td>
+          <td>${u.postCount ?? 0}</td>
+          <td><span class="badge ${u.enabled !== false ? 'text-bg-success' : 'text-bg-warning text-dark'}">${u.enabled !== false ? 'Active' : 'Inactive'}</span></td>
+          <td>${UI.formatDate(u.createdAt)}</td>
+          <td>
+            <button class="btn btn-sm btn-warning" title="Edit" onclick="editUser(${u.id})"><i class="bi bi-pencil"></i></button>
+            <button class="btn btn-sm btn-danger" title="Delete" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button>
+          </td>
+        </tr>`;
+    }).join('');
   }
 }
 
@@ -50,24 +50,28 @@ async function loadUsers() {
   }
 }
 
-function editUser(id, username, email) {
+function editUser(id) {
+  const user = allUsers.find(u => u.id === id);
+  if (!user) return;
   const modalEl = document.getElementById('addUserModal');
-  if (modalEl) {
-    modalEl.dataset.editId = id;
-    const titleEl = document.getElementById('addUserModalLabel');
-    if (titleEl) titleEl.innerHTML = '<i class="bi bi-pencil me-2"></i>Edit User';
-    
-    document.getElementById('newUserName').value = username;
-    document.getElementById('newUserEmail').value = email;
-    document.getElementById('newUserPassword').placeholder = '(leave empty to keep current)';
-    
-    const modal = new bootstrap.Modal(modalEl);
-    modal.show();
-  }
+  if (!modalEl) return;
+
+  modalEl.dataset.editId = id;
+  const titleEl = document.getElementById('addUserModalLabel');
+  if (titleEl) titleEl.innerHTML = '<i class="bi bi-pencil me-2"></i>Edit User';
+
+  document.getElementById('newUserName').value = user.username || user.name || '';
+  document.getElementById('newUserEmail').value = user.email || '';
+  document.getElementById('newUserPassword').placeholder = '(leave empty to keep current)';
+
+  const roleSel = document.getElementById('newUserRole');
+  if (roleSel) roleSel.value = (user.roles?.[0] || '').toLowerCase();
+
+  new bootstrap.Modal(modalEl).show();
 }
 
 async function deleteUser(id) {
-  if (!UI.confirm('Delete this user?')) return;
+  if (!await UI.confirm('Delete this user?')) return;
   try {
     await UserService.delete(id);
     UI.toast('User deleted.');
@@ -83,13 +87,7 @@ window.editUser = editUser;
 window.deleteUser = deleteUser;
 
 document.addEventListener('DOMContentLoaded', async function () {
-  // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
-  const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-  if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-    OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-      scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-    });
-  }
+  UI.initSidebar();
 
   // Filter by role
   const filterRole = document.getElementById('filterRole');

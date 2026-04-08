@@ -55,7 +55,7 @@ function buildTableRow(p, idx) {
     <tr>
       <td>${idx + 1}</td>
       <td><code>${p.name}</code></td>
-      <td><span class="badge ${p.type === "MENU" ? "bg-purple" : "bg-primary"}">${p.type}</span></td>
+      <td><span class="badge ${p.type === "MENU" ? "text-bg-warning" : "text-bg-primary"}">${p.type}</span></td>
       <td><small class="fw-bold text-muted">${p.tag || "—"}</small></td>
       <td><span class="method-badge ${methodClass(p.method)}">${methodLabel(p.method)}</span></td>
       <td><code class="text-muted small">${p.pattern || "—"}</code></td>
@@ -107,12 +107,12 @@ function buildGroupCards(list, containerId) {
               </thead>
               <tbody>
                 ${perms.map((p) => {
-                  const wl = p.isWhiteList === 1 || p.isWhiteList === true;
-                  const accessBadge = wl
-                    ? '<span class="badge text-bg-success whitelist-badge"><i class="bi bi-unlock"></i> Public</span>'
-                    : '<span class="badge text-bg-secondary whitelist-badge"><i class="bi bi-lock"></i> Auth</span>';
-                  if (isMenu) {
-                    return `<tr>
+      const wl = p.isWhiteList === 1 || p.isWhiteList === true;
+      const accessBadge = wl
+        ? '<span class="badge text-bg-success whitelist-badge"><i class="bi bi-unlock"></i> Public</span>'
+        : '<span class="badge text-bg-secondary whitelist-badge"><i class="bi bi-lock"></i> Auth</span>';
+      if (isMenu) {
+        return `<tr>
                       <td><code>${p.name}</code></td>
                       <td><small>${p.tag || "—"}</small></td>
                       <td><code class="text-muted small">${p.pattern || "—"}</code></td>
@@ -122,8 +122,8 @@ function buildGroupCards(list, containerId) {
                         <button class="btn btn-xs btn-danger" onclick="deletePerm(${p.id})"><i class="bi bi-trash"></i></button>
                       </td>
                     </tr>`;
-                  } else {
-                    return `<tr>
+      } else {
+        return `<tr>
                       <td><code>${p.name}</code></td>
                       <td><small>${p.tag || "—"}</small></td>
                       <td><span class="method-badge ${methodClass(p.method)}">${methodLabel(p.method)}</span></td>
@@ -134,8 +134,8 @@ function buildGroupCards(list, containerId) {
                         <button class="btn btn-xs btn-danger" onclick="deletePerm(${p.id})"><i class="bi bi-trash"></i></button>
                       </td>
                     </tr>`;
-                  }
-                }).join("")}
+      }
+    }).join("")}
               </tbody>
             </table>
           </div>
@@ -213,7 +213,7 @@ function openEditPerm(id) {
 }
 
 async function deletePerm(id) {
-  if (!UI.confirm("Delete this permission?")) return;
+  if (!await UI.confirm("Delete this permission?")) return;
   try {
     await PermissionService.delete(id);
     UI.toast("Permission deleted.");
@@ -250,12 +250,7 @@ window.openEditPerm = openEditPerm;
 window.deletePerm = deletePerm;
 
 document.addEventListener("DOMContentLoaded", async function () {
-  const sidebarWrapper = document.querySelector(".sidebar-wrapper");
-  if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-    OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-      scrollbars: { theme: "os-theme-light", autoHide: "leave", clickScroll: true },
-    });
-  }
+  UI.initSidebar();
 
   const filterGrp = document.getElementById("filterGroup");
   if (filterGrp) {

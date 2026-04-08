@@ -9,6 +9,8 @@ import java.util.Optional;
 public interface CategoryService {
     List<CategoryDTO> getAllCategories();
 
+    List<CategoryDTO> searchCategories(String keyword);
+
     List<CategoryDTO> getRootCategories();
 
     Optional<CategoryDTO> getCategoryById(Long id);

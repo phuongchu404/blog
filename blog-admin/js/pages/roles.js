@@ -55,28 +55,52 @@ function refreshRolesList() {
   const pagedData = filtered.slice(start, start + rPageSize);
   
   renderRoles(pagedData, start);
-  renderPagination(filtered.length, totalPages);
+  renderPagination(totalPages);
 }
 
-function renderPagination(total, totalPages) {
-  const ul = document.getElementById("roles-pagination");
-  if (!ul) return;
-  if (total === 0 || totalPages <= 1) {
-    ul.innerHTML = '';
-    return;
-  }
-  let html = `<li class="page-item ${rCurrentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" onclick="changePage(1, event)">«</a></li>`;
-  for (let i = 1; i <= totalPages; i++) {
-    html += `<li class="page-item ${rCurrentPage === i ? 'active' : ''}"><a class="page-link" href="#" onclick="changePage(${i}, event)">${i}</a></li>`;
-  }
-  html += `<li class="page-item ${rCurrentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" onclick="changePage(${totalPages}, event)">»</a></li>`;
-  ul.innerHTML = html;
-}
+function renderPagination(totalPages) {
+  const container = document.getElementById("roles-pagination");
+  if (!container) return;
 
-function changePage(page, e) {
-  if(e) e.preventDefault();
-  rCurrentPage = page;
-  refreshRolesList();
+  const startPage = Math.max(1, rCurrentPage - 2);
+  const endPage = Math.min(totalPages, rCurrentPage + 2);
+
+  let html = `<li class="page-item ${rCurrentPage === 1 ? 'disabled' : ''}">
+    <a class="page-link" href="#" data-page="${rCurrentPage - 1}">«</a>
+  </li>`;
+
+  if (startPage > 1) {
+    html += `<li class="page-item"><a class="page-link" href="#" data-page="1">1</a></li>`;
+    if (startPage > 2) html += `<li class="page-item disabled"><a class="page-link" href="#">…</a></li>`;
+  }
+
+  for (let i = startPage; i <= endPage; i++) {
+    html += `<li class="page-item ${i === rCurrentPage ? 'active' : ''}">
+      <a class="page-link" href="#" data-page="${i}">${i}</a>
+    </li>`;
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) html += `<li class="page-item disabled"><a class="page-link" href="#">…</a></li>`;
+    html += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages}">${totalPages}</a></li>`;
+  }
+
+  html += `<li class="page-item ${rCurrentPage === totalPages ? 'disabled' : ''}">
+    <a class="page-link" href="#" data-page="${rCurrentPage + 1}">»</a>
+  </li>`;
+
+  container.innerHTML = html;
+
+  container.querySelectorAll('.page-link[data-page]').forEach(link => {
+    link.addEventListener('click', function (e) {
+      e.preventDefault();
+      const page = parseInt(this.dataset.page);
+      if (page >= 1 && page <= totalPages) {
+        rCurrentPage = page;
+        refreshRolesList();
+      }
+    });
+  });
 }
 
 function openEditRole(id, name, description) {
@@ -155,7 +179,7 @@ function renderPermissionCheckboxes(assignedIds = new Set()) {
 }
 
 async function deleteRole(id) {
-  if (!UI.confirm("Delete this role?")) return;
+  if (!await UI.confirm("Delete this role?")) return;
   try {
     await RoleService.delete(id);
     UI.toast("Role deleted.");
@@ -175,18 +199,12 @@ async function loadRoles() {
 }
 
 // Gán vào window
-window.changePage = changePage;
 window.openEditRole = openEditRole;
 window.openManagePermissions = openManagePermissions;
 window.deleteRole = deleteRole;
 
 document.addEventListener("DOMContentLoaded", async function () {
-  const sidebarWrapper = document.querySelector(".sidebar-wrapper");
-  if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-    OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-      scrollbars: { theme: "os-theme-light", autoHide: "leave", clickScroll: true },
-    });
-  }
+  UI.initSidebar();
 
   // Add role form
   const addRoleForm = document.getElementById("addRoleForm");

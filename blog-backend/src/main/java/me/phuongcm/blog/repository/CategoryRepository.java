@@ -13,6 +13,8 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
     List<Category> findByParentId(Long parentId);
 
+    List<Category> findByTitleContainingIgnoreCase(String keyword);
+
     @Query(value = "SELECT c FROM Category c WHERE c.parent IS NULL")
     List<Category> findRootCategories();
 }

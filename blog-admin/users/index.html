@@ -242,64 +242,7 @@
     <script src="../js/auth.js"></script>
     <script src="../js/ui.js"></script>
     <script src="../js/user.service.js"></script>
-    <script>
-      Auth.guard();
-      let allUsers = [];
-
-      const roleColors = { ADMIN: 'text-bg-danger', MODERATOR: 'text-bg-primary', AUTHOR: 'text-bg-info', USER: 'text-bg-secondary' };
-
-      function renderUsers(list) {
-        const tbody = document.getElementById('users-tbody');
-        document.getElementById('users-count-badge').textContent = list.length + ' total';
-        if (!list.length) {
-          tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>';
-          return;
-        }
-        tbody.innerHTML = list.map(u => {
-          const roles = (u.roles || []).map(r => `<span class="badge ${roleColors[r] || 'text-bg-secondary'} me-1">${r}</span>`).join('');
-          const avatar = u.avatarUrl
-            ? `<img src="${u.avatarUrl}" class="rounded-circle me-2" width="36" height="36" alt="${u.username}" />`
-            : `<div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;flex-shrink:0"><i class="bi bi-person text-white"></i></div>`;
-          return `
-            <tr>
-              <td><input type="checkbox" class="form-check-input" /></td>
-              <td><div class="d-flex align-items-center">${avatar}<strong>${u.username || u.name || '—'}</strong></div></td>
-              <td>${u.email || '—'}</td>
-              <td>${roles || '<span class="text-muted">—</span>'}</td>
-              <td>${u.postCount ?? 0}</td>
-              <td><span class="badge ${u.enabled !== false ? 'text-bg-success' : 'text-bg-warning text-dark'}">${u.enabled !== false ? 'Active' : 'Inactive'}</span></td>
-              <td>${UI.formatDate(u.createdAt)}</td>
-              <td>
-                <button class="btn btn-sm btn-warning" title="Edit" onclick="editUser(${u.id})"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" title="Delete" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button>
-              </td>
-            </tr>`;
-        }).join('');
-      }
-
-      async function loadUsers() {
-        try {
-          const data = await UserService.getAll();
-          allUsers = Array.isArray(data) ? data : (data.content ?? []);
-          renderUsers(allUsers);
-        } catch (err) { UI.toast('Failed to load users: ' + err.message, 'danger'); }
-      }
-
-      function editUser(id) {
-        const u = allUsers.find(x => x.id === id);
-        if (!u) return;
-        document.getElementById('newUserName').value = u.username || u.name || '';
-        document.getElementById('newUserEmail').value = u.email || '';
-        document.getElementById('newUserRole').value = (u.roles?.[0] || 'USER').toLowerCase();
-        const modal = document.getElementById('addUserModal');
-        modal.querySelector('.modal-title').innerHTML = '<i class="bi bi-pencil me-2"></i>Edit User';
-        modal.dataset.editId = id;
-        new bootstrap.Modal(modal).show();
-      }
-
-    <script>
-      Auth.guard();
-    </script>
+    <script>Auth.guard();</script>
     <script src="../js/pages/users.js"></script>
   </body>
 </html>

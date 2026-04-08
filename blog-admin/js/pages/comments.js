@@ -89,7 +89,7 @@ async function rejectComment(id) {
 }
 
 async function deleteComment(id) {
-  if (!UI.confirm('Delete this comment?')) return;
+  if (!await UI.confirm('Delete this comment?')) return;
   try { 
     await CommentService.delete(id); 
     UI.toast('Comment deleted.'); 
@@ -103,13 +103,7 @@ window.rejectComment = rejectComment;
 window.deleteComment = deleteComment;
 
 document.addEventListener('DOMContentLoaded', async function () {
-  // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
-  const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-  if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-    OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-      scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-    });
-  }
+  UI.initSidebar();
 
   // Status filter
   const filterSelect = document.querySelector('select');
@@ -121,7 +115,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // Approve all pending
-  const btnApproveAll = document.querySelector('.btn-success');
+  const btnApproveAll = document.getElementById('btn-approve-all');
   if (btnApproveAll) {
     btnApproveAll.addEventListener('click', async function () {
       const pending = allComments.filter(c => c.status === 'PENDING');

@@ -26,6 +26,12 @@ public class TagController {
         return ResponseEntity.ok(tagService.getAllTags());
     }
 
+    /** GET /api/tags/search?q={keyword} — PUBLIC. */
+    @GetMapping("/search")
+    public ResponseEntity<List<TagDTO>> searchTags(@RequestParam(name = "q", defaultValue = "") String keyword) {
+        return ResponseEntity.ok(tagService.searchTags(keyword));
+    }
+
     /** GET /api/tags/{id} — PUBLIC. */
     @GetMapping("/{id}")
     public ResponseEntity<TagDTO> getTagById(@PathVariable Long id) {

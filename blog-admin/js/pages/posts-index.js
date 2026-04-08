@@ -44,7 +44,7 @@ function applyFilter() {
 }
 
 async function deletePost(id) {
-  if (!UI.confirm('Delete this post? This action cannot be undone.')) return;
+  if (!await UI.confirm('Delete this post? This action cannot be undone.')) return;
   try {
     await PostService.delete(id);
     UI.toast('Post deleted successfully.');
@@ -59,13 +59,7 @@ async function deletePost(id) {
 window.deletePost = deletePost;
 
 document.addEventListener('DOMContentLoaded', async function () {
-  // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
-  const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-  if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-    OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-      scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-    });
-  }
+  UI.initSidebar();
 
   const tbody = document.getElementById('posts-tbody');
   if (tbody) UI.loading(tbody, true);

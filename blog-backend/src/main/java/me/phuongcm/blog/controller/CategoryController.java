@@ -26,6 +26,12 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
+    /** GET /api/categories/search?q={keyword} — PUBLIC. */
+    @GetMapping("/search")
+    public ResponseEntity<List<CategoryDTO>> searchCategories(@RequestParam(name = "q", defaultValue = "") String keyword) {
+        return ResponseEntity.ok(categoryService.searchCategories(keyword));
+    }
+
     /** GET /api/categories/root — PUBLIC: danh mục gốc. */
     @GetMapping("/root")
     public ResponseEntity<List<CategoryDTO>> getRootCategories() {

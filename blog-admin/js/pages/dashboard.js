@@ -3,7 +3,7 @@
  */
 
 async function deletePost(id) {
-  if (!UI.confirm('Delete this post?')) return;
+  if (!await UI.confirm('Delete this post?')) return;
   try {
     await PostService.delete(id);
     UI.toast('Post deleted.');
@@ -17,13 +17,7 @@ async function deletePost(id) {
 window.deletePost = deletePost;
 
 document.addEventListener('DOMContentLoaded', async function () {
-  // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
-  const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-  if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-    OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-      scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-    });
-  }
+  UI.initSidebar();
 
   // Load thống kê
   try {

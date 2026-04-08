@@ -34,6 +34,11 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    public List<TagDTO> searchTags(String keyword) {
+        return tagMapper.toDTOs(tagRepository.findByTitleContaining(keyword));
+    }
+
+    @Override
     public Optional<TagDTO> getTagById(long id) {
         return tagRepository.findById(id).map(tagMapper::toDTO);
     }

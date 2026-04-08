@@ -98,47 +98,41 @@ const UI = {
 
   /**
    * Ẩn/Hiện menu dựa trên Roles của user.
-   * @param {Object} user 
+   * @param {Object} user
    */
   applyAccessControl(user) {
     const userRoles = (user?.roles || []).map(r => typeof r === 'string' ? r.toUpperCase() : (r.name || '').toUpperCase());
     // Hỗ trợ cả 'ADMIN' và 'ROLE_ADMIN'
     const isAdmin = userRoles.some(r => r.includes('ADMIN'));
 
-    if (!isAdmin) {
-      // Hide Admin-only links by checking text content
-      document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
-        const link = item.querySelector('a.nav-link');
-        if (!link) return;
-        const text = link.textContent.trim().toUpperCase();
-        
-        if (text === 'USERS' || text === 'ROLES' || text === 'PERMISSIONS' || text === 'SETTINGS') {
-          item.style.display = 'none';
-        }
-      });
-      
-      // Hide Admin-only headers
-      document.querySelectorAll('.app-sidebar .nav-header').forEach(header => {
-        const text = header.textContent.trim().toUpperCase();
-        if (text.includes('ACCESS CONTROL') || text.includes('SETTINGS')) {
-          header.style.display = 'none';
-        }
-      });
-    } else {
-      // Dành cho trường hợp reload hoặc clear filter (show lại nếu là ADMIN)
-      document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
-        const link = item.querySelector('a.nav-link');
-        if (!link) return;
-        const text = link.textContent.trim().toUpperCase();
-        if (text === 'USERS' || text === 'ROLES' || text === 'PERMISSIONS' || text === 'SETTINGS') {
-          item.style.display = '';
-        }
-      });
-      document.querySelectorAll('.app-sidebar .nav-header').forEach(header => {
-        const text = header.textContent.trim().toUpperCase();
-        if (text.includes('ACCESS CONTROL') || text.includes('SETTINGS')) {
-          header.style.display = '';
-        }
+    const adminOnlyNavTexts = ['USERS', 'ROLES', 'PERMISSIONS', 'SETTINGS'];
+    const adminOnlyHeaderKeywords = ['ACCESS CONTROL', 'SETTINGS'];
+
+    document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
+      const link = item.querySelector('a.nav-link');
+      if (!link) return;
+      const text = link.textContent.trim().toUpperCase();
+      if (adminOnlyNavTexts.includes(text)) {
+        item.style.display = isAdmin ? '' : 'none';
+      }
+    });
+
+    document.querySelectorAll('.app-sidebar .nav-header').forEach(header => {
+      const text = header.textContent.trim().toUpperCase();
+      if (adminOnlyHeaderKeywords.some(kw => text.includes(kw))) {
+        header.style.display = isAdmin ? '' : 'none';
+      }
+    });
+  },
+
+  /**
+   * Khởi tạo Overlay Scrollbars cho sidebar (chỉ trên desktop).
+   */
+  initSidebar() {
+    const sidebarWrapper = document.querySelector('.sidebar-wrapper');
+    if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
+      OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
+        scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
       });
     }
   },
@@ -154,9 +148,51 @@ const UI = {
     });
   },
 
-  /** Hiện hộp xác nhận trình duyệt, trả về true/false. */
-  confirm(message) {
-    return window.confirm(message);
+  /**
+   * Hiện hộp xác nhận tùy chỉnh (Premium), trả về Promise<boolean>.
+   * @param {string} message - Nội dung câu hỏi
+   * @param {string} title - Tiêu đề (mặc định: "Confirm Action")
+   */
+  async confirm(message, title = 'Confirm Action') {
+    return new Promise((resolve) => {
+      const id = 'confirm-' + Date.now();
+      const html = `
+        <div class="confirm-dialog-overlay" id="${id}">
+          <div class="confirm-dialog-box">
+            <div class="confirm-dialog-icon">
+              <i class="bi bi-exclamation-triangle"></i>
+            </div>
+            <h4 class="confirm-dialog-title">${title}</h4>
+            <p class="confirm-dialog-message">${message}</p>
+            <div class="confirm-dialog-actions">
+              <button type="button" class="btn btn-cancel" id="${id}-cancel">Hủy</button>
+              <button type="button" class="btn btn-confirm" id="${id}-ok">Xác nhận</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.body.insertAdjacentHTML('beforeend', html);
+
+      const overlay = document.getElementById(id);
+      const okBtn = document.getElementById(`${id}-ok`);
+      const cancelBtn = document.getElementById(`${id}-cancel`);
+
+      // Trigger animation
+      setTimeout(() => overlay.classList.add('show'), 10);
+
+      const close = (result) => {
+        overlay.classList.remove('show');
+        setTimeout(() => {
+          overlay.remove();
+          resolve(result);
+        }, 300);
+      };
+
+      okBtn.onclick = () => close(true);
+      cancelBtn.onclick = () => close(false);
+      overlay.onclick = (e) => { if (e.target === overlay) close(false); };
+    });
   },
 
   /**

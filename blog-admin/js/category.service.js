@@ -13,6 +13,7 @@ const CategoryService = {
 
   getById(id)             { return Http.get(`/api/categories/${id}`); },
   getBySlug(slug)         { return Http.get(`/api/categories/slug/${slug}`); },
+  search(keyword)         { return Http.get(`/api/categories/search?q=${encodeURIComponent(keyword)}`); },
 
   /** Lấy danh mục con */
   getSubcategories(id)    { return Http.get(`/api/categories/${id}/subcategories`); },

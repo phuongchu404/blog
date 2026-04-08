@@ -5,9 +5,7 @@
 
 const Auth = {
   _loginPath() {
-    console.log("pathname", window.location.pathname);
     const depth = window.location.pathname.split('/').filter(Boolean).length;
-    console.log("depth", depth);
     const prefix = depth > 1 ? '../'.repeat(depth - 1) : '';
     return prefix + 'login.html';
   },
@@ -27,7 +25,6 @@ const Auth = {
   async login(username, password) {
     // Http._handle() tự động unwrap ApiResponse → nhận { accessToken, refreshToken, ... }
     const data = await Http.post('/auth/login', { username, password });
-    console.log('login data', data);
     if (!data?.accessToken) throw new Error('Login failed: no access token received.');
     localStorage.setItem('token', data.accessToken);
     if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);

@@ -34,6 +34,11 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public List<CategoryDTO> searchCategories(String keyword) {
+        return categoryMapper.toDTOs(categoryRepository.findByTitleContainingIgnoreCase(keyword));
+    }
+
+    @Override
     public List<CategoryDTO> getRootCategories() {
 
         return categoryMapper.toDTOs(categoryRepository.findRootCategories());

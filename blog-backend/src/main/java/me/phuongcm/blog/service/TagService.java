@@ -10,6 +10,8 @@ public interface TagService {
 
     List<TagDTO> getAllTags();
 
+    List<TagDTO> searchTags(String keyword);
+
     Optional<TagDTO> getTagById(long id);
 
     Optional<TagDTO> getTagBySlug(String slug);
