@@ -12,12 +12,7 @@ function renderPagination(list) {
   const container = document.getElementById('cat-pagination');
   if (!container) return;
 
-  const totalPages = Math.ceil(list.length / PAGE_SIZE);
-
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    return;
-  }
+  const totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
 
   const startPage = Math.max(1, currentPage - 2);
   const endPage = Math.min(totalPages, currentPage + 2);
@@ -71,7 +66,6 @@ function renderCategories(list) {
 
   if (!list.length) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No categories found.</td></tr>';
-    renderPagination([]);
     return;
   }
 

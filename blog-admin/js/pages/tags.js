@@ -13,12 +13,7 @@ function renderPagination(list) {
   if (!container) return;
 
   const total = list.length;
-  const totalPages = Math.ceil(total / PAGE_SIZE);
-
-  if (totalPages <= 1) {
-    container.innerHTML = '';
-    return;
-  }
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   const startPage = Math.max(1, currentPage - 2);
   const endPage = Math.min(totalPages, currentPage + 2);
@@ -72,7 +67,6 @@ function renderTags(list) {
 
   if (!list.length) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No tags found.</td></tr>';
-    renderPagination([]);
     return;
   }
 
