@@ -158,7 +158,9 @@
               <div class="col-md-6">
                 <div class="input-group">
                   <input type="text" id="posts-search" class="form-control" placeholder="Search posts..." />
-                  <button class="btn btn-outline-secondary" id="posts-search-btn" type="button"><i class="bi bi-search"></i></button>
+                  <button id="posts-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
                 </div>
               </div>
               <div class="col-md-3">
@@ -180,7 +182,7 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><i class="bi bi-file-earmark-text me-2"></i>Posts List</h3>
-                <div class="card-tools">
+                <div class="card-tools ms-auto">
                   <span class="badge text-bg-primary" id="posts-total">— total</span>
                 </div>
               </div>

@@ -171,8 +171,10 @@
             <div class="row mb-3">
               <div class="col-md-5">
                 <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search comments..." />
-                  <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+                  <input type="text" id="comments-search" class="form-control" placeholder="Search comments..." autocomplete="off" />
+                  <button id="comments-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
                 </div>
               </div>
               <div class="col-md-3">
@@ -193,8 +195,8 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><i class="bi bi-chat-dots me-2"></i>All Comments</h3>
-                <div class="card-tools">
-                  <span class="badge text-bg-primary">128 total</span>
+                <div class="card-tools ms-auto">
+                  <span class="badge text-bg-primary" id="comments-total-badge">0 total</span>
                 </div>
               </div>
               <div class="card-body p-0">

@@ -270,6 +270,14 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
+  // Refresh button
+  document.getElementById('roles-refresh-btn')?.addEventListener('click', async () => {
+    if (searchInput) searchInput.value = '';
+    _searchKeyword = '';
+    currentPage    = 0;
+    await loadRoles();
+  });
+
   // Select All / Clear All (for manage permissions modal)
   document.getElementById('btnSelectAll')?.addEventListener('click', () => {
     document.querySelectorAll('.perm-check').forEach(cb => (cb.checked = true));

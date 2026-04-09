@@ -68,7 +68,7 @@ function statusBadgeComment(status) {
 
 function renderCommentPage() {
   const tbody     = document.getElementById('comments-tbody');
-  const totalBadge = document.querySelector('.card-tools .badge');
+  const totalBadge = document.getElementById('comments-total-badge');
   if (totalBadge) totalBadge.textContent = `${totalElements} total`;
 
   totalPages = Math.max(1, Math.ceil(displayList.length / PAGE_SIZE));
@@ -189,6 +189,18 @@ document.addEventListener('DOMContentLoaded', async function () {
       renderCommentPage();
     });
   }
+
+  // Refresh button
+  document.getElementById('comments-refresh-btn')?.addEventListener('click', async () => {
+    const searchInput = document.getElementById('comments-search');
+    if (searchInput) searchInput.value = '';
+    const filterSelect = document.querySelector('select');
+    if (filterSelect) filterSelect.value = '';
+    displayList = allComments;
+    totalElements = allComments.length;
+    currentPage = 0;
+    await loadAllComments();
+  });
 
   // Approve all pending
   const btnApproveAll = document.getElementById('btn-approve-all');

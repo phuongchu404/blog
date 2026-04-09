@@ -1,336 +1,294 @@
 /**
- * Categories Page Logic
- * Pagination: server-side (gọi API theo từng trang).
- * Sliding window: hiển thị tối đa WINDOW_SIZE trang liền kề,
- * luôn kèm trang 1 và trang cuối nếu ngoài window.
+ * Categories Page Logic - Optimized Version
+ * Features: Server-side pagination, Debounced Search, State Management, Smooth UX.
  */
 
-let allCategories = [];     // dùng cho dropdown parent (luôn load full)
-let totalElements = 0;      // tổng số phần tử từ server
-let totalPages = 1;         // tổng số trang từ server
-let currentPage = 0;        // index trang hiện tại (0-based, theo chuẩn Spring)
-const PAGE_SIZE = 10;
-const WINDOW_SIZE = 3;      // số trang hiển thị liên tiếp trong window
+// --- 1. State Management ---
+// Tập trung tất cả biến trạng thái vào một object để dễ quản lý và debug
+const state = {
+  allCategories: [],      // Dùng cho dropdown parent (load full)
+  totalElements: 0,
+  totalPages: 1,
+  currentPage: 0,         // 0-based index (Spring Boot standard)
+  pageSize: 10,
+  windowSize: 3,          // Số trang hiển thị trong sliding window
+  editingId: null,        // ID của category đang được chỉnh sửa
+  isSearching: false
+};
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// --- 2. DOM Elements Cache ---
+// Truy xuất DOM một lần để tăng hiệu năng
+const elements = {
+  tbody: document.getElementById('cat-tbody'),
+  pagination: document.getElementById('cat-pagination'),
+  form: document.querySelector('form'),
+  submitBtn: document.getElementById('submitBtn') || document.querySelector('button[type="submit"]'),
+  cancelBtn: document.getElementById('cancelEditBtn'),
+  searchInput: document.getElementById('cat-search'),
+  searchBtn: document.getElementById('cat-search-btn'),
+  refreshBtn: document.getElementById('cat-refresh-btn'),
+  parentDropdown: document.getElementById('catParent'),
+  totalBadge: document.querySelector('.card-tools .badge'),
+  selectAll: document.getElementById('selectAll'),
+  inputs: {
+    title: document.getElementById('catTitle'),
+    slug: document.getElementById('catSlug'),
+    content: document.getElementById('catDescription')
+  }
+};
 
-/**
- * Phát hiện response có phải dạng Page của Spring Boot không.
- * Spring trả: { content: [], totalElements, totalPages, number, ... }
- */
-function isPageResponse(data) {
-  return data && Array.isArray(data.content) && typeof data.totalPages === 'number';
+// --- 3. Core Initialization ---
+document.addEventListener('DOMContentLoaded', async () => {
+  UI.initSidebar();
+  setupEventListeners();
+  await refreshData();
+  await UI.renderCurrentUser();
+});
+
+/** Tải lại toàn bộ dữ liệu (Bảng + Dropdown) */
+async function refreshData() {
+  await Promise.all([loadCategories(), loadAllForDropdown()]);
 }
 
-// ── Render ─────────────────────────────────────────────────────────────────────
-
-function renderPagination() {
-  const container = document.getElementById('cat-pagination');
-  if (!container) return;
-
-  let html = `<ul class="pagination pagination-sm m-0 float-end">`;
-
-  // Nút «  Prev
-  html += `<li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
-    <a class="page-link" href="#" data-page="${currentPage - 1}">«</a>
-  </li>`;
-
-  // Tính window hiện tại
-  const windowStart = Math.max(0, currentPage - Math.floor(WINDOW_SIZE / 2));
-  const windowEnd   = Math.min(totalPages - 1, windowStart + WINDOW_SIZE - 1);
-  // Điều chỉnh nếu window vượt cuối
-  const adjStart    = Math.max(0, windowEnd - WINDOW_SIZE + 1);
-
-  // Trang 1 + dấu … nếu window không bắt đầu từ 0
-  if (adjStart > 0) {
-    html += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
-    if (adjStart > 1) {
-      html += `<li class="page-item disabled"><a class="page-link" href="#">…</a></li>`;
-    }
-  }
-
-  // Các trang trong window
-  for (let i = adjStart; i <= windowEnd; i++) {
-    html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
-      <a class="page-link" href="#" data-page="${i}">${i + 1}</a>
-    </li>`;
-  }
-
-  // Dấu … + trang cuối nếu window không kết thúc ở trang cuối
-  if (windowEnd < totalPages - 1) {
-    if (windowEnd < totalPages - 2) {
-      html += `<li class="page-item disabled"><a class="page-link" href="#">…</a></li>`;
-    }
-    html += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
-  }
-
-  // Nút »  Next
-  html += `<li class="page-item ${currentPage >= totalPages - 1 ? 'disabled' : ''}">
-    <a class="page-link" href="#" data-page="${currentPage + 1}">»</a>
-  </li>`;
-
-  html += `</ul>`;
-  container.innerHTML = html;
-
-  // Gắn sự kiện click — mỗi click gọi API mới
-  container.querySelectorAll('.page-link[data-page]').forEach(link => {
-    link.addEventListener('click', function (e) {
-      e.preventDefault();
-      const page = parseInt(this.dataset.page);
-      if (page >= 0 && page < totalPages) {
-        currentPage = page;
-        loadCategories();
-      }
-    });
-  });
-}
-
-function renderCategories(items) {
-  const tbody = document.getElementById('cat-tbody');
-  const totalEl = document.querySelector('.card-tools .badge');
-  if (totalEl) totalEl.textContent = `${totalElements} total`;
-
-  if (!items.length) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No categories found.</td></tr>';
-    renderPagination();
-    return;
-  }
-
-  if (tbody) {
-    tbody.innerHTML = items.map(c => `
-      <tr data-id="${c.id}">
-        <td><input type="checkbox" class="form-check-input row-check" /></td>
-        <td><strong>${c.title}</strong>${c.parentId ? ' <small class="text-muted">(sub)</small>' : ''}</td>
-        <td><code>${c.slug}</code></td>
-        <td class="col-wrap">${c.content || '—'}</td>
-        <td><span class="badge text-bg-primary">${c.postCount ?? 0}</span></td>
-        <td>
-          <button class="btn btn-sm btn-warning" onclick="editCategory(${c.id})"><i class="bi bi-pencil"></i></button>
-          <button class="btn btn-sm btn-danger" onclick="deleteCategory(${c.id})"><i class="bi bi-trash"></i></button>
-        </td>
-      </tr>`).join('');
-  }
-
-  renderPagination();
-}
-
-// ── Cập nhật dropdown parent — luôn dùng allCategories (full list) ─────────────
-
-function updateParentDropdown() {
-  const sel = document.getElementById('catParent');
-  if (sel) {
-    sel.innerHTML = '<option value="">None (Top Level)</option>' +
-      allCategories.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
-  }
-}
-
-// ── Load dữ liệu từ server ─────────────────────────────────────────────────────
+// --- 4. Data Loading Logic ---
 
 async function loadCategories() {
   try {
-    const data = await CategoryService.getPage(currentPage, PAGE_SIZE);
+    const data = await CategoryService.getPage(state.currentPage, state.pageSize);
 
-    if (isPageResponse(data)) {
-      // Backend hỗ trợ pagination (Spring Page)
-      totalElements = data.totalElements;
-      totalPages    = Math.max(1, data.totalPages);
-      renderCategories(data.content);
-    } else {
-      // Backend trả về mảng thẳng (chưa hỗ trợ pagination)
-      // → client-side slice tạm thời
-      const list = Array.isArray(data) ? data : [];
-      totalElements = list.length;
-      totalPages    = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-      if (currentPage >= totalPages) currentPage = 0;
-      const start = currentPage * PAGE_SIZE;
-      renderCategories(list.slice(start, start + PAGE_SIZE));
-    }
+    // Chuẩn hóa dữ liệu từ Spring Boot Page hoặc mảng thuần
+    const isPage = data && Array.isArray(data.content);
+    const items = isPage ? data.content : (Array.isArray(data) ? data : []);
+
+    state.totalElements = isPage ? data.totalElements : items.length;
+    state.totalPages = isPage ? Math.max(1, data.totalPages) : Math.max(1, Math.ceil(items.length / state.pageSize));
+
+    // Fallback client-side slice nếu backend chưa có pagination
+    const displayItems = isPage ? items : items.slice(state.currentPage * state.pageSize, (state.currentPage + 1) * state.pageSize);
+
+    renderTable(displayItems);
   } catch (err) {
     UI.toast('Failed to load categories: ' + err.message, 'danger');
   }
 }
 
-async function loadAllCategoriesForDropdown() {
+async function loadAllForDropdown() {
   try {
     const data = await CategoryService.getAll();
-    allCategories = Array.isArray(data) ? data
-      : Array.isArray(data?.content) ? data.content
-      : [];
-    updateParentDropdown();
-  } catch {
-    allCategories = [];
-    updateParentDropdown();
+    state.allCategories = Array.isArray(data) ? data : (data?.content || []);
+
+    elements.parentDropdown.innerHTML = '<option value="">None (Top Level)</option>' +
+      state.allCategories.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+  } catch (err) {
+    console.error('Dropdown load error:', err);
   }
 }
 
-// ── CRUD ───────────────────────────────────────────────────────────────────────
+// --- 5. Rendering Logic ---
 
-function editCategory(id) {
-  const cat = allCategories.find(c => c.id === id);
-  if (!cat) {
-    UI.toast('Không tìm thấy category trong danh sách. Thử reload trang.', 'warning');
+function renderTable(items) {
+  if (elements.totalBadge) elements.totalBadge.textContent = `${state.totalElements} total`;
+
+  if (!items.length) {
+    elements.tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No categories found.</td></tr>';
+    elements.pagination.innerHTML = '';
     return;
   }
-  const titleInput  = document.getElementById('catTitle');
-  const slugInput   = document.getElementById('catSlug');
-  const descInput   = document.getElementById('catDescription');
-  const parentSel   = document.getElementById('catParent');
-  const submitBtn   = document.querySelector('[type="submit"]');
 
-  if (titleInput) titleInput.value  = cat.title;
-  if (slugInput)  slugInput.value   = cat.slug;
-  if (descInput)  descInput.value   = cat.content || '';
-  if (parentSel)  parentSel.value   = cat.parentId ?? '';
-  if (submitBtn)  submitBtn.textContent = 'Update Category';
+  elements.tbody.innerHTML = items.map(c => `
+        <tr data-id="${c.id}">
+            <td><input type="checkbox" class="form-check-input row-check" /></td>
+            <td><strong>${c.title}</strong>${c.parentId ? ' <small class="text-muted">(sub)</small>' : ''}</td>
+            <td><code>${c.slug}</code></td>
+            <td class="text-truncate" style="max-width: 250px;">${c.content || '—'}</td>
+            <td><span class="badge text-bg-primary">${c.postCount ?? 0}</span></td>
+            <td>
+                <button class="btn btn-sm btn-warning" onclick="editCategory(${c.id})" title="Edit"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-danger" onclick="deleteCategory(${c.id})" title="Delete"><i class="bi bi-trash"></i></button>
+                
+            </td>
+        </tr>`).join('');
 
-  // Lưu id đang edit vào biến toàn cục
-  window._editingCatId = id;
-
-  titleInput?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  titleInput?.focus();
+  renderPagination();
 }
 
-async function deleteCategory(id) {
-  if (!await UI.confirm('Delete this category?')) return;
+function renderPagination() {
+  if (!elements.pagination) return;
+  const { currentPage, totalPages, windowSize } = state;
+
+  let html = `<ul class="pagination pagination-sm m-0 float-end">`;
+
+  // Nút Previous
+  html += `<li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${currentPage - 1}">«</a></li>`;
+
+  // Sliding Window Logic
+  const windowStart = Math.max(0, currentPage - Math.floor(windowSize / 2));
+  const windowEnd = Math.min(totalPages - 1, windowStart + windowSize - 1);
+  const adjStart = Math.max(0, windowEnd - windowSize + 1);
+
+  if (adjStart > 0) {
+    html += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
+    if (adjStart > 1) html += `<li class="page-item disabled"><span class="page-link">…</span></li>`;
+  }
+
+  for (let i = adjStart; i <= windowEnd; i++) {
+    html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+            <a class="page-link" href="#" data-page="${i}">${i + 1}</a></li>`;
+  }
+
+  if (windowEnd < totalPages - 1) {
+    if (windowEnd < totalPages - 2) html += `<li class="page-item disabled"><span class="page-link">…</span></li>`;
+    html += `<li class="page-item"><a class="page-link" href="#" data-page="${totalPages - 1}">${totalPages}</a></li>`;
+  }
+
+  // Nút Next
+  html += `<li class="page-item ${currentPage >= totalPages - 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" data-page="${currentPage + 1}">»</a></li>`;
+
+  html += `</ul>`;
+  elements.pagination.innerHTML = html;
+
+  // Event Delegation cho Pagination
+  elements.pagination.querySelectorAll('.page-link[data-page]').forEach(link => {
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetPage = parseInt(e.target.dataset.page);
+      if (targetPage >= 0 && targetPage < totalPages) {
+        state.currentPage = targetPage;
+        loadCategories();
+      }
+    };
+  });
+}
+
+// --- 6. Event Handlers ---
+
+function setupEventListeners() {
+  // 1. Auto-slug logic
+  elements.inputs.title.addEventListener('input', function () {
+    if (!state.editingId && elements.inputs.slug) {
+      elements.inputs.slug.value = UI.toSlug(this.value);
+    }
+  });
+
+  // 2. Form Submit (Create/Update)
+  elements.form.onsubmit = async (e) => {
+    e.preventDefault();
+    const payload = {
+      title: elements.inputs.title.value.trim(),
+      slug: elements.inputs.slug.value.trim() || UI.toSlug(elements.inputs.title.value),
+      content: elements.inputs.content.value.trim(),
+      parentId: elements.parentDropdown.value || null
+    };
+
+    try {
+      if (state.editingId) {
+        await CategoryService.update(state.editingId, payload);
+        UI.toast('Category updated successfully!');
+      } else {
+        await CategoryService.create(payload);
+        UI.toast('Category created successfully!');
+        state.currentPage = 0; // Về trang đầu khi tạo mới
+      }
+      resetForm();
+      await refreshData();
+    } catch (err) { UI.toast(err.message, 'danger'); }
+  };
+
+  // 3. Search với Debounce (300ms)
+  let searchTimeout;
+  elements.searchInput?.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => performSearch(e.target.value.trim()), 300);
+  });
+
+  // 3b. Refresh button
+  elements.refreshBtn?.addEventListener('click', async () => {
+    if (elements.searchInput) elements.searchInput.value = '';
+    state.currentPage = 0;
+    await refreshData();
+  });
+
+  // 4. Select All
+  elements.selectAll?.addEventListener('change', (e) => {
+    document.querySelectorAll('.row-check').forEach(cb => cb.checked = e.target.checked);
+  });
+
+  // 5. Delete Selected
+  document.getElementById('deleteSelectedBtn')?.addEventListener('click', deleteSelected);
+
+  // 6. Cancel Edit
+  elements.cancelBtn?.addEventListener('click', resetForm);
+}
+
+// --- 7. Action Functions ---
+
+async function performSearch(keyword) {
+  if (!keyword) {
+    state.currentPage = 0;
+    await loadCategories();
+    return;
+  }
+  try {
+    const data = await CategoryService.search(keyword);
+    const list = Array.isArray(data) ? data : (data?.content || []);
+    renderTable(list.slice(0, state.pageSize));
+    elements.pagination.innerHTML = ''; // Tắt phân trang khi đang search kết quả tự do
+  } catch (err) {
+    UI.toast('Search failed, showing all categories.', 'warning');
+    await loadCategories();
+  }
+}
+
+window.editCategory = (id) => {
+  const cat = state.allCategories.find(c => c.id === id);
+  if (!cat) return UI.toast('Category not found.', 'warning');
+
+  state.editingId = id;
+  elements.inputs.title.value = cat.title;
+  elements.inputs.slug.value = cat.slug;
+  elements.inputs.content.value = cat.content || '';
+  elements.parentDropdown.value = cat.parentId || '';
+
+  elements.submitBtn.textContent = 'Update Category';
+  elements.cancelBtn?.classList.remove('d-none');
+  elements.inputs.title.scrollIntoView({ behavior: 'smooth' });
+  elements.inputs.title.focus();
+};
+
+window.deleteCategory = async (id) => {
+  if (!await UI.confirm('Are you sure you want to delete this category?')) return;
   try {
     await CategoryService.delete(id);
-    UI.toast('Category deleted.');
-    // Nếu trang hiện tại không còn item nào, lùi 1 trang
-    if (currentPage > 0) {
-      const remainingOnPage = document.querySelectorAll('#cat-tbody tr[data-id]').length - 1;
-      if (remainingOnPage <= 0) currentPage--;
-    }
-    await loadCategories();
-    await loadAllCategoriesForDropdown();
+    UI.toast('Deleted successfully.');
+
+    // Kiểm tra nếu trang hiện tại hết item thì lùi trang
+    const remainingOnPage = elements.tbody.querySelectorAll('tr').length;
+    if (remainingOnPage <= 1 && state.currentPage > 0) state.currentPage--;
+
+    await refreshData();
+  } catch (err) { UI.toast(err.message, 'danger'); }
+};
+
+async function deleteSelected() {
+  const ids = Array.from(document.querySelectorAll('.row-check:checked'))
+    .map(cb => Number(cb.closest('tr').dataset.id));
+
+  if (!ids.length) return UI.toast('Please select at least one item.', 'warning');
+  if (!await UI.confirm(`Delete ${ids.length} selected items?`)) return;
+
+  try {
+    await Promise.all(ids.map(id => CategoryService.delete(id)));
+    UI.toast('Selected categories deleted.');
+    if (elements.selectAll) elements.selectAll.checked = false;
+    await refreshData();
   } catch (err) { UI.toast(err.message, 'danger'); }
 }
 
-async function deleteSelectedCategories() {
-  const checkedBoxes = document.querySelectorAll('.row-check:checked');
-
-  if (checkedBoxes.length === 0) {
-    UI.toast('Vui lòng chọn ít nhất một category để xóa.', 'warning');
-    return;
-  }
-
-  if (!await UI.confirm(`Bạn có chắc chắn muốn xóa ${checkedBoxes.length} category đã chọn không?`)) {
-    return;
-  }
-
-  const categoryIds = Array.from(checkedBoxes).map(cb => {
-    const row = cb.closest('tr');
-    return row ? Number(row.dataset.id) : null;
-  }).filter(id => id !== null);
-
-  try {
-    await Promise.all(categoryIds.map(id => CategoryService.delete(id)));
-    UI.toast(`${categoryIds.length} category đã được xóa thành công.`, 'success');
-    const selectAll = document.getElementById('selectAll');
-    if (selectAll) selectAll.checked = false;
-    // Nếu xóa hết trang hiện tại thì lùi về trang trước
-    if (currentPage > 0 && categoryIds.length >= PAGE_SIZE) currentPage--;
-    await loadCategories();
-    await loadAllCategoriesForDropdown();
-  } catch (err) {
-    UI.toast(err.message || 'Đã xảy ra lỗi khi xóa các category.', 'danger');
-  }
+function resetForm() {
+  state.editingId = null;
+  elements.form.reset();
+  elements.submitBtn.textContent = 'Add Category';
+  elements.cancelBtn?.classList.add('d-none');
 }
-
-// Gán các hàm vào window để gọi từ HTML
-window.editCategory    = editCategory;
-window.deleteCategory  = deleteCategory;
-window._editingCatId   = null;
-
-// ── DOMContentLoaded ───────────────────────────────────────────────────────────
-
-document.addEventListener('DOMContentLoaded', async function () {
-  UI.initSidebar();
-
-  // Auto slug khi thêm mới
-  const titleInput = document.getElementById('catTitle');
-  if (titleInput) {
-    titleInput.addEventListener('input', function () {
-      const slugInput = document.getElementById('catSlug');
-      if (slugInput && !window._editingCatId) slugInput.value = UI.toSlug(this.value);
-    });
-  }
-
-  // Form submit
-  const form = document.querySelector('form');
-  if (form) {
-    form.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const payload = {
-        title:    document.getElementById('catTitle').value.trim(),
-        slug:     document.getElementById('catSlug').value.trim() || UI.toSlug(document.getElementById('catTitle').value),
-        content:  document.getElementById('catDescription').value.trim(),
-        parentId: document.getElementById('catParent').value || null,
-      };
-      try {
-        if (window._editingCatId) {
-          await CategoryService.update(window._editingCatId, payload);
-          UI.toast('Category updated.');
-          window._editingCatId = null;
-          const submitBtn = document.querySelector('[type="submit"]');
-          if (submitBtn) submitBtn.textContent = 'Add Category';
-        } else {
-          await CategoryService.create(payload);
-          UI.toast('Category created.');
-        }
-        this.reset();
-        currentPage = 0;
-        await loadCategories();
-        await loadAllCategoriesForDropdown();
-      } catch (err) { UI.toast(err.message, 'danger'); }
-    });
-  }
-
-  // Select all
-  const selectAll = document.getElementById('selectAll');
-  if (selectAll) {
-    selectAll.addEventListener('change', function () {
-      document.querySelectorAll('.row-check').forEach(cb => cb.checked = this.checked);
-    });
-  }
-
-  // Delete selected
-  const deleteSelectedBtn = document.getElementById('deleteSelectedBtn');
-  if (deleteSelectedBtn) {
-    deleteSelectedBtn.addEventListener('click', deleteSelectedCategories);
-  }
-
-  // Search
-  const searchInput = document.getElementById('cat-search');
-  const searchBtn   = document.getElementById('cat-search-btn');
-
-  async function performSearch() {
-    const keyword = searchInput?.value.trim() || '';
-    if (!keyword) {
-      currentPage = 0;
-      await loadCategories();
-      return;
-    }
-    try {
-      const data = await CategoryService.search(keyword);
-      const list = Array.isArray(data) ? data : Array.isArray(data?.content) ? data.content : [];
-      // Kết quả search hiển thị hết trên 1 trang (thường ít item)
-      totalElements = list.length;
-      totalPages    = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-      currentPage   = 0;
-      renderCategories(list.slice(0, PAGE_SIZE));
-    } catch {
-      UI.toast('Không thể tìm kiếm, hiển thị tất cả.', 'warning');
-      currentPage = 0;
-      await loadCategories();
-    }
-  }
-
-  if (searchBtn) searchBtn.addEventListener('click', performSearch);
-  if (searchInput) {
-    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') performSearch(); });
-  }
-
-  // Load song song: dữ liệu trang + dropdown parent
-  await Promise.all([loadCategories(), loadAllCategoriesForDropdown()]);
-  await UI.renderCurrentUser();
-});

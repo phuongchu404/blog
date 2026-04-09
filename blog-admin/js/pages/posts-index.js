@@ -153,7 +153,6 @@ document.addEventListener('DOMContentLoaded', async function () {
   UI.initSidebar();
 
   const searchInput  = document.getElementById('posts-search');
-  const searchBtn    = document.getElementById('posts-search-btn');
   const statusFilter = document.getElementById('posts-status-filter');
 
   function applyFilter() {
@@ -165,9 +164,17 @@ document.addEventListener('DOMContentLoaded', async function () {
     loadPosts();
   }
 
-  if (searchBtn)    searchBtn.addEventListener('click', applyFilter);
   if (searchInput)  searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') applyFilter(); });
   if (statusFilter) statusFilter.addEventListener('change', applyFilter);
+
+  // Refresh button
+  document.getElementById('posts-refresh-btn')?.addEventListener('click', async () => {
+    if (searchInput)  searchInput.value  = '';
+    if (statusFilter) statusFilter.value = '';
+    _currentFilter = {};
+    currentPage    = 0;
+    await loadPosts();
+  });
 
   await loadPosts();
   await UI.renderCurrentUser();

@@ -190,9 +190,12 @@
                       <textarea class="form-control" id="catDescription" rows="3"
                         placeholder="Optional description..."></textarea>
                     </div>
-                    <div class="d-grid">
-                      <button type="submit" class="btn btn-primary">
+                    <div class="mb-4">
+                      <button type="submit" id="submitBtn" class="btn btn-primary">
                         <i class="bi bi-plus-circle me-1"></i> Add Category
+                      </button>
+                      <button type="button" id="cancelEditBtn" class="btn btn-secondary d-none">
+                        <i class="bi bi-x-circle me-1"></i>Cancel
                       </button>
                     </div>
                   </form>
@@ -205,9 +208,10 @@
               <!-- Search -->
               <div class="mb-3">
                 <div class="input-group">
-                  <input type="text" id="cat-search" class="form-control" placeholder="Search categories by name or slug..." autocomplete="off" />
-                  <button id="cat-search-btn" class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
+                  <input type="text" id="cat-search" class="form-control"
+                    placeholder="Search categories by name or slug..." autocomplete="off" />
+                  <button id="cat-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
+                    <i class="bi bi-arrow-clockwise"></i>
                   </button>
                 </div>
               </div>
@@ -215,25 +219,27 @@
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title"><i class="bi bi-tags me-2"></i>All Categories</h3>
-                  <div class="card-tools">
+                  <div class="card-tools ms-auto">
                     <span class="badge text-bg-primary">0 total</span>
                   </div>
                 </div>
                 <div class="card-body p-0">
-                  <table class="table table-striped table-hover align-middle mb-0">
-                    <thead>
-                      <tr>
-                        <th><input type="checkbox" class="form-check-input" id="selectAll" /></th>
-                        <th>Title</th>
-                        <th>Slug</th>
-                        <th>Content</th>
-                        <th>Posts</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody id="cat-tbody">
-                    </tbody>
-                  </table>
+                  <div style="overflow-x: auto;">
+                    <table class="table table-striped table-hover align-middle mb-0">
+                      <thead>
+                        <tr>
+                          <th><input type="checkbox" class="form-check-input" id="selectAll" /></th>
+                          <th>Title</th>
+                          <th>Slug</th>
+                          <th>Content</th>
+                          <th>Posts</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="cat-tbody">
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
                 <div class="card-footer clearfix">
                   <div id="cat-pagination"></div>

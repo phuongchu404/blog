@@ -183,29 +183,18 @@
                       <input type="text" class="form-control" id="tagSlug" placeholder="tag-slug" />
                       <small class="text-muted">Auto-generated if blank.</small>
                     </div>
-                    <div class="d-grid">
-                      <button type="submit" class="btn btn-primary">
+                    <div class="mb-4">
+                      <button type="submit" id="submitBtn" class="btn btn-primary">
                         <i class="bi bi-plus-circle me-1"></i> Add Tag
+                      </button>
+                      <button type="button" id="cancelEditBtn" class="btn btn-secondary d-none">
+                        <i class="bi bi-x-circle me-1"></i> Cancel
                       </button>
                     </div>
                   </form>
                 </div>
               </div>
 
-              <!-- Tag Cloud Preview -->
-              <div class="card mt-3">
-                <div class="card-header">
-                  <h3 class="card-title">
-                    <i class="bi bi-cloud me-2"></i>Tag Cloud
-                  </h3>
-                </div>
-                <div class="card-body" id="tag-cloud">
-                  <!-- Dynamic tags will be loaded here -->
-                  <div class="text-center py-3 text-muted">
-                    <small>Loading tags...</small>
-                  </div>
-                </div>
-              </div>
             </div>
 
             <!-- Tags Table -->
@@ -213,10 +202,10 @@
               <!-- Search -->
               <div class="mb-3">
                 <div class="input-group">
-                  <input type="text" id="searchInput" class="form-control" placeholder="Search tags by name..."
-                    autocomplete="off" />
-                  <button id="searchBtn" class="btn btn-outline-secondary" type="button">
-                    <i class="bi bi-search"></i>
+                  <input type="text" id="tag-search" class="form-control"
+                    placeholder="Search tags by name or slug..." autocomplete="off" />
+                  <button id="tag-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
+                    <i class="bi bi-arrow-clockwise"></i>
                   </button>
                 </div>
               </div>
@@ -226,7 +215,7 @@
                   <h3 class="card-title">
                     <i class="bi bi-hash me-2"></i>All Tags
                   </h3>
-                  <div class="card-tools">
+                  <div class="card-tools ms-auto">
                     <span class="badge text-bg-primary"><span id="tag-count">0</span> total</span>
                   </div>
                 </div>

@@ -121,7 +121,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // Search
-  const searchInput = document.querySelector('.input-group input');
+  const searchInput = document.getElementById('users-search');
   if (searchInput) {
     searchInput.addEventListener('input', function () {
       const kw = this.value.trim().toLowerCase();
@@ -132,6 +132,14 @@ document.addEventListener('DOMContentLoaded', async function () {
       ));
     });
   }
+
+  // Refresh button
+  document.getElementById('users-refresh-btn')?.addEventListener('click', async () => {
+    if (searchInput) searchInput.value = '';
+    const filterRole = document.getElementById('filterRole');
+    if (filterRole) filterRole.value = '';
+    await loadUsers();
+  });
 
   // Create / update user form
   const addForm = document.getElementById('addUserForm');

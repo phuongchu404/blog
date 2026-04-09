@@ -103,7 +103,7 @@ function renderTagPage() {
       <td><code>${t.slug}</code></td>
       <td><span class="badge text-bg-secondary">${t.postCount ?? 0}</span></td>
       <td>
-        <button class="btn btn-sm btn-warning" onclick="openEditTag(${t.id})" data-bs-toggle="modal" data-bs-target="#editTagModal"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-warning" onclick="openEditTag(${t.id})"><i class="bi bi-pencil"></i></button>
         <button class="btn btn-sm btn-danger" onclick="deleteTag(${t.id})"><i class="bi bi-trash"></i></button>
       </td>
     </tr>`).join('');
@@ -138,12 +138,24 @@ async function loadTags() {
 
 function openEditTag(id) {
   const tag = allTags.find(t => t.id === id);
-  if (!tag) return;
+  if (!tag) {
+    UI.toast('Không tìm thấy tag trong danh sách. Thử reload trang.', 'warning');
+    return;
+  }
   editingTagId = id;
-  const nameInput = document.getElementById('editTagName');
-  const slugInput = document.getElementById('editTagSlug');
-  if (nameInput) nameInput.value = tag.title;
-  if (slugInput) slugInput.value = tag.slug;
+
+  const nameInput    = document.getElementById('tagName');
+  const slugInput    = document.getElementById('tagSlug');
+  const submitBtn    = document.getElementById('submitBtn');
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+
+  if (nameInput)    nameInput.value  = tag.title;
+  if (slugInput)    slugInput.value  = tag.slug;
+  if (submitBtn)    submitBtn.textContent = 'Update Tag';
+  if (cancelEditBtn) cancelEditBtn.classList.remove('d-none');
+
+  nameInput?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  nameInput?.focus();
 }
 
 async function deleteTag(id) {
@@ -230,7 +242,19 @@ document.addEventListener('DOMContentLoaded', async function () {
     deleteSelectedBtn.addEventListener('click', deleteSelectedTags);
   }
 
-  // Add tag form
+  // Cancel edit
+  const cancelEditBtn = document.getElementById('cancelEditBtn');
+  if (cancelEditBtn) {
+    cancelEditBtn.addEventListener('click', function () {
+      editingTagId = null;
+      document.getElementById('addTagForm')?.reset();
+      this.classList.add('d-none');
+      const submitBtn = document.getElementById('submitBtn');
+      if (submitBtn) submitBtn.textContent = 'Add Tag';
+    });
+  }
+
+  // Add / Update tag form
   const addTagForm = document.getElementById('addTagForm');
   if (addTagForm) {
     addTagForm.addEventListener('submit', async function (e) {
@@ -240,8 +264,18 @@ document.addEventListener('DOMContentLoaded', async function () {
         slug:  document.getElementById('tagSlug').value.trim() || UI.toSlug(document.getElementById('tagName').value),
       };
       try {
-        await TagService.create(payload);
-        UI.toast('Tag created.');
+        if (editingTagId) {
+          await TagService.update(editingTagId, payload);
+          UI.toast('Tag updated.');
+          editingTagId = null;
+          const submitBtn = document.getElementById('submitBtn');
+          if (submitBtn) submitBtn.textContent = 'Add Tag';
+          const cancelBtn = document.getElementById('cancelEditBtn');
+          if (cancelBtn) cancelBtn.classList.add('d-none');
+        } else {
+          await TagService.create(payload);
+          UI.toast('Tag created.');
+        }
         this.reset();
         currentPage = 0;
         await loadTags();
@@ -249,64 +283,44 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
-  // Edit tag form (inside modal)
-  const editTagForm = document.getElementById('editTagForm');
-  if (editTagForm) {
-    editTagForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const payload = {
-        title: document.getElementById('editTagName').value.trim(),
-        slug:  document.getElementById('editTagSlug').value.trim(),
-      };
-      try {
-        await TagService.update(editingTagId, payload);
-        UI.toast('Tag updated.');
-        const modalEl = document.getElementById('editTagModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) modal.hide();
-        await loadTags();
-      } catch (err) { UI.toast(err.message, 'danger'); }
-    });
-  }
+  // Search với Debounce (300ms)
+  const searchInput  = document.getElementById('tag-search');
+  const refreshBtn   = document.getElementById('tag-refresh-btn');
 
-  // Search
-  const searchInput = document.getElementById('searchInput');
-  const searchBtn   = document.getElementById('searchBtn');
-
-  async function performSearch() {
-    const keyword = searchInput?.value.trim() || '';
+  async function performSearch(keyword) {
     if (!keyword) {
-      currentPage   = 0;
-      displayList   = allTags;
-      totalElements = allTags.length;
-      totalPages    = Math.max(1, Math.ceil(allTags.length / PAGE_SIZE));
-      renderTagPage();
+      currentPage = 0;
+      await loadTags();
       return;
     }
     try {
       const data = await TagService.search(keyword);
-      const list  = Array.isArray(data) ? data : [];
+      const list  = Array.isArray(data) ? data : (data?.content || []);
       displayList   = list;
       totalElements = list.length;
       totalPages    = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
       currentPage   = 0;
       renderTagPage();
+      document.getElementById('tags-pagination').innerHTML = ''; // tắt phân trang khi search
     } catch {
-      displayList = allTags.filter(t =>
-        t.title.toLowerCase().includes(keyword.toLowerCase()) ||
-        t.slug.toLowerCase().includes(keyword.toLowerCase())
-      );
-      totalElements = displayList.length;
-      totalPages    = Math.max(1, Math.ceil(displayList.length / PAGE_SIZE));
-      currentPage   = 0;
-      renderTagPage();
+      UI.toast('Không thể tìm kiếm, hiển thị tất cả.', 'warning');
+      currentPage = 0;
+      await loadTags();
     }
   }
 
-  if (searchBtn)   searchBtn.addEventListener('click', performSearch);
-  if (searchInput) {
-    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') performSearch(); });
-  }
+  let searchTimeout;
+  searchInput?.addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => performSearch(e.target.value.trim()), 300);
+  });
+
+  // Refresh button
+  refreshBtn?.addEventListener('click', async () => {
+    if (searchInput) searchInput.value = '';
+    currentPage = 0;
+    await loadTags();
+  });
 
   await loadTags();
   await UI.renderCurrentUser();

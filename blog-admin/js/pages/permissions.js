@@ -318,6 +318,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
+  // Refresh button
+  document.getElementById('perms-refresh-btn')?.addEventListener('click', async () => {
+    if (searchInp) searchInp.value = '';
+    const filterGrp = document.getElementById('filterGroup');
+    if (filterGrp) filterGrp.value = '';
+    currentPage = 0;
+    await loadPermissions();
+  });
+
   // Add permission form
   const addForm = document.getElementById('addPermissionForm');
   if (addForm) {

@@ -131,8 +131,10 @@
             <div class="row mb-3">
               <div class="col-md-6">
                 <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search users..." />
-                  <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
+                  <input type="text" id="users-search" class="form-control" placeholder="Search users..." autocomplete="off" />
+                  <button id="users-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
+                    <i class="bi bi-arrow-clockwise"></i>
+                  </button>
                 </div>
               </div>
               <div class="col-md-3">
@@ -151,8 +153,8 @@
             <div class="card">
               <div class="card-header">
                 <h3 class="card-title"><i class="bi bi-people me-2"></i>All Users</h3>
-                <div class="card-tools">
-                  <span class="badge text-bg-primary" id="users-count-badge">...</span>
+                <div class="card-tools ms-auto">
+                  <span class="badge text-bg-primary" id="users-count-badge">0 total</span>
                 </div>
               </div>
               <div class="card-body p-0">

@@ -8,6 +8,15 @@ const CategoryService = {
   /** Lấy toàn bộ danh mục */
   getAll()                { return Http.get('/api/categories'); },
 
+  /**
+   * Lấy danh mục theo trang (server-side pagination).
+   * Trả về { content, totalElements, totalPages, number } nếu backend hỗ trợ,
+   * hoặc fallback sang getAll() nếu backend chưa hỗ trợ.
+   */
+  getPage(page = 0, size = 10) {
+    return Http.get(`/api/categories?page=${page}&size=${size}`);
+  },
+
   /** Lấy danh mục gốc (không có parent) */
   getRoots()              { return Http.get('/api/categories/root'); },
 
