@@ -19,13 +19,19 @@ const WINDOW_SIZE = 3;
 let _searchKeyword = '';
 
 const roleBadgeClass = {
-  ADMIN: 'text-bg-danger',
+  ADMIN:     'text-bg-danger',
   MODERATOR: 'text-bg-primary',
-  AUTHOR: 'text-bg-success',
-  USER: 'text-bg-secondary',
+  AUTHOR:    'text-bg-success',
+  USER:      'text-bg-secondary',
 };
 
-// ── Sliding window pagination ─────────────────────────────────────────────────
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function isPageResponse(data) {
+  return data && Array.isArray(data.content) && typeof data.totalPages === 'number';
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────────
 
 function renderPagination() {
   const container = document.getElementById('roles-pagination');
@@ -72,10 +78,8 @@ function renderPagination() {
   });
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
-
 function renderRoles(items) {
-  const tbody    = document.getElementById('roles-tbody');
+  const tbody      = document.getElementById('roles-tbody');
   const countBadge = document.getElementById('roles-count-badge');
   if (countBadge) countBadge.textContent = `${totalElements} total`;
 
@@ -104,13 +108,12 @@ function renderRoles(items) {
   renderPagination();
 }
 
-// ── Load ──────────────────────────────────────────────────────────────────────
+// ── Load dữ liệu từ server ─────────────────────────────────────────────────────
 
 async function loadRoles() {
   try {
     const data = await RoleService.getAll();
-    // Roles thường ít → lấy hết rồi client-side filter + slice
-    allRoles = Array.isArray(data) ? data : (data.content ?? []);
+    allRoles = isPageResponse(data) ? data.content : (Array.isArray(data) ? data : (data.content ?? []));
 
     const filtered = _searchKeyword
       ? allRoles.filter(r => r.name.toLowerCase().includes(_searchKeyword) || (r.description || '').toLowerCase().includes(_searchKeyword))
@@ -126,7 +129,7 @@ async function loadRoles() {
   }
 }
 
-// ── Role CRUD ─────────────────────────────────────────────────────────────────
+// ── CRUD ───────────────────────────────────────────────────────────────────────
 
 function openEditRole(id, name, description) {
   editingRoleId = id;
@@ -216,7 +219,7 @@ window.openEditRole          = openEditRole;
 window.openManagePermissions = openManagePermissions;
 window.deleteRole            = deleteRole;
 
-// ── DOMContentLoaded ──────────────────────────────────────────────────────────
+// ── DOMContentLoaded ───────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async function () {
   UI.initSidebar();
@@ -262,7 +265,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   if (searchInput) {
     searchInput.addEventListener('input', () => {
       _searchKeyword = searchInput.value.trim().toLowerCase();
-      currentPage = 0;
+      currentPage    = 0;
       loadRoles();
     });
   }
