@@ -317,9 +317,18 @@ h1,h2,h3,h4,h5,h6 { font-family: 'Inter', sans-serif !important; color: var(--te
 .small-box-footer:hover { background: rgba(0,0,0,.25) !important; color: white !important; }
 
 /* ── Tables ──────────────────────────────────────────────── */
+
+/* Scroll ngang khi bảng vượt quá chiều rộng container */
+.card-body.p-0 {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .table {
   font-size: .875rem;
   color: var(--text-body);
+  /* Giữ min-width để bảng không bị co lại — buộc scroll thay vì wrap */
+  min-width: 600px;
 }
 .table thead th {
   background: var(--body-bg) !important;
@@ -337,6 +346,15 @@ h1,h2,h3,h4,h5,h6 { font-family: 'Inter', sans-serif !important; color: var(--te
   padding: .85rem 1rem !important;
   border-bottom: 1px solid var(--border-light, #f3f4f6) !important;
   color: var(--text-body);
+  /* Không cho các ô bị xuống dòng — buộc scroll ngang thay vì wrap */
+  white-space: nowrap;
+}
+/* Cột content/description cho phép wrap nhưng giới hạn chiều rộng */
+.table tbody td.col-wrap {
+  white-space: normal;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .table tbody tr:last-child td { border-bottom: none !important; }
 .table-hover tbody tr:hover { background: #fafbff !important; }
