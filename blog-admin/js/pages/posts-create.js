@@ -3,14 +3,13 @@
  */
 
 // Lấy postId từ URL nếu đang edit
-const urlParams = new URLSearchParams(window.location.search);
+const urlParams  = new URLSearchParams(window.location.search);
 const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
 
 let ckEditor = null;
 
-/**
- * Custom Upload Adapter for CKEditor 5
- */
+// ── CKEditor Upload Adapter ────────────────────────────────────────────────────
+
 class MyUploadAdapter {
   constructor(loader) {
     this.loader = loader;
@@ -42,8 +41,10 @@ function MyCustomUploadAdapterPlugin(editor) {
   };
 }
 
+// ── Save ───────────────────────────────────────────────────────────────────────
+
 async function savePost(status) {
-  const title = document.getElementById('postTitle').value.trim();
+  const title   = document.getElementById('postTitle').value.trim();
   const content = ckEditor ? ckEditor.getData() : '';
 
   if (!title) { UI.toast('Title is required.', 'warning'); return; }
@@ -56,17 +57,17 @@ async function savePost(status) {
 
   const payload = {
     title,
-    slug: document.getElementById('postSlug').value.trim() || UI.toSlug(title),
-    summary: document.getElementById('postExcerpt').value.trim(),
+    slug:            document.getElementById('postSlug').value.trim() || UI.toSlug(title),
+    summary:         document.getElementById('postExcerpt').value.trim(),
     content,
-    status: status === 'PUBLISHED' ? 1 : (status === 'ARCHIVED' ? 2 : 0),
-    imageUrl: window.featuredImageUrl || null,
-    metaTitle: document.getElementById('metaTitle').value.trim(),
+    status:          status === 'PUBLISHED' ? 1 : (status === 'ARCHIVED' ? 2 : 0),
+    imageUrl:        window.featuredImageUrl || null,
+    metaTitle:       document.getElementById('metaTitle').value.trim(),
     metaDescription: document.getElementById('metaDescription').value.trim(),
-    metaKeywords: document.getElementById('metaKeywords').value.trim(),
-    authorId: document.getElementById('postAuthor').value || null,
-    tagIds: selectedTags,
-    categoryIds: document.getElementById('postCategory').value ? [Number(document.getElementById('postCategory').value)] : [],
+    metaKeywords:    document.getElementById('metaKeywords').value.trim(),
+    authorId:        document.getElementById('postAuthor').value || null,
+    tagIds:          selectedTags,
+    categoryIds:     document.getElementById('postCategory').value ? [Number(document.getElementById('postCategory').value)] : [],
   };
 
   try {
@@ -84,16 +85,12 @@ async function savePost(status) {
   }
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
-  // ── Sidebar Overlay Scrollbars ──────────────────────────────────────
-  const sidebarWrapper = document.querySelector('.sidebar-wrapper');
-  if (sidebarWrapper && OverlayScrollbarsGlobal?.OverlayScrollbars !== undefined && window.innerWidth > 992) {
-    OverlayScrollbarsGlobal.OverlayScrollbars(sidebarWrapper, {
-      scrollbars: { theme: 'os-theme-light', autoHide: 'leave', clickScroll: true },
-    });
-  }
+// ── DOMContentLoaded ───────────────────────────────────────────────────────────
 
-  // ── CKEditor 5 ──────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async function () {
+  UI.initSidebar();
+
+  // ── CKEditor 5 ─────────────────────────────────────────────────────
   const editorEl = document.getElementById('editor');
   if (editorEl) {
     ckEditor = await ClassicEditor.create(editorEl, {
@@ -132,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
-  // ── Tom Select (Tags) ────────────────────────────────────────────
+  // ── Tom Select (Tags) ───────────────────────────────────────────────
   const tagsEl = document.getElementById('postTags');
   if (tagsEl) {
     window.tomSelectTags = new TomSelect('#postTags', {
@@ -141,7 +138,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       placeholder: 'Select or type tags...',
       maxOptions: 200,
       delimiter: ',',
-      dropdownParent: 'body'
+      dropdownParent: 'body',
     });
   }
 
@@ -168,7 +165,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     fileInput.addEventListener('change', async function () {
       const file = this.files[0];
       if (!file) return;
-      
+
       const reader = new FileReader();
       reader.onload = e => {
         const preview = document.getElementById('imgPreview');
@@ -197,9 +194,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // ── Load Categories ─────────────────────────────────────────────────
   try {
-    const res = await CategoryService.getAll();
+    const res  = await CategoryService.getAll();
     const cats = Array.isArray(res) ? res : (res.content ?? []);
-    const sel = document.getElementById('postCategory');
+    const sel  = document.getElementById('postCategory');
     if (sel) {
       sel.innerHTML = '<option value="">-- Choose Category --</option>' +
         cats.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
@@ -208,11 +205,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     UI.toast('Could not load categories.', 'warning');
   }
 
-  // ── Load Tags into Tom Select ────────────────────────────────────
+  // ── Load Tags into Tom Select ────────────────────────────────────────
   try {
-    const res = await TagService.getAll();
+    const res  = await TagService.getAll();
     const tags = Array.isArray(res) ? res : (res.content ?? []);
-    const ts = window.tomSelectTags;
+    const ts   = window.tomSelectTags;
     if (ts) {
       tags.forEach(t => {
         const text = t.title || t.name || t;
@@ -220,12 +217,12 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
       ts.refreshOptions(false);
     }
-  } catch (_) { }
+  } catch (_) {}
 
   // ── Load Authors & Set Default ──────────────────────────────────────
   try {
     const users = await Http.get('/api/users/all') || [];
-    const list = Array.isArray(users) ? users : (users.content ?? []);
+    const list  = Array.isArray(users) ? users : (users.content ?? []);
     const selAut = document.getElementById('postAuthor');
 
     if (selAut) {
@@ -243,22 +240,22 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // ── Edit mode: load existing post ───────────────────────────────────
   if (editPostId) {
-    const pageTitle = document.getElementById('pageTitle');
+    const pageTitle       = document.getElementById('pageTitle');
     const breadcrumbAction = document.getElementById('breadcrumbAction');
-    const btnPublish = document.getElementById('btnPublish');
-    const publishDate = document.getElementById('publishDate');
+    const btnPublish      = document.getElementById('btnPublish');
+    const publishDate     = document.getElementById('publishDate');
 
-    if (pageTitle) pageTitle.textContent = 'Edit Post';
+    if (pageTitle)        pageTitle.textContent        = 'Edit Post';
     if (breadcrumbAction) breadcrumbAction.textContent = 'Edit';
-    if (btnPublish) btnPublish.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Post';
-    if (publishDate) publishDate.disabled = true;
+    if (btnPublish)       btnPublish.innerHTML         = '<i class="bi bi-check-circle me-1"></i> Update Post';
+    if (publishDate)      publishDate.disabled         = true;
 
     try {
       const post = await PostService.getById(editPostId);
-      document.getElementById('postTitle').value = post.title || '';
-      document.getElementById('postSlug').value = post.slug || '';
+      document.getElementById('postTitle').value   = post.title || '';
+      document.getElementById('postSlug').value    = post.slug || '';
       document.getElementById('postExcerpt').value = post.summary || '';
-      document.getElementById('postStatus').value = post.status || '0';
+      document.getElementById('postStatus').value  = post.status || '0';
 
       if (ckEditor) ckEditor.setData(post.content || '');
 
@@ -269,7 +266,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (post.tags && post.tags.length && window.tomSelectTags) {
         const ts = window.tomSelectTags;
         post.tags.forEach(t => {
-          const val = t.id;
+          const val  = t.id;
           const text = t.title || t.name;
           if (!ts.options[val]) ts.addOption({ value: val, text });
           ts.addItem(val, true);
@@ -287,35 +284,35 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (dropZone) dropZone.classList.add('d-none');
       }
 
-      document.getElementById('metaTitle').value = post.metaTitle || '';
+      document.getElementById('metaTitle').value       = post.metaTitle || '';
       document.getElementById('metaDescription').value = post.metaDescription || '';
-      document.getElementById('metaKeywords').value = post.metaKeywords || '';
+      document.getElementById('metaKeywords').value    = post.metaKeywords || '';
       if (post.metaDescription) {
         document.getElementById('metaDescCount').textContent = `(${post.metaDescription.length}/160)`;
       }
 
       if (post.publishedAt) {
-        const container = document.getElementById('publishDateContainer');
+        const container   = document.getElementById('publishDateContainer');
         const pubDateInput = document.getElementById('publishDate');
-        if (container) container.classList.remove('d-none');
+        if (container)    container.classList.remove('d-none');
         if (pubDateInput) {
-          pubDateInput.value = post.publishedAt.substring(0, 16);
+          pubDateInput.value    = post.publishedAt.substring(0, 16);
           pubDateInput.disabled = true;
         }
       }
 
       // SEO meta
       try {
-        const meta = await PostService.getMeta(editPostId);
+        const meta   = await PostService.getMeta(editPostId);
         const metaMap = {};
         (Array.isArray(meta) ? meta : []).forEach(m => metaMap[m.key] = m.value);
-        if (metaMap.metaTitle) document.getElementById('metaTitle').value = metaMap.metaTitle;
+        if (metaMap.metaTitle)       document.getElementById('metaTitle').value       = metaMap.metaTitle;
         if (metaMap.metaDescription) {
-          document.getElementById('metaDescription').value = metaMap.metaDescription;
-          document.getElementById('metaDescCount').textContent = `(${metaMap.metaDescription.length}/160)`;
+          document.getElementById('metaDescription').value                           = metaMap.metaDescription;
+          document.getElementById('metaDescCount').textContent                       = `(${metaMap.metaDescription.length}/160)`;
         }
-        if (metaMap.metaKeywords) document.getElementById('metaKeywords').value = metaMap.metaKeywords;
-      } catch (_) { }
+        if (metaMap.metaKeywords) document.getElementById('metaKeywords').value      = metaMap.metaKeywords;
+      } catch (_) {}
 
     } catch (err) { UI.toast('Failed to load post: ' + err.message, 'danger'); }
   }

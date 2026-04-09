@@ -9,14 +9,16 @@ let currentPage   = 0;   // 0-based
 const PAGE_SIZE   = 10;
 const WINDOW_SIZE = 3;
 
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
 function isPageResponse(data) {
   return data && Array.isArray(data.content) && typeof data.totalPages === 'number';
 }
 
-// ── Sliding window pagination ─────────────────────────────────────────────────
+// ── Render ─────────────────────────────────────────────────────────────────────
 
-function renderPagination(paginationId) {
-  const container = document.getElementById(paginationId);
+function renderPagination() {
+  const container = document.getElementById('posts-pagination');
   if (!container) return;
 
   let html = `<ul class="pagination pagination-sm m-0 float-end">`;
@@ -62,8 +64,6 @@ function renderPagination(paginationId) {
   });
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
-
 function renderPosts(items) {
   const tbody   = document.getElementById('posts-tbody');
   const countEl = document.getElementById('posts-total');
@@ -71,7 +71,7 @@ function renderPosts(items) {
 
   if (!items.length) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">No posts found.</td></tr>';
-    renderPagination('posts-pagination');
+    renderPagination();
     return;
   }
 
@@ -94,32 +94,27 @@ function renderPosts(items) {
       </tr>`).join('');
   }
 
-  renderPagination('posts-pagination');
+  renderPagination();
 }
 
-// ── Load ──────────────────────────────────────────────────────────────────────
+// ── Load dữ liệu từ server ─────────────────────────────────────────────────────
 
-// Lưu filter hiện tại để dùng khi đổi trang
-let _currentFilter = {};
+let _currentFilter = {};   // lưu filter hiện tại để dùng khi đổi trang
 
 async function loadPosts() {
-  const tbody = document.getElementById('posts-tbody');
-  if (tbody) UI.loading?.(tbody, true);
   try {
     const params = { page: currentPage, size: PAGE_SIZE, ..._currentFilter };
-    const data = await PostService.getAll(params);
+    const data   = await PostService.getAll(params);
 
     if (isPageResponse(data)) {
       totalElements = data.totalElements;
       totalPages    = Math.max(1, data.totalPages);
       renderPosts(data.content);
     } else {
-      // Fallback client-side
-      const list = Array.isArray(data) ? data : [];
-      // Áp filter tại client nếu backend không hỗ trợ
+      const list     = Array.isArray(data) ? data : [];
       const filtered = applyClientFilter(list);
-      totalElements = filtered.length;
-      totalPages    = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+      totalElements  = filtered.length;
+      totalPages     = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
       if (currentPage >= totalPages) currentPage = 0;
       renderPosts(filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE));
     }
@@ -137,6 +132,8 @@ function applyClientFilter(list) {
   );
 }
 
+// ── CRUD ───────────────────────────────────────────────────────────────────────
+
 async function deletePost(id) {
   if (!await UI.confirm('Delete this post? This action cannot be undone.')) return;
   try {
@@ -150,7 +147,7 @@ async function deletePost(id) {
 
 window.deletePost = deletePost;
 
-// ── DOMContentLoaded ──────────────────────────────────────────────────────────
+// ── DOMContentLoaded ───────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async function () {
   UI.initSidebar();
