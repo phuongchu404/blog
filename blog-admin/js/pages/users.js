@@ -4,12 +4,25 @@
 
 let allUsers = [];
 
-const roleColors = { ADMIN: 'text-bg-danger', MODERATOR: 'text-bg-primary', AUTHOR: 'text-bg-info', USER: 'text-bg-secondary' };
+const roleColors = {
+  ADMIN:     'text-bg-danger',
+  MODERATOR: 'text-bg-primary',
+  AUTHOR:    'text-bg-info',
+  USER:      'text-bg-secondary',
+};
+
+// ── Helpers ────────────────────────────────────────────────────────────────────
+
+function isPageResponse(data) {
+  return data && Array.isArray(data.content) && typeof data.totalPages === 'number';
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────────
 
 function renderUsers(list) {
-  const tbody = document.getElementById('users-tbody');
+  const tbody   = document.getElementById('users-tbody');
   const countEl = document.getElementById('users-count-badge');
-  if (countEl) countEl.textContent = list.length + ' total';
+  if (countEl) countEl.textContent = `${list.length} total`;
 
   if (!list.length) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No users found.</td></tr>';
@@ -18,7 +31,7 @@ function renderUsers(list) {
 
   if (tbody) {
     tbody.innerHTML = list.map(u => {
-      const roles = (u.roles || []).map(r => `<span class="badge ${roleColors[r] || 'text-bg-secondary'} me-1">${r}</span>`).join('') || '<span class="text-muted">—</span>';
+      const roles  = (u.roles || []).map(r => `<span class="badge ${roleColors[r] || 'text-bg-secondary'} me-1">${r}</span>`).join('') || '<span class="text-muted">—</span>';
       const avatar = u.avatarUrl
         ? `<img src="${u.avatarUrl}" class="rounded-circle me-2" width="36" height="36" alt="${u.username}" />`
         : `<div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width:36px;height:36px;flex-shrink:0"><i class="bi bi-person text-white"></i></div>`;
@@ -40,15 +53,19 @@ function renderUsers(list) {
   }
 }
 
+// ── Load dữ liệu từ server ─────────────────────────────────────────────────────
+
 async function loadUsers() {
   try {
     const data = await UserService.getAll();
-    allUsers = Array.isArray(data) ? data : (data.content ?? []);
+    allUsers = isPageResponse(data) ? data.content : (Array.isArray(data) ? data : (data.content ?? []));
     renderUsers(allUsers);
   } catch (err) {
     UI.toast('Failed to load users: ' + err.message, 'danger');
   }
 }
+
+// ── CRUD ───────────────────────────────────────────────────────────────────────
 
 function editUser(id) {
   const user = allUsers.find(u => u.id === id);
@@ -60,8 +77,8 @@ function editUser(id) {
   const titleEl = document.getElementById('addUserModalLabel');
   if (titleEl) titleEl.innerHTML = '<i class="bi bi-pencil me-2"></i>Edit User';
 
-  document.getElementById('newUserName').value = user.username || user.name || '';
-  document.getElementById('newUserEmail').value = user.email || '';
+  document.getElementById('newUserName').value     = user.username || user.name || '';
+  document.getElementById('newUserEmail').value    = user.email || '';
   document.getElementById('newUserPassword').placeholder = '(leave empty to keep current)';
 
   const roleSel = document.getElementById('newUserRole');
@@ -83,8 +100,10 @@ async function deleteUser(id) {
 }
 
 // Gán các hàm vào window để gọi từ HTML
-window.editUser = editUser;
+window.editUser   = editUser;
 window.deleteUser = deleteUser;
+
+// ── DOMContentLoaded ───────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async function () {
   UI.initSidebar();
@@ -93,7 +112,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   const filterRole = document.getElementById('filterRole');
   if (filterRole) {
     filterRole.addEventListener('change', function () {
-      const role = this.value.toUpperCase();
+      const role    = this.value.toUpperCase();
       const filtered = role
         ? allUsers.filter(u => (u.roles || []).some(r => r.toUpperCase() === role))
         : allUsers;
@@ -120,10 +139,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     addForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       const modalEl = document.getElementById('addUserModal');
-      const editId = modalEl.dataset.editId;
+      const editId  = modalEl.dataset.editId;
       const payload = {
         username: document.getElementById('newUserName').value.trim(),
-        email: document.getElementById('newUserEmail').value.trim(),
+        email:    document.getElementById('newUserEmail').value.trim(),
       };
       const password = document.getElementById('newUserPassword').value;
       if (password) payload.password = password;
@@ -138,14 +157,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         const modal = bootstrap.Modal.getInstance(modalEl);
         if (modal) modal.hide();
-        loadUsers();
+        await loadUsers();
       } catch (err) { UI.toast(err.message, 'danger'); }
     });
   }
 
   // Load roles into filter + modal dropdown
   try {
-    const roles = await Http.get('/api/roles') || [];
+    const roles   = await Http.get('/api/roles') || [];
     const filterSel = document.getElementById('filterRole');
     const modalSel  = document.getElementById('newUserRole');
     if (filterSel && modalSel) {
@@ -154,7 +173,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         modalSel.insertAdjacentHTML('beforeend',  `<option value="${r.name}">${r.name}</option>`);
       });
     }
-  } catch (_) { }
+  } catch (_) {}
 
   await loadUsers();
   await UI.renderCurrentUser();

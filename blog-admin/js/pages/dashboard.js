@@ -2,6 +2,8 @@
  * Dashboard Page Logic
  */
 
+// ── CRUD ───────────────────────────────────────────────────────────────────────
+
 async function deletePost(id) {
   if (!await UI.confirm('Delete this post?')) return;
   try {
@@ -16,6 +18,8 @@ async function deletePost(id) {
 // Gán vào window
 window.deletePost = deletePost;
 
+// ── DOMContentLoaded ───────────────────────────────────────────────────────────
+
 document.addEventListener('DOMContentLoaded', async function () {
   UI.initSidebar();
 
@@ -28,9 +32,9 @@ document.addEventListener('DOMContentLoaded', async function () {
       UserService.getAll(),
     ]);
 
-    const statPosts = document.getElementById('stat-posts');
+    const statPosts      = document.getElementById('stat-posts');
     const statCategories = document.getElementById('stat-categories');
-    const statUsers = document.getElementById('stat-users');
+    const statUsers      = document.getElementById('stat-users');
 
     if (statPosts && posts.status === 'fulfilled' && posts.value) {
       statPosts.textContent = Array.isArray(posts.value) ? posts.value.length : (posts.value.totalElements ?? '—');
@@ -46,7 +50,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   // Load recent posts
   try {
     const posts = await PostService.getAll();
-    const list = Array.isArray(posts) ? posts : (posts.content ?? []);
+    const list  = Array.isArray(posts) ? posts : (posts.content ?? []);
     const tbody = document.getElementById('recent-posts-body');
     if (tbody) {
       if (list.length === 0) {
@@ -68,7 +72,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   } catch (_) {}
 
-  // Hiển thị user hiện tại
   await UI.renderCurrentUser();
 
   // Logout
