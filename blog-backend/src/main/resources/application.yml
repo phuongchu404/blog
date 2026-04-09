@@ -67,6 +67,12 @@ spring:
 #      hibernate.cache.use_second_level_cache: false
 #      hibernate.cache.use_query_cache: false
 #      hibernate.generate_statistics: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
   security:
     oauth2:
       client:

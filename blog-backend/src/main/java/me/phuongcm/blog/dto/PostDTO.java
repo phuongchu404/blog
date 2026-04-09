@@ -52,9 +52,24 @@ public class PostDTO {
     @NotBlank(message = "Content is required")
     private String content;
 
+    private Long viewCount;
+
+    private AuthorInfo author;
+
     private List<Long> tagIds;
     private List<Long> categoryIds;
 
     private List<TagDTO> tags;
     private List<CategoryDTO> categories;
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AuthorInfo {
+        private Long id;
+        private String username;
+        private String fullName;
+        private String imageUrl;
+    }
 }

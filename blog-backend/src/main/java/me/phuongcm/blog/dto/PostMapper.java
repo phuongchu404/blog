@@ -3,6 +3,7 @@ package me.phuongcm.blog.dto;
 import me.phuongcm.blog.entity.Post;
 import me.phuongcm.blog.entity.PostCategory;
 import me.phuongcm.blog.entity.PostTag;
+import me.phuongcm.blog.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -20,6 +21,8 @@ public interface PostMapper {
     @Mapping(target = "tags", source = "postTags", qualifiedByName = "mapPostTags")
     @Mapping(target = "categories", source = "postCategories", qualifiedByName = "mapPostCategories")
     @Mapping(target = "categoryName", source = "postCategories", qualifiedByName = "mapCategoryName")
+    @Mapping(target = "author", source = "author", qualifiedByName = "mapAuthorInfo")
+    @Mapping(target = "viewCount", source = "viewCount")
     @Mapping(target = "tagIds", ignore = true)
     @Mapping(target = "categoryIds", ignore = true)
     PostDTO toDTO(Post post);
@@ -60,5 +63,16 @@ public interface PostMapper {
     default String mapCategoryName(List<PostCategory> postCategories) {
         if (postCategories == null || postCategories.isEmpty()) return null;
         return postCategories.get(0).getCategory().getTitle();
+    }
+
+    @Named("mapAuthorInfo")
+    default PostDTO.AuthorInfo mapAuthorInfo(User user) {
+        if (user == null) return null;
+        PostDTO.AuthorInfo info = new PostDTO.AuthorInfo();
+        info.setId(user.getId());
+        info.setUsername(user.getUsername());
+        info.setFullName(user.getFullName());
+        info.setImageUrl(user.getImageUrl());
+        return info;
     }
 }
