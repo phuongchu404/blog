@@ -1,9 +1,10 @@
 package me.phuongcm.blog.config;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
@@ -20,24 +21,25 @@ import java.time.Duration;
 public class RedisConfig {
 
     /**
-     * Inject Spring Boot's auto-configured ObjectMapper (đã có JavaTimeModule, Kotlin module, v.v.)
-     * rồi copy + thêm DefaultTyping riêng cho Redis.
+     * Xây ObjectMapper riêng cho Redis:
+     * - Đăng ký JavaTimeModule để serialize LocalDateTime
+     * - Tắt ghi timestamp, dùng ISO-8601 string
+     * - Bật DefaultTyping để lưu @class vào JSON → deserialize đúng kiểu
      */
-    @Autowired
-    private ObjectMapper springObjectMapper;
-
-    private GenericJackson2JsonRedisSerializer redisJsonSerializer() {
-        // Copy để không ảnh hưởng đến ObjectMapper toàn cục (dùng cho HTTP response)
-        ObjectMapper redisMapper = springObjectMapper.copy();
-        // Đảm bảo JavaTimeModule luôn được đăng ký (xử lý LocalDateTime, LocalDate, ...)
-        redisMapper.registerModule(new JavaTimeModule());
-        redisMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        // Ghi type info vào JSON để deserialize đúng kiểu khi đọc từ Redis
-        redisMapper.activateDefaultTyping(
-                redisMapper.getPolymorphicTypeValidator(),
-                ObjectMapper.DefaultTyping.NON_FINAL
+    private ObjectMapper redisObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.activateDefaultTypingAsProperty(
+                LaissezFaireSubTypeValidator.instance,
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                "@class"
         );
-        return new GenericJackson2JsonRedisSerializer(redisMapper);
+        return mapper;
+    }
+
+    private GenericJackson2JsonRedisSerializer redisSerializer() {
+        return new GenericJackson2JsonRedisSerializer(redisObjectMapper());
     }
 
     @Bean
@@ -45,8 +47,7 @@ public class RedisConfig {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
 
-        GenericJackson2JsonRedisSerializer serializer = redisJsonSerializer();
-
+        GenericJackson2JsonRedisSerializer serializer = redisSerializer();
         template.setKeySerializer(new StringRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(serializer);
@@ -64,7 +65,7 @@ public class RedisConfig {
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(
-                        RedisSerializationContext.SerializationPair.fromSerializer(redisJsonSerializer()))
+                        RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(connectionFactory)
