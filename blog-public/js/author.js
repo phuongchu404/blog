@@ -52,10 +52,19 @@ async function init() {
     const posts = await PostService.getByAuthor(authorId);
     allPosts = Array.isArray(posts) ? posts : (posts?.content || []);
 
-    // Lấy thông tin tác giả từ bài viết đầu tiên
-    const author = allPosts[0]?.author;
-    const authorName = author?.fullName || author?.username || `Tác giả #${authorId}`;
-    const authorAvatar = UI.avatarUrl(author);
+    // Lấy thông tin tác giả: ưu tiên từ bài viết, fallback gọi API
+    let authorInfo = allPosts[0]?.author || null;
+    if (!authorInfo || (!authorInfo.fullName && !authorInfo.username)) {
+      try {
+        authorInfo = await UserService.getById(authorId);
+      } catch (_) {
+        authorInfo = { id: authorId };
+      }
+    }
+
+    const authorName = authorInfo?.fullName || authorInfo?.username || `Tác giả #${authorId}`;
+    const authorAvatar = UI.avatarUrl(authorInfo);
+    const authorIntro = authorInfo?.intro || '';
 
     document.getElementById('author-header').innerHTML = `
       <div style="display:flex;align-items:center;gap:1.25rem;flex-wrap:wrap">
@@ -64,6 +73,7 @@ async function init() {
              onerror="this.src='https://ui-avatars.com/api/?name=U&background=3b82f6&color=fff'">
         <div>
           <h1 style="color:white;margin-bottom:.25rem">${authorName}</h1>
+          ${authorIntro ? `<p style="opacity:.8;font-size:.9rem;margin-bottom:.25rem">${authorIntro}</p>` : ''}
           <p style="opacity:.7;font-size:.95rem">${allPosts.length} bài viết</p>
         </div>
       </div>`;

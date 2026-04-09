@@ -44,7 +44,7 @@ function togglePassword(inputId, btn) {
 }
 
 function loginOAuth(provider) {
-  window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}?redirect_uri=${encodeURIComponent(window.location.origin + 'index.html')}`;
+  window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}?redirect_uri=${encodeURIComponent(window.location.origin + '/index.html')}`;
 }
 
 function handleNavSearch(e) {
@@ -250,7 +250,10 @@ async function handleChangePassword(e) {
 
   setLoading('password-save-btn', true, 'Đổi mật khẩu');
   try {
-    await Http.put(`/api/users/${profileUser.id}`, { password: newPwd });
+    await Http.post('/auth/change-password', {
+      userName: profileUser.username,
+      newPassword: newPwd,
+    });
     UI.toast('Đổi mật khẩu thành công!', 'success');
     document.getElementById('password-form').reset();
   } catch (err) {
