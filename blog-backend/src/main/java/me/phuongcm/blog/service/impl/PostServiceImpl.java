@@ -12,6 +12,7 @@ import me.phuongcm.blog.entity.PostDocument;
 import me.phuongcm.blog.repository.PostSearchRepository;
 import me.phuongcm.blog.service.KafkaProducerService;
 import me.phuongcm.blog.common.utils.SlugUtils;
+import me.phuongcm.blog.service.PostMetaService;
 import me.phuongcm.blog.service.PostService;
 import me.phuongcm.blog.service.TagService;
 import me.phuongcm.blog.service.UploadTrackerService;
@@ -45,7 +46,9 @@ public class PostServiceImpl implements PostService {
 
     private final PostMapper postMapper;
 
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService, CategoryService categoryService, RedisTemplate<String, Object> redisTemplate, KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository, UploadTrackerService uploadTrackerService, PostMapper postMapper) {
+    private final PostMetaService postMetaService;
+
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService, CategoryService categoryService, RedisTemplate<String, Object> redisTemplate, KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository, UploadTrackerService uploadTrackerService, PostMapper postMapper, PostMetaService postMetaService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.tagService = tagService;
@@ -55,6 +58,7 @@ public class PostServiceImpl implements PostService {
         this.postSearchRepository = postSearchRepository;
         this.uploadTrackerService = uploadTrackerService;
         this.postMapper = postMapper;
+        this.postMetaService = postMetaService;
     }
     @Override
     public List<PostDTO> getAllPosts() {
@@ -73,7 +77,7 @@ public class PostServiceImpl implements PostService {
         if (post.isPresent()) {
             incrementViewCountInRedis(id);
         }
-        return post.map(postMapper::toDTO);
+        return post.map(p -> enrichWithMeta(postMapper.toDTO(p)));
     }
 
     @Override
@@ -81,7 +85,7 @@ public class PostServiceImpl implements PostService {
     public Optional<PostDTO> getPostBySlug(String slug) {
         Optional<Post> post = postRepository.findBySlug(slug);
         post.ifPresent(p -> incrementViewCountInRedis(p.getId()));
-        return post.map(postMapper::toDTO);
+        return post.map(p -> enrichWithMeta(postMapper.toDTO(p)));
     }
 
     private void incrementViewCountInRedis(Long postId) {
@@ -123,13 +127,10 @@ public class PostServiceImpl implements PostService {
         post.setAuthor(author);
         post.setTitle(postDTO.getTitle());
         post.setContent(postDTO.getContent());
-        post.setMetaTitle(postDTO.getMetaTitle());
         post.setSlug(generateSlug(postDTO.getTitle()));
         post.setSummary(postDTO.getSummary());
         post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : 0);
         post.setImageUrl(postDTO.getImageUrl());
-        post.setMetaDescription(postDTO.getMetaDescription());
-        post.setMetaKeywords(postDTO.getMetaKeywords());
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
 
@@ -145,6 +146,8 @@ public class PostServiceImpl implements PostService {
         if(postDTO.getCategoryIds() != null && !postDTO.getCategoryIds().isEmpty()) {
             categoryService.addCategoriesToPost(savedPost, postDTO.getCategoryIds());
         }
+
+        saveMetaFields(savedPost.getId(), postDTO);
 
         // Send Kafka Event for Elasticsearch Sync
         PostEvent event = new PostEvent(
@@ -162,7 +165,7 @@ public class PostServiceImpl implements PostService {
         // Mark any uploaded files in content as explicitly USED
         uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
 
-        return postMapper.toDTO(savedPost);
+        return enrichWithMeta(postMapper.toDTO(savedPost));
     }
 
     @Override
@@ -172,13 +175,10 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
         post.setTitle(postDTO.getTitle());
-        post.setMetaTitle(postDTO.getMetaTitle());
         post.setSlug(generateSlug(postDTO.getTitle()));
         post.setSummary(postDTO.getSummary());
         post.setContent(postDTO.getContent());
         post.setImageUrl(postDTO.getImageUrl());
-        post.setMetaDescription(postDTO.getMetaDescription());
-        post.setMetaKeywords(postDTO.getMetaKeywords());
 
         Integer oldStatus = post.getStatus();
         post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : 0);
@@ -218,10 +218,12 @@ public class PostServiceImpl implements PostService {
         );
         kafkaProducerService.sendPostSyncEvent(event);
 
+        saveMetaFields(savedPost.getId(), postDTO);
+
         // Mark any uploaded files in content as explicitly USED
         uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
 
-        return postMapper.toDTO(savedPost);
+        return enrichWithMeta(postMapper.toDTO(savedPost));
     }
 
     @Override
@@ -302,6 +304,29 @@ public class PostServiceImpl implements PostService {
         kafkaProducerService.sendPostSyncEvent(event);
 
         return postMapper.toDTO(savedPost);
+    }
+
+    /** Lưu metaTitle, metaDescription, metaKeywords vào bảng post_meta. */
+    private void saveMetaFields(Long postId, PostDTO dto) {
+        if (dto.getMetaTitle() != null)
+            postMetaService.CreateOrUpdateMeta(postId, "metaTitle", dto.getMetaTitle());
+        if (dto.getMetaDescription() != null)
+            postMetaService.CreateOrUpdateMeta(postId, "metaDescription", dto.getMetaDescription());
+        if (dto.getMetaKeywords() != null)
+            postMetaService.CreateOrUpdateMeta(postId, "metaKeywords", dto.getMetaKeywords());
+    }
+
+    /** Đọc metaTitle, metaDescription, metaKeywords từ post_meta và gắn vào DTO. */
+    private PostDTO enrichWithMeta(PostDTO dto) {
+        if (dto.getId() == null) return dto;
+        postMetaService.getMetaByPost(dto.getId()).forEach(m -> {
+            switch (m.getKey()) {
+                case "metaTitle"       -> dto.setMetaTitle(m.getContent());
+                case "metaDescription" -> dto.setMetaDescription(m.getContent());
+                case "metaKeywords"    -> dto.setMetaKeywords(m.getContent());
+            }
+        });
+        return dto;
     }
 
     private String generateSlug(String title) {

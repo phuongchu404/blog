@@ -87,6 +87,26 @@ const UI = {
 
     if (Auth.isLoggedIn() && user) {
       navAuth.innerHTML = `
+        <!-- Notification Bell -->
+        <div class="notif-wrap" id="notif-wrap">
+          <button class="notif-btn" id="notif-btn" aria-label="Thông báo">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+              <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
+            </svg>
+            <span class="notif-badge" id="notif-badge" style="display:none">0</span>
+          </button>
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="notif-header">
+              <span>Thông báo</span>
+              <button class="notif-mark-all" id="notif-mark-all">Đánh dấu tất cả đã đọc</button>
+            </div>
+            <div class="notif-list" id="notif-list">
+              <div class="notif-empty">Đang tải...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User Menu -->
         <div class="user-menu">
           <button class="user-avatar-btn" id="user-menu-btn" aria-expanded="false">
             <img class="user-avatar-img" src="${this.avatarUrl(user)}" alt="avatar" onerror="this.src='https://ui-avatars.com/api/?name=U&background=3b82f6&color=fff&size=80'">
@@ -106,30 +126,223 @@ const UI = {
           </div>
         </div>`;
 
+      // User menu toggle
       document.getElementById('user-menu-btn')?.addEventListener('click', (e) => {
         e.stopPropagation();
-        const dd = document.getElementById('user-dropdown');
-        dd?.classList.toggle('open');
+        document.getElementById('user-dropdown')?.classList.toggle('open');
+        document.getElementById('notif-dropdown')?.classList.remove('open');
       });
-      document.addEventListener('click', () => {
+
+      // Notification bell toggle
+      document.getElementById('notif-btn')?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const dd = document.getElementById('notif-dropdown');
+        const isOpen = dd?.classList.toggle('open');
+        if (isOpen) this._loadNotifications();
         document.getElementById('user-dropdown')?.classList.remove('open');
       });
+
+      // Mark all read
+      document.getElementById('notif-mark-all')?.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        await NotificationService.markAllRead();
+        this._refreshNotifBadge();
+        this._loadNotifications();
+      });
+
+      // Close dropdowns on outside click
+      document.addEventListener('click', () => {
+        document.getElementById('user-dropdown')?.classList.remove('open');
+        document.getElementById('notif-dropdown')?.classList.remove('open');
+      });
+
+      // Load unread count on page load
+      this._refreshNotifBadge();
+      // Poll every 60s
+      setInterval(() => this._refreshNotifBadge(), 60000);
+
     } else {
       navAuth.innerHTML = `
         <a href="login.html" class="btn btn-ghost btn-sm">Đăng nhập</a>
         <a href="register.html" class="btn btn-primary btn-sm">Đăng ký</a>`;
     }
+
+    // Render categories megamenu (independent of auth state)
+    this.renderCategoriesMegamenu();
+  },
+
+  async _refreshNotifBadge() {
+    if (!Auth.isLoggedIn()) return;
+    try {
+      const count = await NotificationService.getUnreadCount();
+      const badge = document.getElementById('notif-badge');
+      if (!badge) return;
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    } catch (_) {}
+  },
+
+  async _loadNotifications() {
+    const list = document.getElementById('notif-list');
+    if (!list) return;
+    try {
+      const data = await NotificationService.getAll(0, 15);
+      const items = data?.content || [];
+      if (!items.length) {
+        list.innerHTML = '<div class="notif-empty">Chưa có thông báo nào</div>';
+        return;
+      }
+      list.innerHTML = items.map(n => `
+        <div class="notif-item${n.read ? '' : ' unread'}" data-id="${n.id}"
+             onclick="UI._onNotifClick(${n.id}, '${n.postSlug || ''}')">
+          <div class="notif-icon ${n.type === 'REPLY_COMMENT' ? 'reply' : 'comment'}">
+            ${n.type === 'REPLY_COMMENT'
+              ? '<svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5z"/></svg>'
+              : '<svg width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M14 1a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4.414A2 2 0 0 0 3 11.586l-2 2V2a1 1 0 0 1 1-1h12z"/></svg>'
+            }
+          </div>
+          <div class="notif-content">
+            <p>${n.message}</p>
+            <span class="notif-time">${this.timeAgo(n.createdAt)}</span>
+          </div>
+          ${!n.read ? '<div class="notif-dot"></div>' : ''}
+        </div>`).join('');
+    } catch (_) {
+      list.innerHTML = '<div class="notif-empty">Không thể tải thông báo</div>';
+    }
+  },
+
+  async _onNotifClick(id, postSlug) {
+    await NotificationService.markRead(id);
+    const el = document.querySelector(`.notif-item[data-id="${id}"]`);
+    el?.classList.remove('unread');
+    el?.querySelector('.notif-dot')?.remove();
+    this._refreshNotifBadge();
+    if (postSlug) {
+      // Determine correct path prefix
+      const isInSubdir = window.location.pathname.includes('/blog-public/') ||
+                         !window.location.pathname.endsWith('.html');
+      window.location.href = `post.html?slug=${postSlug}`;
+    }
+  },
+
+  /* ── Render categories megamenu ─────────────────────────────── */
+  async renderCategoriesMegamenu() {
+    const trigger = document.getElementById('cat-mega-trigger');
+    if (!trigger) return;
+    try {
+      const cats = await CategoryService.getAll();
+      if (!cats?.length) return;
+
+      // Build megamenu HTML
+      const menuEl = document.getElementById('cat-megamenu');
+      if (!menuEl) return;
+
+      const roots = cats.filter(c => !c.parentId);
+      const childMap = {};
+      cats.filter(c => c.parentId).forEach(c => {
+        if (!childMap[c.parentId]) childMap[c.parentId] = [];
+        childMap[c.parentId].push(c);
+      });
+
+      if (roots.length <= 6) {
+        // Simple dropdown nếu ít danh mục
+        menuEl.innerHTML = `
+          <div class="mega-simple">
+            ${roots.map(c => `
+              <a href="category.html?slug=${c.slug}" class="mega-item">
+                ${c.title}
+                ${childMap[c.id] ? `<span class="mega-count">${childMap[c.id].length}</span>` : ''}
+              </a>`).join('')}
+            <div class="mega-divider"></div>
+            <a href="blog.html" class="mega-item mega-all">Tất cả bài viết →</a>
+          </div>`;
+      } else {
+        // Multi-column megamenu kiểu CellphoneS
+        const COLS = 3;
+        const perCol = Math.ceil(roots.length / COLS);
+        const columns = [];
+        for (let i = 0; i < COLS; i++) {
+          columns.push(roots.slice(i * perCol, (i + 1) * perCol));
+        }
+        menuEl.innerHTML = `
+          <div class="mega-grid">
+            ${columns.map(col => `
+              <div class="mega-col">
+                ${col.map(c => `
+                  <div class="mega-group">
+                    <a href="category.html?slug=${c.slug}" class="mega-group-title">${c.title}</a>
+                    ${(childMap[c.id] || []).map(sub =>
+                      `<a href="category.html?slug=${sub.slug}" class="mega-sub-item">${sub.title}</a>`
+                    ).join('')}
+                  </div>`).join('')}
+              </div>`).join('')}
+          </div>
+          <div class="mega-footer">
+            <a href="blog.html" class="mega-all-posts">Xem tất cả bài viết →</a>
+          </div>`;
+      }
+    } catch (_) {}
   },
 
   /* ── Active nav link ─────────────────────────────────────── */
   setActiveNav() {
     const path = window.location.pathname;
-    document.querySelectorAll('.nav-links a').forEach(link => {
+    // Chỉ highlight <a> trực tiếp, KHÔNG touch megamenu button
+    document.querySelectorAll('.nav-links > a').forEach(link => {
       const href = link.getAttribute('href') || '';
-      if (path.endsWith(href) || (href !== 'index.html' && path.includes(href.split('.')[0]))) {
+      link.classList.remove('active');
+      if (path.endsWith(href)) {
         link.classList.add('active');
       }
     });
+  },
+
+  /* ── Featured card (dùng ở trang chủ - 3 bài nổi bật) ──── */
+  featuredCard(post) {
+    const categories = (post.categories || []).map(c =>
+      `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
+    ).join('');
+    const thumbUrl   = post.imageUrl || post.thumbnailUrl;
+    const thumb      = thumbUrl
+      ? `<div class="post-card-thumb"><img src="${thumbUrl}" alt="${post.title}" loading="lazy"></div>`
+      : `<div class="post-card-no-thumb">📝</div>`;
+    const authorName   = post.author?.fullName || post.author?.username || 'Ẩn danh';
+    const authorAvatar = this.avatarUrl(post.author);
+    const readTime     = this.readingTime(post.summary || post.title);
+
+    return `
+      <article class="post-card post-card--featured">
+        <a href="post.html?slug=${post.slug}">${thumb}</a>
+        <div class="post-card-body">
+          <div class="featured-label">⭐ Nổi bật</div>
+          ${categories ? `<div class="post-card-cats">${categories}</div>` : ''}
+          <h2 class="post-card-title">
+            <a href="post.html?slug=${post.slug}">${post.title}</a>
+          </h2>
+          ${post.summary ? `<p class="post-card-excerpt">${post.summary}</p>` : ''}
+          <div class="post-card-meta">
+            <img class="avatar-xs" src="${authorAvatar}" alt="${authorName}"
+                 onerror="this.src='https://ui-avatars.com/api/?name=U&background=3b82f6&color=fff'">
+            <span>${authorName}</span>
+            <span>·</span>
+            <span>${this.formatDateShort(post.publishedAt || post.createdAt)}</span>
+            <span>·</span>
+            <span class="read-time">⏱ ${readTime}</span>
+          </div>
+        </div>
+      </article>`;
+  },
+
+  /* ── Reading time estimate ──────────────────────────────── */
+  readingTime(text) {
+    const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
+    const mins = Math.max(1, Math.round(words / 200));
+    return `${mins} phút đọc`;
   },
 
   /* ── Post card HTML ─────────────────────────────────────── */
@@ -145,6 +358,7 @@ const UI = {
 
     const authorName = post.author?.fullName || post.author?.username || 'Ẩn danh';
     const authorAvatar = this.avatarUrl(post.author);
+    const readTime = this.readingTime(post.summary || post.title);
 
     return `
       <article class="post-card">
@@ -160,6 +374,8 @@ const UI = {
             <span>${authorName}</span>
             <span>·</span>
             <span>${this.formatDateShort(post.publishedAt || post.createdAt)}</span>
+            <span>·</span>
+            <span class="read-time">⏱ ${readTime}</span>
           </div>
         </div>
       </article>`;
@@ -176,6 +392,16 @@ const UI = {
     }
     btns += `<button ${page === totalPages - 1 ? 'disabled' : ''} onclick="(${onPageChange})(${page + 1})">&#8594;</button>`;
     container.innerHTML = `<div class="pagination">${btns}</div>`;
+  },
+
+  /* ── Newsletter submit handler ──────────────────────────── */
+  newsletterSubmit(e) {
+    e.preventDefault();
+    const input = e.target.querySelector('input[type="email"]');
+    if (input?.value) {
+      this.toast('Đăng ký thành công! Cảm ơn bạn.', 'success');
+      input.value = '';
+    }
   },
 
   /* ── Category sidebar widget ────────────────────────────── */

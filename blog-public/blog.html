@@ -15,7 +15,13 @@
     <a href="index.html" class="nav-logo">My<span>Blog</span></a>
     <div class="nav-links" id="nav-links">
       <a href="index.html">Trang chủ</a>
-      <a href="blog.html" class="active">Bài viết</a>
+      <div class="cat-mega-wrap">
+        <button class="cat-mega-btn" id="cat-mega-trigger">
+          Danh mục
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+        </button>
+        <div class="cat-megamenu" id="cat-megamenu"></div>
+      </div>
     </div>
     <form class="nav-search" onsubmit="handleNavSearch(event)">
       <svg class="search-icon" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
@@ -70,14 +76,52 @@
       <div class="sidebar-widget-title">Tags</div>
       <div class="sidebar-widget-body" id="sidebar-tags"></div>
     </div>
+    <div class="sidebar-widget newsletter-widget">
+      <div class="sidebar-widget-title">Nhận bài viết mới</div>
+      <div class="sidebar-widget-body">
+        <p class="newsletter-desc">Đăng ký để nhận bài viết mới nhất về AI, Backend & DevOps.</p>
+        <form class="newsletter-form" onsubmit="UI.newsletterSubmit(event)">
+          <input type="email" class="newsletter-input" placeholder="Email của bạn..." required>
+          <button type="submit" class="btn btn-primary" style="width:100%">Đăng ký</button>
+        </form>
+      </div>
+    </div>
   </aside>
 </main>
 
 <footer class="site-footer">
   <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="index.html" class="footer-brand">My<span>Blog</span></a>
+        <p class="footer-desc">Blog chia sẻ kiến thức về công nghệ, lập trình và cuộc sống. Cùng nhau học hỏi và phát triển.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Khám phá</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Trang chủ</a></li>
+          <li><a href="blog.html">Tất cả bài viết</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Tài khoản</h4>
+        <ul class="footer-links">
+          <li><a href="login.html">Đăng nhập</a></li>
+          <li><a href="register.html">Đăng ký</a></li>
+          <li><a href="profile.html">Trang cá nhân</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Liên hệ</h4>
+        <ul class="footer-links">
+          <li><a href="#">Email</a></li>
+          <li><a href="#">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
     <div class="footer-bottom">
       <span>© 2024 MyBlog. All rights reserved.</span>
-      <a href="index.html" style="color:#94a3b8">← Về trang chủ</a>
+      <span>Made with ❤️</span>
     </div>
   </div>
 </footer>
@@ -88,6 +132,7 @@
 <script src="js/post.service.js"></script>
 <script src="js/category.service.js"></script>
 <script src="js/tag.service.js"></script>
+<script src="js/notification.service.js"></script>
 <script src="js/blog.js"></script>
 </body>
 </html>

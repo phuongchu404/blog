@@ -1,6 +1,7 @@
 package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
+import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.dto.CategoryDTO;
 import me.phuongcm.blog.service.CategoryService;
 import org.springframework.http.HttpStatus;
@@ -64,6 +65,7 @@ public class CategoryController {
      * POST /api/categories — Tạo danh mục mới.
      * Yêu cầu permission "category:create" (chỉ ROLE_ADMIN).
      */
+    @Auditable(action = "CREATE", resource = "CATEGORY")
     @PostMapping
     @PreAuthorize("hasAuthority('category:create')")
     public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) {
@@ -75,6 +77,7 @@ public class CategoryController {
      * PUT /api/categories/{id} — Cập nhật danh mục.
      * Yêu cầu permission "category:update".
      */
+    @Auditable(action = "UPDATE", resource = "CATEGORY")
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('category:update')")
     public ResponseEntity<CategoryDTO> updateCategory(
@@ -87,6 +90,7 @@ public class CategoryController {
      * DELETE /api/categories/{id} — Xóa danh mục.
      * Yêu cầu permission "category:delete".
      */
+    @Auditable(action = "DELETE", resource = "CATEGORY")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('category:delete')")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {

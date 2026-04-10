@@ -18,7 +18,13 @@
 
     <div class="nav-links" id="nav-links">
       <a href="index.html" class="active">Trang chủ</a>
-      <a href="blog.html">Bài viết</a>
+      <div class="cat-mega-wrap">
+        <button class="cat-mega-btn" id="cat-mega-trigger">
+          Danh mục
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+        </button>
+        <div class="cat-megamenu" id="cat-megamenu"></div>
+      </div>
     </div>
 
     <form class="nav-search" onsubmit="handleNavSearch(event)">
@@ -41,8 +47,13 @@
 <!-- ── Hero ──────────────────────────────────────────────── -->
 <section class="hero">
   <div class="container">
-    <h1>Khám phá kiến thức mới mỗi ngày</h1>
-    <p>Chia sẻ bài viết về công nghệ, lập trình và cuộc sống từ cộng đồng</p>
+    <div class="hero-badge">Khám phá kiến thức công nghệ hiện đại</div>
+    <h1>Chia sẻ về AI, Backend<br>& DevOps</h1>
+    <p>Bài viết chất lượng về lập trình, kiến trúc hệ thống và xu hướng công nghệ mới nhất</p>
+    <div class="hero-cta">
+      <a href="blog.html" class="btn btn-hero-primary">Đọc bài mới nhất</a>
+      <a href="blog.html" class="btn btn-hero-outline">Xem danh mục</a>
+    </div>
     <form class="hero-search" onsubmit="handleHeroSearch(event)">
       <input type="search" id="hero-search-input" placeholder="Tìm kiếm bài viết, chủ đề...">
       <button type="submit">Tìm kiếm</button>
@@ -50,49 +61,54 @@
   </div>
 </section>
 
-<!-- ── Main Content ───────────────────────────────────────── -->
-<main class="container layout">
-  <!-- ── Posts column ── -->
-  <div>
-    <!-- Featured post -->
-    <section id="featured-section" style="margin-bottom:2rem">
-      <div id="featured-post"></div>
-    </section>
-
-    <!-- Recent posts -->
-    <section>
-      <div class="section-header">
-        <h2 class="section-title">Bài viết mới nhất</h2>
-        <a href="blog.html" class="view-all">Xem tất cả →</a>
+<!-- ── 1. Khám phá thể loại ───────────────────────────────── -->
+<section class="categories-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Khám phá thể loại</h2>
+      <a href="blog.html" class="view-all">Xem tất cả →</a>
+    </div>
+    <div class="categories-scroll-wrap">
+      <div id="categories-pills" class="categories-pills">
+        <div class="spinner" style="display:block;margin:0 auto"></div>
       </div>
-      <div id="recent-posts" class="post-grid"></div>
-    </section>
+    </div>
   </div>
+</section>
 
-  <!-- ── Sidebar ── -->
-  <aside class="sidebar">
-    <div class="sidebar-widget">
-      <div class="sidebar-widget-title">Danh mục</div>
-      <div class="sidebar-widget-body" id="sidebar-categories">
-        <div class="spinner" style="margin:1rem auto;display:block"></div>
-      </div>
+<!-- ── 2. Tags ───────────────────────────────────────────── -->
+<section class="tags-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Tags phổ biến</h2>
     </div>
+    <div id="home-tags" class="home-tags-cloud">
+      <div class="spinner" style="display:block;margin:0 auto"></div>
+    </div>
+  </div>
+</section>
 
-    <div class="sidebar-widget">
-      <div class="sidebar-widget-title">Bài viết nổi bật</div>
-      <div class="sidebar-widget-body" id="sidebar-recent">
-        <div class="spinner" style="margin:1rem auto;display:block"></div>
-      </div>
+<!-- ── 3. Bài viết nổi bật ───────────────────────────────── -->
+<section class="home-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Bài viết nổi bật</h2>
+      <a href="blog.html" class="view-all">Xem tất cả →</a>
     </div>
+    <div id="featured-posts" class="post-grid post-grid-3"></div>
+  </div>
+</section>
 
-    <div class="sidebar-widget">
-      <div class="sidebar-widget-title">Tags</div>
-      <div class="sidebar-widget-body" id="sidebar-tags">
-        <div class="spinner" style="margin:1rem auto;display:block"></div>
-      </div>
+<!-- ── 4. Bài viết mới nhất ──────────────────────────────── -->
+<section class="home-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Bài viết mới nhất</h2>
+      <a href="blog.html" class="view-all">Xem tất cả →</a>
     </div>
-  </aside>
-</main>
+    <div id="recent-posts" class="post-grid"></div>
+  </div>
+</section>
 
 <!-- ── Footer ────────────────────────────────────────────── -->
 <footer class="site-footer">
@@ -138,6 +154,7 @@
 <script src="js/post.service.js"></script>
 <script src="js/category.service.js"></script>
 <script src="js/tag.service.js"></script>
+<script src="js/notification.service.js"></script>
 <script src="js/index.js"></script>
 </body>
 </html>

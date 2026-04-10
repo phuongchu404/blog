@@ -90,10 +90,43 @@ async function savePost(status) {
 document.addEventListener('DOMContentLoaded', async function () {
   UI.initSidebar();
 
-  // ── CKEditor 5 ─────────────────────────────────────────────────────
+  // ── CKEditor 5 v43 ─────────────────────────────────────────────────
   const editorEl = document.getElementById('editor');
   if (editorEl) {
+    const {
+      ClassicEditor,
+      Autoformat,
+      Bold, Italic, Underline, Strikethrough, Code,
+      BlockQuote, CodeBlock,
+      Essentials,
+      FileRepository,
+      Heading,
+      HorizontalLine,
+      Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload,
+      ImageResize,
+      Indent, IndentBlock,
+      Link,
+      List, TodoList,
+      MediaEmbed,
+      Paragraph,
+      PasteFromOffice,
+      Table, TableToolbar,
+    } = CKEDITOR;
+
     ckEditor = await ClassicEditor.create(editorEl, {
+      plugins: [
+        Autoformat,
+        Bold, Italic, Underline, Strikethrough, Code,
+        BlockQuote, CodeBlock,
+        Essentials, FileRepository,
+        Heading, HorizontalLine,
+        Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload, ImageResize,
+        Indent, IndentBlock,
+        Link,
+        List, TodoList,
+        MediaEmbed, Paragraph, PasteFromOffice,
+        Table, TableToolbar,
+      ],
       extraPlugins: [MyCustomUploadAdapterPlugin],
       toolbar: {
         items: [
@@ -255,7 +288,8 @@ document.addEventListener('DOMContentLoaded', async function () {
       document.getElementById('postTitle').value   = post.title || '';
       document.getElementById('postSlug').value    = post.slug || '';
       document.getElementById('postExcerpt').value = post.summary || '';
-      document.getElementById('postStatus').value  = post.status || '0';
+      const statusMap = { 0: 'DRAFT', 1: 'PUBLISHED', 2: 'ARCHIVED' };
+      document.getElementById('postStatus').value  = statusMap[post.status] ?? 'DRAFT';
 
       if (ckEditor) ckEditor.setData(post.content || '');
 
@@ -300,19 +334,6 @@ document.addEventListener('DOMContentLoaded', async function () {
           pubDateInput.disabled = true;
         }
       }
-
-      // SEO meta
-      try {
-        const meta   = await PostService.getMeta(editPostId);
-        const metaMap = {};
-        (Array.isArray(meta) ? meta : []).forEach(m => metaMap[m.key] = m.value);
-        if (metaMap.metaTitle)       document.getElementById('metaTitle').value       = metaMap.metaTitle;
-        if (metaMap.metaDescription) {
-          document.getElementById('metaDescription').value                           = metaMap.metaDescription;
-          document.getElementById('metaDescCount').textContent                       = `(${metaMap.metaDescription.length}/160)`;
-        }
-        if (metaMap.metaKeywords) document.getElementById('metaKeywords').value      = metaMap.metaKeywords;
-      } catch (_) {}
 
     } catch (err) { UI.toast('Failed to load post: ' + err.message, 'danger'); }
   }

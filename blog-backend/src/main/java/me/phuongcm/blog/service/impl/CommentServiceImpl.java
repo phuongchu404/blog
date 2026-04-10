@@ -30,6 +30,11 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public List<PostComment> getAllComments() {
+        return commentRepository.findAll();
+    }
+
+    @Override
     public List<PostComment> getCommentsByPostId(Long postId) {
         return commentRepository.findByPostId(postId);
     }
@@ -57,7 +62,10 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user);
         comment.setTitle(title);
         comment.setContent(content);
-        comment.setPublished(false);
+        // Auto-approve nếu comment đến từ user đã đăng nhập (có userId)
+        boolean autoApprove = userId != null;
+        comment.setPublished(autoApprove ? true : null);
+        comment.setPublishedAt(autoApprove ? LocalDateTime.now() : null);
         comment.setCreatedAt(LocalDateTime.now());
 
         if (parentId != null) {
@@ -70,13 +78,23 @@ public class CommentServiceImpl implements CommentService {
 
         // Async Notification via Kafka
         try {
+            Long parentCommentUserId = null;
+            if (parentId != null) {
+                PostComment parentComment = savedComment.getParent();
+                if (parentComment != null && parentComment.getUser() != null) {
+                    parentCommentUserId = parentComment.getUser().getId();
+                }
+            }
             me.phuongcm.blog.dto.CommentEvent event = new me.phuongcm.blog.dto.CommentEvent(
                     savedComment.getId(),
                     post.getId(),
+                    post.getSlug(),
+                    post.getTitle(),
                     post.getAuthor().getId(),
+                    user.getId(),
                     user.getUsername(),
                     content,
-                    post.getTitle()
+                    parentCommentUserId
             );
             kafkaProducerService.sendCommentNotificationEvent(event);
         } catch (Exception e) {

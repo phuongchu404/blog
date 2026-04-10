@@ -15,7 +15,13 @@
     <a href="index.html" class="nav-logo">My<span>Blog</span></a>
     <div class="nav-links" id="nav-links">
       <a href="index.html">Trang chủ</a>
-      <a href="blog.html">Bài viết</a>
+      <div class="cat-mega-wrap">
+        <button class="cat-mega-btn" id="cat-mega-trigger">
+          Danh mục
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
+        </button>
+        <div class="cat-megamenu" id="cat-megamenu"></div>
+      </div>
     </div>
     <form class="nav-search" onsubmit="handleNavSearch(event)">
       <svg class="search-icon" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
@@ -139,6 +145,7 @@
 <script src="js/post.service.js"></script>
 <script src="js/category.service.js"></script>
 <script src="js/tag.service.js"></script>
+<script src="js/notification.service.js"></script>
 <script src="js/auth-pages.js"></script>
 </body>
 </html>

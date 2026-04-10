@@ -2,6 +2,7 @@ package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.dto.ApiResponse;
 import me.phuongcm.blog.dto.RoleDTO;
 import me.phuongcm.blog.dto.RoleResponseDTO;
@@ -33,18 +34,21 @@ public class RoleController {
         return ResponseEntity.ok(ApiResponse.ok(roleService.getAllRoles()));
     }
 
+    @Auditable(action = "CREATE", resource = "ROLE")
     @PostMapping
     @PreAuthorize("hasAuthority('role:create')")
     public ResponseEntity<ApiResponse<RoleResponseDTO>> createRole(@Valid @RequestBody RoleDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.ok("Role created", roleService.createRole(dto)));
     }
 
+    @Auditable(action = "UPDATE", resource = "ROLE")
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('role:update')")
     public ResponseEntity<ApiResponse<RoleResponseDTO>> updateRole(@PathVariable Long id, @Valid @RequestBody RoleDTO dto) {
         return ResponseEntity.ok(ApiResponse.ok("Role updated", roleService.updateRole(id, dto)));
     }
 
+    @Auditable(action = "DELETE", resource = "ROLE")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('role:delete')")
     public ResponseEntity<ApiResponse<Void>> deleteRole(@PathVariable Long id) {

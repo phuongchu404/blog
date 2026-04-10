@@ -17,9 +17,8 @@ function renderPagination() {
   const container = document.getElementById('comments-pagination');
   if (!container) return;
 
-  if (totalPages <= 1) { container.innerHTML = ''; return; }
-
   let html = `<ul class="pagination pagination-sm m-0 float-end">`;
+
   html += `<li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
     <a class="page-link" href="#" data-page="${currentPage - 1}">«</a>
   </li>`;
@@ -99,7 +98,7 @@ function renderCommentPage() {
     return `
       <tr class="${rowClass}">
         <td><input type="checkbox" class="form-check-input" /></td>
-        <td><strong>${c.authorName || c.author?.username || 'Anonymous'}</strong><br><small class="text-muted">${c.authorEmail || ''}</small></td>
+        <td><strong>${c.user?.fullName || c.user?.username || 'Anonymous'}</strong><br><small class="text-muted">${c.user?.username || ''}</small></td>
         <td class="col-wrap"><p class="mb-0 text-truncate">${c.content || '—'}</p></td>
         <td class="col-wrap"><a href="#">${c.postTitle || '—'}</a></td>
         <td>${statusBadgeComment(c.status)}</td>
@@ -128,12 +127,13 @@ function updateStats(list) {
 
 async function loadAllComments() {
   try {
-    const postsData = await PostService.getAll();
+    const [commentsRaw, postsData] = await Promise.all([
+      CommentService.getAll(),
+      PostService.getAll(),
+    ]);
     const posts = Array.isArray(postsData) ? postsData : (postsData.content ?? []);
-    const results = await Promise.allSettled(
-      posts.map(p => CommentService.getByPost(p.id).then(cs => (cs || []).map(c => ({ ...c, postTitle: p.title, postId: p.id }))))
-    );
-    allComments   = results.flatMap(r => r.status === 'fulfilled' ? r.value : []);
+    const postMap = Object.fromEntries(posts.map(p => [p.id, p.title]));
+    allComments   = (commentsRaw || []).map(c => ({ ...c, postTitle: postMap[c.postId] || '—' }));
     totalElements = allComments.length;
     displayList   = allComments;
     currentPage   = 0;

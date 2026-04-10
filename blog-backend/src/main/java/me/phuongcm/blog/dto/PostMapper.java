@@ -25,6 +25,9 @@ public interface PostMapper {
     @Mapping(target = "viewCount", source = "viewCount")
     @Mapping(target = "tagIds", ignore = true)
     @Mapping(target = "categoryIds", ignore = true)
+    @Mapping(target = "metaTitle", ignore = true)
+    @Mapping(target = "metaDescription", ignore = true)
+    @Mapping(target = "metaKeywords", ignore = true)
     PostDTO toDTO(Post post);
 
     List<PostDTO> toDTOs(List<Post> posts);

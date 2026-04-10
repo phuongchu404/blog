@@ -25,16 +25,18 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Load thống kê
   try {
-    const [posts, categories, tags, users] = await Promise.allSettled([
+    const [posts, categories, tags, users, comments] = await Promise.allSettled([
       PostService.getAll(),
       CategoryService.getAll(),
       TagService.getAll(),
       UserService.getAll(),
+      CommentService.getAll(),
     ]);
 
     const statPosts      = document.getElementById('stat-posts');
     const statCategories = document.getElementById('stat-categories');
     const statUsers      = document.getElementById('stat-users');
+    const statComments   = document.getElementById('stat-comments');
 
     if (statPosts && posts.status === 'fulfilled' && posts.value) {
       statPosts.textContent = Array.isArray(posts.value) ? posts.value.length : (posts.value.totalElements ?? '—');
@@ -44,6 +46,30 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
     if (statUsers && users.status === 'fulfilled' && users.value) {
       statUsers.textContent = Array.isArray(users.value) ? users.value.length : '—';
+    }
+    if (statComments && comments.status === 'fulfilled' && comments.value) {
+      statComments.textContent = Array.isArray(comments.value) ? comments.value.length : '—';
+    }
+
+    // Load latest comments
+    const commentList = document.getElementById('latest-comments-list');
+    if (commentList && comments.status === 'fulfilled' && Array.isArray(comments.value)) {
+      const latest = comments.value.slice(0, 5);
+      if (latest.length === 0) {
+        commentList.innerHTML = '<li class="list-group-item text-center text-muted">Chưa có bình luận nào.</li>';
+      } else {
+        commentList.innerHTML = latest.map(c => {
+          const author = c.user?.fullName || c.user?.username || 'Ẩn danh';
+          const preview = (c.content || '').substring(0, 80) + ((c.content || '').length > 80 ? '...' : '');
+          const timeAgo = UI.formatDate(c.createdAt);
+          return `
+            <li class="list-group-item">
+              <strong>${author}</strong>
+              <span class="float-end text-secondary" style="font-size:.8rem">${timeAgo}</span>
+              <p class="mb-0 text-muted small">${preview}</p>
+            </li>`;
+        }).join('');
+      }
     }
   } catch (_) {}
 

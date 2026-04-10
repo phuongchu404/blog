@@ -32,9 +32,6 @@ public class Post {
     @Column(name = "title", length = 75, nullable = false)
     private String title;
 
-    @Column(name = "meta_title", length = 100)
-    private String metaTitle;
-
     @Column(name = "slug", length = 100, nullable = false)
     private String slug;
 
@@ -46,12 +43,6 @@ public class Post {
 
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl;
-
-    @Column(name = "meta_description", columnDefinition = "TEXT")
-    private String metaDescription;
-
-    @Column(name = "meta_keywords", columnDefinition = "TEXT")
-    private String metaKeywords;
 
     public Boolean getPublished() {
         return status != null && status == 1;

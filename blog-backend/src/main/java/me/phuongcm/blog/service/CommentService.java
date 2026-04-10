@@ -6,6 +6,8 @@ import me.phuongcm.blog.entity.PostComment;
 import java.util.List;
 
 public interface CommentService {
+    List<PostComment> getAllComments();
+
     List<PostComment> getCommentsByPostId(Long postId);
 
     List<PostComment> getPublishedCommentsByPostId(Long postId);

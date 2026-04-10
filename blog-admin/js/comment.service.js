@@ -5,6 +5,9 @@
  */
 
 const CommentService = {
+  /** Lấy tất cả bình luận (yêu cầu comment:read:all) */
+  getAll()                  { return Http.get('/api/comments'); },
+
   /** Lấy tất cả bình luận của một bài viết (yêu cầu comment:read:all) */
   getByPost(postId)         { return Http.get(`/api/comments/post/${postId}`); },
 

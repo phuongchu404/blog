@@ -20,7 +20,7 @@ public class KafkaProducerService {
         log.info("Sending Comment Event to Kafka Topic: {} -> {}", COMMENT_TOPIC, event);
         
         // We can use post author id as message key to ensure sequential processing for the same author
-        String key = String.valueOf(event.getAuthorId());
+        String key = String.valueOf(event.getPostAuthorId());
         kafkaTemplate.send(COMMENT_TOPIC, key, event);
     }
 

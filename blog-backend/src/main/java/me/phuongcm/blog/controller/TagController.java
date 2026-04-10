@@ -1,6 +1,7 @@
 package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
+import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.dto.TagDTO;
 import me.phuongcm.blog.service.TagService;
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,7 @@ public class TagController {
      * POST /api/tags — Tạo tag mới.
      * Yêu cầu permission "tag:create" (chỉ ROLE_ADMIN).
      */
+    @Auditable(action = "CREATE", resource = "TAG")
     @PostMapping
     @PreAuthorize("hasAuthority('tag:create')")
     public ResponseEntity<TagDTO> createTag(@Valid @RequestBody TagDTO tagDTO) {
@@ -63,6 +65,7 @@ public class TagController {
      * PUT /api/tags/{id} — Cập nhật tag.
      * Yêu cầu permission "tag:update".
      */
+    @Auditable(action = "UPDATE", resource = "TAG")
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('tag:update')")
     public ResponseEntity<TagDTO> updateTag(@PathVariable Long id, @Valid @RequestBody TagDTO tagDTO) {
@@ -74,6 +77,7 @@ public class TagController {
      * DELETE /api/tags/{id} — Xóa tag.
      * Yêu cầu permission "tag:delete".
      */
+    @Auditable(action = "DELETE", resource = "TAG")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('tag:delete')")
     public ResponseEntity<Void> deleteTag(@PathVariable Long id) {

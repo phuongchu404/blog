@@ -1,5 +1,6 @@
 package me.phuongcm.blog.controller;
 
+import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.service.MinIOService;
 import me.phuongcm.blog.service.UploadTrackerService;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ public class FileController {
      * POST /api/files/upload — Tải ảnh lên phục vụ Rich Text Editor (CKEditor 5) sử dụng MinIO.
      * Phản hồi JSON định dạng { "url": "..." } để CKEditor nhận diện.
      */
+    @Auditable(action = "UPLOAD", resource = "FILE")
     @PostMapping("/upload")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Object>> upload(@RequestParam("upload") MultipartFile file) {

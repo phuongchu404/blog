@@ -53,27 +53,105 @@ function renderPostHeader(post) {
   }
 }
 
+/* ── Table of Contents ───────────────────────────────────── */
+function buildTOC(contentHtml) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = contentHtml;
+  const headings = tmp.querySelectorAll('h2, h3');
+
+  const tocEl = document.getElementById('post-toc');
+  if (!tocEl || headings.length < 2) return tmp.innerHTML;
+
+  let items = '';
+  headings.forEach((h, i) => {
+    const id = `toc-heading-${i}`;
+    h.id = id;
+    const cls = h.tagName === 'H3' ? ' class="toc-h3"' : '';
+    items += `<li${cls}><a href="#${id}">${h.textContent.trim()}</a></li>`;
+  });
+
+  tocEl.innerHTML = `
+    <div class="toc-header">
+      <span class="toc-title">Nội dung bài viết</span>
+      <button class="toc-toggle" onclick="this.closest('.post-toc-sidebar').classList.toggle('collapsed')" title="Ẩn/hiện mục lục">☰</button>
+    </div>
+    <ol class="toc-list">${items}</ol>`;
+
+  /* Highlight mục đang đọc khi scroll */
+  const links = tocEl.querySelectorAll('a');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        const active = tocEl.querySelector(`a[href="#${entry.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  tmp.querySelectorAll('h2, h3').forEach(h => {
+    const real = document.getElementById(h.id);
+    if (real) observer.observe(real);
+  });
+
+  return tmp.innerHTML;
+}
+
 /* ── Render post content ─────────────────────────────────── */
 function renderPostContent(post) {
   const tags = (post.tags || []).map(t =>
     `<a href="tag.html?slug=${t.slug}" class="tag-chip tag">${t.title}</a>`
   ).join('');
 
+  const bodyHtml = post.content || '<p style="color:var(--text-muted)">Bài viết chưa có nội dung.</p>';
+
   document.getElementById('post-content-wrap').innerHTML = `
     <div class="post-content">
-      <div class="post-body">${post.content || '<p style="color:var(--text-muted)">Bài viết chưa có nội dung.</p>'}</div>
+      <div class="post-body">${bodyHtml}</div>
       ${tags ? `<div class="post-tags">${tags}</div>` : ''}
     </div>`;
+
+  /* Build TOC sau khi content đã được render vào DOM */
+  const contentWithIds = buildTOC(post.content || '');
+  const postBody = document.querySelector('.post-body');
+  if (postBody) postBody.innerHTML = contentWithIds;
 }
 
 /* ── Comments ────────────────────────────────────────────── */
+let _commentPollInterval = null;
+
+function startCommentPolling(postId, intervalMs = 30000) {
+  if (_commentPollInterval) clearInterval(_commentPollInterval);
+  _commentPollInterval = setInterval(() => refreshComments(postId), intervalMs);
+}
+
+async function refreshComments(postId) {
+  try {
+    const res = await CommentService.getPublishedByPost(postId);
+    const fresh = Array.isArray(res) ? res : [];
+    const list = document.getElementById('comment-list');
+    if (!list) return;
+    const user = Auth.getUser();
+    const topLevel = fresh.filter(c => !c.parentId);
+    if (fresh.length === 0) {
+      list.innerHTML = `<div class="no-comments">Chưa có bình luận nào. Hãy là người đầu tiên!</div>`;
+    } else {
+      list.innerHTML = topLevel.map(c => renderComment(c, fresh, user)).join('');
+    }
+    const countEl = document.querySelector('.comments-count');
+    if (countEl) countEl.textContent = `💬 ${fresh.length} bình luận`;
+  } catch (_) {}
+}
+
 async function loadComments(postId) {
   const wrap = document.getElementById('comments-section-wrap');
   let comments = [];
   try {
     const res = await CommentService.getPublishedByPost(postId);
     comments = Array.isArray(res) ? res : [];
-  } catch (_) {}
+  } catch (err) {
+    console.error('loadComments error:', err);
+  }
 
   const isLoggedIn = Auth.isLoggedIn();
   const user = Auth.getUser();
@@ -157,8 +235,9 @@ async function submitComment() {
       postId:  currentPost.id,
       userId:  user.id,
       content: text,
+      title:   text.length > 60 ? text.substring(0, 60) + '...' : text,
     });
-    UI.toast('Bình luận đã được gửi, đang chờ duyệt!', 'success');
+    UI.toast('Bình luận đã được đăng!', 'success');
     document.getElementById('new-comment-text').value = '';
     await loadComments(currentPost.id);
   } catch (err) {
@@ -177,8 +256,9 @@ async function submitReply(parentId) {
       userId:   user.id,
       parentId: parentId,
       content:  text,
+      title:    text.length > 60 ? text.substring(0, 60) + '...' : text,
     });
-    UI.toast('Trả lời đã được gửi, đang chờ duyệt!', 'success');
+    UI.toast('Trả lời đã được đăng!', 'success');
     await loadComments(currentPost.id);
   } catch (err) {
     UI.toast(err.message || 'Không thể gửi trả lời.', 'error');
@@ -223,6 +303,7 @@ async function init() {
 
     UI.renderRecentWidget('sidebar-recent', post.slug);
     await loadComments(post.id);
+    startCommentPolling(post.id);
   } catch (err) {
     document.getElementById('post-header-content').innerHTML =
       `<div class="empty-state"><h3>Không tìm thấy bài viết</h3><p>${err.message}</p></div>`;

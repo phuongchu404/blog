@@ -12,8 +12,11 @@ import lombok.Setter;
 public class CommentEvent {
     private Long commentId;
     private Long postId;
-    private Long authorId; // Post Author ID
+    private String postSlug;
+    private String postTitle;
+    private Long postAuthorId;        // ID tác giả bài viết
+    private Long commenterId;         // ID người comment
     private String commenterName;
     private String content;
-    private String postTitle;
+    private Long parentCommentUserId; // ID chủ bình luận cha (nếu là reply), null nếu comment gốc
 }

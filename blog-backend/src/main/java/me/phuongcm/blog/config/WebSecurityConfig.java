@@ -106,6 +106,8 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/posts/{id}").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/categories/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/tags/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/series").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/series/slug/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/comments/post/*/published").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/comments/*/replies").permitAll()
 

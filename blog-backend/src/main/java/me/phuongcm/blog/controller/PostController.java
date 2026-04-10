@@ -1,6 +1,7 @@
 package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
+import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.dto.PostDTO;
 import me.phuongcm.blog.service.PostService;
 import org.springframework.http.HttpStatus;
@@ -80,6 +81,7 @@ public class PostController {
      * POST /api/posts — Tạo bài viết mới.
      * Yêu cầu permission "post:create" (có ở ROLE_USER và ROLE_ADMIN).
      */
+    @Auditable(action = "CREATE", resource = "POST")
     @PostMapping
     @PreAuthorize("hasAuthority('post:create')")
     public ResponseEntity<PostDTO> createPost(@Valid @RequestBody PostDTO postDTO) {
@@ -91,6 +93,7 @@ public class PostController {
      * PUT /api/posts/{id} — Cập nhật bài viết.
      * Yêu cầu permission "post:update:any".
      */
+    @Auditable(action = "UPDATE", resource = "POST")
     @PutMapping("/{id}")
     @PreAuthorize("hasAuthority('post:update:any')")
     public ResponseEntity<PostDTO> updatePost(@PathVariable Long id, @Valid @RequestBody PostDTO postDTO) {
@@ -102,6 +105,7 @@ public class PostController {
      * DELETE /api/posts/{id} — Xóa bài viết.
      * Yêu cầu permission "post:delete:any".
      */
+    @Auditable(action = "DELETE", resource = "POST")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('post:delete:any')")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {
@@ -113,6 +117,7 @@ public class PostController {
      * PUT /api/posts/{id}/publish — Xuất bản bài viết.
      * Yêu cầu permission "post:publish" (chỉ ROLE_ADMIN có).
      */
+    @Auditable(action = "PUBLISH", resource = "POST")
     @PutMapping("/{id}/publish")
     @PreAuthorize("hasAuthority('post:publish')")
     public ResponseEntity<PostDTO> publishPost(@PathVariable Long id) {
@@ -124,6 +129,7 @@ public class PostController {
      * PUT /api/posts/{id}/unpublish — Hủy xuất bản bài viết.
      * Yêu cầu permission "post:publish".
      */
+    @Auditable(action = "UNPUBLISH", resource = "POST")
     @PutMapping("/{id}/unpublish")
     @PreAuthorize("hasAuthority('post:publish')")
     public ResponseEntity<PostDTO> unpublishPost(@PathVariable Long id) {

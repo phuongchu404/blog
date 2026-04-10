@@ -1,6 +1,7 @@
 package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
+import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.dto.*;
 import me.phuongcm.blog.entity.RefreshToken;
 import me.phuongcm.blog.common.exception.TokenRefreshException;
@@ -32,6 +33,7 @@ public class AuthController {
      * Body: { "username": "...", "password": "...", "rememberMe": false }
      * Response: { "accessToken": "...", "tokenType": "Bearer", "userId": 1, "username": "...", ... }
      */
+    @Auditable(action = "LOGIN", resource = "AUTH")
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest loginRequest) {
         LoginResponse response = authService.login(loginRequest);
@@ -45,6 +47,7 @@ public class AuthController {
      * Body: { "username": "...", "email": "...", "password": "...", "fullName": "..." }
      * Response: { "success": true, "message": "Registered successfully", "data": { ...userInfo } }
      */
+    @Auditable(action = "REGISTER", resource = "AUTH")
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserDTO>> register(@Valid @RequestBody RegisterRequest registerRequest) {
         UserDTO user = authService.register(registerRequest);
@@ -93,6 +96,7 @@ public class AuthController {
      *
      * Yêu cầu: Header Authorization: Bearer {token}
      */
+    @Auditable(action = "LOGOUT", resource = "AUTH")
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse<String>> logoutUser() {
         UserDTO user = authService.getCurrentUser();
@@ -100,6 +104,7 @@ public class AuthController {
         return ResponseEntity.ok(ApiResponse.ok("Log out successful", null));
     }
 
+    @Auditable(action = "CHANGE_PASSWORD", resource = "AUTH")
     @PostMapping("/change-password")
     public ResponseEntity<ApiResponse<UserDTO>> changePassword(@Valid @RequestBody ChangePasswordRequestDTO changePasswordRequest) {
         UserDTO user = authService.changePassword(changePasswordRequest);

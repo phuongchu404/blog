@@ -1,6 +1,7 @@
 package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
+import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.dto.UserDTO;
 import me.phuongcm.blog.service.AuthService;
 import me.phuongcm.blog.service.UserService;
@@ -93,6 +94,7 @@ public class UserController {
      * Đã đăng nhập là đủ (để sửa profile bản thân).
      * Dùng "user:update:any" nếu sửa người khác (sẽ kiểm tra ở service layer).
      */
+    @Auditable(action = "UPDATE", resource = "USER")
     @PutMapping("/{id}")
     public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserDTO userDTO) {
         UserDTO updatedUser = userService.updateUser(id, userDTO);
@@ -103,6 +105,7 @@ public class UserController {
      * DELETE /api/users/{id} — Xóa tài khoản.
      * Yêu cầu permission "user:delete" (chỉ ROLE_ADMIN).
      */
+    @Auditable(action = "DELETE", resource = "USER")
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('user:delete')")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
