@@ -70,6 +70,12 @@ public class User extends AuditEntity {
     @Column(name = "provider_id")
     private String providerId; // chưa có
 
+    @Column(name = "membership_status", nullable = false, columnDefinition = "INT DEFAULT 0")
+    private Integer membershipStatus = 0; // 0: none, 1: active
+
+    @Column(name = "membership_expired_at")
+    private LocalDateTime membershipExpiredAt;
+
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Post> posts;
 

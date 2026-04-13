@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Set;
 
 @Repository
@@ -39,4 +40,7 @@ public interface UserRoleRepository extends JpaRepository<UserRole, Long> {
     void deleteByUserId(@Param("userId") Long userId);
 
     long countByRoleId(Long roleId);
+
+    @Query("SELECT ur.user.id FROM UserRole ur WHERE ur.role.name = :roleName")
+    List<Long> findUserIdsByRoleName(@Param("roleName") String roleName);
 }

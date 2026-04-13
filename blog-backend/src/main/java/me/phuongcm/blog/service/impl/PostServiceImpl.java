@@ -19,6 +19,8 @@ import me.phuongcm.blog.service.UploadTrackerService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -77,15 +79,53 @@ public class PostServiceImpl implements PostService {
         if (post.isPresent()) {
             incrementViewCountInRedis(id);
         }
-        return post.map(p -> enrichWithMeta(postMapper.toDTO(p)));
+        return post.map(p -> applyMembershipGate(enrichWithMeta(postMapper.toDTO(p))));
     }
 
     @Override
-    @Cacheable(value = "posts", key = "#slug")
     public Optional<PostDTO> getPostBySlug(String slug) {
         Optional<Post> post = postRepository.findBySlug(slug);
         post.ifPresent(p -> incrementViewCountInRedis(p.getId()));
-        return post.map(p -> enrichWithMeta(postMapper.toDTO(p)));
+        return post.map(p -> applyMembershipGate(enrichWithMeta(postMapper.toDTO(p))));
+    }
+
+    /**
+     * Nếu bài là member-only và user hiện tại không có membership hợp lệ,
+     * cắt ngắn nội dung và đặt contentLocked = true.
+     */
+    private PostDTO applyMembershipGate(PostDTO dto) {
+        if (!dto.isMemberOnly()) return dto;
+        if (hasActiveMembership()) return dto;
+
+        // Cắt nội dung thành teaser ~500 ký tự
+        String raw = dto.getContent() != null ? dto.getContent() : "";
+        String teaser = raw.length() > 500 ? raw.substring(0, 500) + "…" : raw;
+        dto.setContent(teaser);
+        dto.setContentLocked(true);
+        return dto;
+    }
+
+    /**
+     * Kiểm tra user hiện tại có quyền xem full content không.
+     * - ROLE_ADMIN / ROLE_EDITOR luôn bypass gate (tránh mất nội dung khi admin edit).
+     * - Còn lại: cần membershipStatus = 1 và chưa hết hạn.
+     */
+    private boolean hasActiveMembership() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || "anonymousUser".equals(auth.getPrincipal())) {
+            return false;
+        }
+        // Admin và Editor luôn có quyền xem full content
+        boolean isPrivileged = auth.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")
+                            || a.getAuthority().equals("ROLE_EDITOR"));
+        if (isPrivileged) return true;
+
+        String username = auth.getName();
+        return userRepository.findByUsername(username)
+                .map(u -> u.getMembershipStatus() != null && u.getMembershipStatus() == 1
+                        && (u.getMembershipExpiredAt() == null || u.getMembershipExpiredAt().isAfter(LocalDateTime.now())))
+                .orElse(false);
     }
 
     private void incrementViewCountInRedis(Long postId) {
@@ -131,6 +171,7 @@ public class PostServiceImpl implements PostService {
         post.setSummary(postDTO.getSummary());
         post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : 0);
         post.setImageUrl(postDTO.getImageUrl());
+        post.setMemberOnly(postDTO.isMemberOnly());
         post.setCreatedAt(LocalDateTime.now());
         post.setUpdatedAt(LocalDateTime.now());
 
@@ -179,6 +220,7 @@ public class PostServiceImpl implements PostService {
         post.setSummary(postDTO.getSummary());
         post.setContent(postDTO.getContent());
         post.setImageUrl(postDTO.getImageUrl());
+        post.setMemberOnly(postDTO.isMemberOnly());
 
         Integer oldStatus = post.getStatus();
         post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : 0);

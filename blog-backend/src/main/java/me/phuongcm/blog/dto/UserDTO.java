@@ -29,4 +29,6 @@ public class UserDTO {
     private String intro;
     private String profile;
     private List<String> roles;
+    private Integer membershipStatus; // 0: none, 1: active
+    private LocalDateTime membershipExpiredAt;
 }

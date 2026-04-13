@@ -3,7 +3,7 @@
  */
 
 // Lấy postId từ URL nếu đang edit
-const urlParams  = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search);
 const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
 
 let ckEditor = null;
@@ -32,7 +32,7 @@ class MyUploadAdapter {
         });
     }));
   }
-  abort() {}
+  abort() { }
 }
 
 function MyCustomUploadAdapterPlugin(editor) {
@@ -44,7 +44,7 @@ function MyCustomUploadAdapterPlugin(editor) {
 // ── Save ───────────────────────────────────────────────────────────────────────
 
 async function savePost(status) {
-  const title   = document.getElementById('postTitle').value.trim();
+  const title = document.getElementById('postTitle').value.trim();
   const content = ckEditor ? ckEditor.getData() : '';
 
   if (!title) { UI.toast('Title is required.', 'warning'); return; }
@@ -57,29 +57,29 @@ async function savePost(status) {
 
   const payload = {
     title,
-    slug:            document.getElementById('postSlug').value.trim() || UI.toSlug(title),
-    summary:         document.getElementById('postExcerpt').value.trim(),
+    slug: document.getElementById('postSlug').value.trim() || UI.toSlug(title),
+    summary: document.getElementById('postExcerpt').value.trim(),
     content,
-    status:          status === 'PUBLISHED' ? 1 : (status === 'ARCHIVED' ? 2 : 0),
-    imageUrl:        window.featuredImageUrl || null,
-    metaTitle:       document.getElementById('metaTitle').value.trim(),
+    status: status === 'PUBLISHED' ? 1 : (status === 'ARCHIVED' ? 2 : 0),
+    imageUrl: window.featuredImageUrl || null,
+    metaTitle: document.getElementById('metaTitle').value.trim(),
     metaDescription: document.getElementById('metaDescription').value.trim(),
-    metaKeywords:    document.getElementById('metaKeywords').value.trim(),
-    authorId:        document.getElementById('postAuthor').value || null,
-    tagIds:          selectedTags,
-    categoryIds:     document.getElementById('postCategory').value ? [Number(document.getElementById('postCategory').value)] : [],
+    metaKeywords: document.getElementById('metaKeywords').value.trim(),
+    authorId: document.getElementById('postAuthor').value || null,
+    tagIds: selectedTags,
+    categoryIds: document.getElementById('postCategory').value ? [Number(document.getElementById('postCategory').value)] : [],
+    memberOnly: document.getElementById('memberOnly')?.checked || false,
   };
 
   try {
-    let post;
     if (editPostId) {
-      post = await PostService.update(editPostId, payload);
+      await PostService.update(editPostId, payload);
       UI.toast('Post updated successfully.');
     } else {
-      post = await PostService.create(payload);
+      await PostService.create(payload);
       UI.toast('Post created successfully.');
-      if (post?.id) window.location.href = `create.html?id=${post.id}`;
     }
+    setTimeout(() => { window.location.href = 'index.html'; }, 800);
   } catch (err) {
     UI.toast('Failed to save post: ' + err.message, 'danger');
   }
@@ -145,11 +145,11 @@ document.addEventListener('DOMContentLoaded', async function () {
       image: {
         resizeUnit: '%',
         resizeOptions: [
-          { name: 'resizeImage:original', value: null,  label: 'Original' },
-          { name: 'resizeImage:25',       value: '25',  label: '25%' },
-          { name: 'resizeImage:50',       value: '50',  label: '50%' },
-          { name: 'resizeImage:75',       value: '75',  label: '75%' },
-          { name: 'resizeImage:100',      value: '100', label: '100%' },
+          { name: 'resizeImage:original', value: null, label: 'Original' },
+          { name: 'resizeImage:25', value: '25', label: '25%' },
+          { name: 'resizeImage:50', value: '50', label: '50%' },
+          { name: 'resizeImage:75', value: '75', label: '75%' },
+          { name: 'resizeImage:100', value: '100', label: '100%' },
         ],
         toolbar: [
           'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
@@ -227,9 +227,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // ── Load Categories ─────────────────────────────────────────────────
   try {
-    const res  = await CategoryService.getAll();
+    const res = await CategoryService.getAll();
     const cats = Array.isArray(res) ? res : (res.content ?? []);
-    const sel  = document.getElementById('postCategory');
+    const sel = document.getElementById('postCategory');
     if (sel) {
       sel.innerHTML = '<option value="">-- Choose Category --</option>' +
         cats.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
@@ -240,9 +240,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // ── Load Tags into Tom Select ────────────────────────────────────────
   try {
-    const res  = await TagService.getAll();
+    const res = await TagService.getAll();
     const tags = Array.isArray(res) ? res : (res.content ?? []);
-    const ts   = window.tomSelectTags;
+    const ts = window.tomSelectTags;
     if (ts) {
       tags.forEach(t => {
         const text = t.title || t.name || t;
@@ -250,12 +250,12 @@ document.addEventListener('DOMContentLoaded', async function () {
       });
       ts.refreshOptions(false);
     }
-  } catch (_) {}
+  } catch (_) { }
 
   // ── Load Authors & Set Default ──────────────────────────────────────
   try {
     const users = await Http.get('/api/users/all') || [];
-    const list  = Array.isArray(users) ? users : (users.content ?? []);
+    const list = Array.isArray(users) ? users : (users.content ?? []);
     const selAut = document.getElementById('postAuthor');
 
     if (selAut) {
@@ -273,23 +273,23 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // ── Edit mode: load existing post ───────────────────────────────────
   if (editPostId) {
-    const pageTitle       = document.getElementById('pageTitle');
+    const pageTitle = document.getElementById('pageTitle');
     const breadcrumbAction = document.getElementById('breadcrumbAction');
-    const btnPublish      = document.getElementById('btnPublish');
-    const publishDate     = document.getElementById('publishDate');
+    const btnPublish = document.getElementById('btnPublish');
+    const publishDate = document.getElementById('publishDate');
 
-    if (pageTitle)        pageTitle.textContent        = 'Edit Post';
+    if (pageTitle) pageTitle.textContent = 'Edit Post';
     if (breadcrumbAction) breadcrumbAction.textContent = 'Edit';
-    if (btnPublish)       btnPublish.innerHTML         = '<i class="bi bi-check-circle me-1"></i> Update Post';
-    if (publishDate)      publishDate.disabled         = true;
+    if (btnPublish) btnPublish.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Post';
+    if (publishDate) publishDate.disabled = true;
 
     try {
       const post = await PostService.getById(editPostId);
-      document.getElementById('postTitle').value   = post.title || '';
-      document.getElementById('postSlug').value    = post.slug || '';
+      document.getElementById('postTitle').value = post.title || '';
+      document.getElementById('postSlug').value = post.slug || '';
       document.getElementById('postExcerpt').value = post.summary || '';
       const statusMap = { 0: 'DRAFT', 1: 'PUBLISHED', 2: 'ARCHIVED' };
-      document.getElementById('postStatus').value  = statusMap[post.status] ?? 'DRAFT';
+      document.getElementById('postStatus').value = statusMap[post.status] ?? 'DRAFT';
 
       if (ckEditor) ckEditor.setData(post.content || '');
 
@@ -300,7 +300,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (post.tags && post.tags.length && window.tomSelectTags) {
         const ts = window.tomSelectTags;
         post.tags.forEach(t => {
-          const val  = t.id;
+          const val = t.id;
           const text = t.title || t.name;
           if (!ts.options[val]) ts.addOption({ value: val, text });
           ts.addItem(val, true);
@@ -318,19 +318,21 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (dropZone) dropZone.classList.add('d-none');
       }
 
-      document.getElementById('metaTitle').value       = post.metaTitle || '';
+      document.getElementById('metaTitle').value = post.metaTitle || '';
       document.getElementById('metaDescription').value = post.metaDescription || '';
-      document.getElementById('metaKeywords').value    = post.metaKeywords || '';
+      document.getElementById('metaKeywords').value = post.metaKeywords || '';
+      const memberOnlyChk = document.getElementById('memberOnly');
+      if (memberOnlyChk) memberOnlyChk.checked = post.memberOnly || false;
       if (post.metaDescription) {
         document.getElementById('metaDescCount').textContent = `(${post.metaDescription.length}/160)`;
       }
 
       if (post.publishedAt) {
-        const container   = document.getElementById('publishDateContainer');
+        const container = document.getElementById('publishDateContainer');
         const pubDateInput = document.getElementById('publishDate');
-        if (container)    container.classList.remove('d-none');
+        if (container) container.classList.remove('d-none');
         if (pubDateInput) {
-          pubDateInput.value    = post.publishedAt.substring(0, 16);
+          pubDateInput.value = post.publishedAt.substring(0, 16);
           pubDateInput.disabled = true;
         }
       }

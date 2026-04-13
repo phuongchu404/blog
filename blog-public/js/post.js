@@ -97,6 +97,37 @@ function buildTOC(contentHtml) {
   return tmp.innerHTML;
 }
 
+/* ── Membership gate ─────────────────────────────────────── */
+function renderMembershipGate() {
+  const isLoggedIn = Auth.isLoggedIn();
+  const user = Auth.getUser();
+  const status = user?.membershipStatus ?? 0; // 0=none, 1=active, 2=pending
+
+  let actionHtml = '';
+  if (!isLoggedIn) {
+    actionHtml = `<a href="login.html" class="btn btn-primary membership-gate-btn">Đăng nhập</a>`;
+  } else if (status === 2) {
+    actionHtml = `<span class="membership-gate-pending">⏳ Yêu cầu của bạn đang chờ duyệt</span>`;
+  } else {
+    // status = 0 (none) — chưa có membership, cho phép gửi yêu cầu
+    actionHtml = `<a href="membership.html" class="btn btn-primary membership-gate-btn">🚀 Đăng ký Membership</a>`;
+  }
+
+  const desc = !isLoggedIn
+    ? 'Đăng nhập rồi đăng ký membership để đọc toàn bộ nội dung.'
+    : status === 2
+      ? 'Admin sẽ xét duyệt yêu cầu của bạn sớm nhất.'
+      : 'Tài khoản của bạn chưa có membership. Gửi yêu cầu để được duyệt truy cập miễn phí.';
+
+  return `
+    <div class="membership-gate">
+      <div class="membership-gate-icon">🔒</div>
+      <h3 class="membership-gate-title">Nội dung dành cho thành viên</h3>
+      <p class="membership-gate-desc">${desc}</p>
+      ${actionHtml}
+    </div>`;
+}
+
 /* ── Render post content ─────────────────────────────────── */
 function renderPostContent(post) {
   const tags = (post.tags || []).map(t =>
@@ -105,16 +136,24 @@ function renderPostContent(post) {
 
   const bodyHtml = post.content || '<p style="color:var(--text-muted)">Bài viết chưa có nội dung.</p>';
 
+  const memberBadge = post.memberOnly
+    ? `<div class="member-only-badge"><span>🔒 Member Only</span></div>`
+    : '';
+
   document.getElementById('post-content-wrap').innerHTML = `
     <div class="post-content">
+      ${memberBadge}
       <div class="post-body">${bodyHtml}</div>
+      ${post.contentLocked ? renderMembershipGate() : ''}
       ${tags ? `<div class="post-tags">${tags}</div>` : ''}
     </div>`;
 
   /* Build TOC sau khi content đã được render vào DOM */
-  const contentWithIds = buildTOC(post.content || '');
-  const postBody = document.querySelector('.post-body');
-  if (postBody) postBody.innerHTML = contentWithIds;
+  if (!post.contentLocked) {
+    const contentWithIds = buildTOC(post.content || '');
+    const postBody = document.querySelector('.post-body');
+    if (postBody) postBody.innerHTML = contentWithIds;
+  }
 }
 
 /* ── Comments ────────────────────────────────────────────── */
@@ -304,6 +343,17 @@ async function init() {
     UI.renderRecentWidget('sidebar-recent', post.slug);
     await loadComments(post.id);
     startCommentPolling(post.id);
+
+    // Scroll đến comment khi vào từ link thông báo
+    const targetHash = window.location.hash;
+    if (targetHash && targetHash.startsWith('#comment-')) {
+      const commentEl = document.querySelector(targetHash);
+      if (commentEl) {
+        commentEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        commentEl.classList.add('comment-highlight');
+        setTimeout(() => commentEl.classList.remove('comment-highlight'), 3000);
+      }
+    }
   } catch (err) {
     document.getElementById('post-header-content').innerHTML =
       `<div class="empty-state"><h3>Không tìm thấy bài viết</h3><p>${err.message}</p></div>`;

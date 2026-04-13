@@ -10,29 +10,25 @@ function handleNavSearch(e) {
   if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
 }
 
-function handleHeroSearch(e) {
-  e.preventDefault();
-  const kw = document.getElementById('hero-search-input').value.trim();
-  if (kw) window.location.href = `search.html?q=${encodeURIComponent(kw)}`;
-}
-
 /* ── Mobile nav toggle ───────────────────────────────────── */
 document.getElementById('nav-toggle')?.addEventListener('click', () => {
   document.getElementById('nav-links')?.classList.toggle('open');
 });
 
-/* ── 1. Categories pills ─────────────────────────────────── */
+/* ── 1. Categories list (sidebar) ────────────────────────── */
 async function renderCategoriesPills() {
   const el = document.getElementById('categories-pills');
   if (!el) return;
   try {
-    const cats = await CategoryService.getAll();
+    const cats  = await CategoryService.getAll();
     const roots = (cats || []).filter(c => !c.parentId);
-    if (!roots.length) { el.innerHTML = '<p style="color:var(--text-muted)">Chưa có thể loại nào.</p>'; return; }
+    if (!roots.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">Chưa có thể loại nào.</p>'; return; }
     el.innerHTML = roots.map(c => `
       <a href="category.html?slug=${c.slug}" class="cat-pill">
-        ${c.imageUrl ? `<img src="${c.imageUrl}" alt="${c.title}" class="cat-pill-img">` : ''}
         <span>${c.title}</span>
+        <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+        </svg>
       </a>`).join('');
   } catch (_) {
     el.innerHTML = '';
@@ -88,9 +84,9 @@ async function init() {
     const list  = Array.isArray(posts) ? posts : (posts?.content || []);
 
     if (list.length > 0) {
-      // 3 bài đầu → nổi bật, còn lại → mới nhất
+      // 3 bài đầu → nổi bật, 3 bài tiếp → mới nhất
       renderFeaturedPosts(list.slice(0, 3));
-      renderRecentPosts(list.slice(3, 9));
+      renderRecentPosts(list.slice(3, 6));
     } else {
       UI.emptyState(featuredEl, 'Chưa có bài viết nào');
       UI.emptyState(recentEl,   'Chưa có bài viết nào');

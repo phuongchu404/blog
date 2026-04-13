@@ -3,6 +3,7 @@ package me.phuongcm.blog.service;
 import me.phuongcm.blog.dto.RegisterRequest;
 import me.phuongcm.blog.dto.UserDTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,4 +28,11 @@ public interface UserService {
     List<UserDTO> searchUsers(String name);
 
     void assignRolesToUser(Long userId, List<Long> roleIds);
+
+    UserDTO grantMembership(Long userId, LocalDateTime expiredAt);
+
+    UserDTO revokeMembership(Long userId);
+
+    /** User tự yêu cầu membership — status 0 → 2 (PENDING) */
+    UserDTO requestMembership(Long userId);
 }

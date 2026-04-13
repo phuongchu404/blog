@@ -2,6 +2,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <script>document.documentElement.dataset.theme = localStorage.getItem('blog-theme') || 'light';</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog - Tất cả bài viết</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,10 +25,12 @@
       </div>
     </div>
     <form class="nav-search" onsubmit="handleNavSearch(event)">
-      <svg class="search-icon" width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
-        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
-      </svg>
-      <input type="search" placeholder="Tìm kiếm bài viết..." id="nav-search-input">
+      <input type="search" id="nav-search-input" placeholder="Tìm kiếm bài viết..." autocomplete="off" />
+      <button type="submit" class="nav-search-submit">
+        <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+        </svg>
+      </button>
     </form>
     <div id="nav-auth" class="nav-auth"></div>
     <button class="nav-toggle" id="nav-toggle" aria-label="Menu">

@@ -9,9 +9,11 @@ import me.phuongcm.blog.common.utils.Status;
 import me.phuongcm.blog.dto.RegisterRequest;
 import me.phuongcm.blog.dto.UserDTO;
 import me.phuongcm.blog.dto.UserMapper;
+import me.phuongcm.blog.entity.Notification;
 import me.phuongcm.blog.entity.Role;
 import me.phuongcm.blog.entity.User;
 import me.phuongcm.blog.entity.UserRole;
+import me.phuongcm.blog.repository.NotificationRepository;
 import me.phuongcm.blog.repository.RoleRepository;
 import me.phuongcm.blog.repository.UserRepository;
 import me.phuongcm.blog.repository.UserRoleRepository;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -42,6 +45,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
 
     @Override
     public UserDTO getCurrentUser(String username) {
@@ -147,6 +153,57 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> searchUsers(String name) {
         return userMapper.toDTOs(userRepository.findByNameContaining(name));
+    }
+
+    @Override
+    public UserDTO requestMembership(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
+
+        if (user.getMembershipStatus() != null && user.getMembershipStatus() == 1) {
+            throw new RuntimeException("Tài khoản đã có membership hợp lệ.");
+        }
+        if (user.getMembershipStatus() != null && user.getMembershipStatus() == 2) {
+            throw new RuntimeException("Yêu cầu membership của bạn đang chờ xét duyệt.");
+        }
+
+        user.setMembershipStatus(2); // PENDING
+        userRepository.save(user);
+
+        // Gửi thông báo đến tất cả admin
+        String msg = "🔑 " + (user.getFullName() != null ? user.getFullName() : user.getUsername())
+                + " đã yêu cầu cấp membership.";
+        List<Long> adminIds = userRoleRepository.findUserIdsByRoleName("ROLE_ADMIN");
+        List<Notification> notifs = adminIds.stream().map(adminId ->
+            Notification.builder()
+                .recipientId(adminId)
+                .type("MEMBERSHIP_REQUEST")
+                .message(msg)
+                .createdAt(LocalDateTime.now())
+                .read(false)
+                .build()
+        ).collect(java.util.stream.Collectors.toList());
+        notificationRepository.saveAll(notifs);
+
+        return userMapper.toDTO(user);
+    }
+
+    @Override
+    public UserDTO grantMembership(Long userId, LocalDateTime expiredAt) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
+        user.setMembershipStatus(1);
+        user.setMembershipExpiredAt(expiredAt);
+        return userMapper.toDTO(userRepository.save(user));
+    }
+
+    @Override
+    public UserDTO revokeMembership(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
+        user.setMembershipStatus(0);
+        user.setMembershipExpiredAt(null);
+        return userMapper.toDTO(userRepository.save(user));
     }
 
     @Override

@@ -22,7 +22,7 @@ public class PostMeta {
     @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "id")
     private Post post;
 
-    @Column(name = "key", length = 50, nullable = false)
+    @Column(name = "meta_key", length = 50, nullable = false)
     private String key;
 
     @Column(name = "content", columnDefinition = "TEXT")

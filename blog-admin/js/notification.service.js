@@ -72,7 +72,7 @@ const AdminNotif = {
       }
       list.innerHTML = items.map(n => `
         <a class="dropdown-item${n.read ? '' : ' fw-semibold bg-light'}" href="#"
-           onclick="AdminNotif.onItemClick(event, ${n.id}, '${n.postSlug || ''}')">
+           onclick="AdminNotif.onItemClick(event, ${n.id}, '${n.postSlug || ''}', ${n.commentId || 'null'})">
           <div class="d-flex align-items-start gap-2">
             <div class="flex-shrink-0 mt-1">
               <i class="bi ${n.type === 'REPLY_COMMENT' ? 'bi-reply-fill text-success' : 'bi-chat-dots-fill text-primary'}" style="font-size:.9rem"></i>
@@ -89,11 +89,16 @@ const AdminNotif = {
     }
   },
 
-  async onItemClick(e, id, postSlug) {
+  async onItemClick(e, id, postSlug, commentId) {
     e.preventDefault();
     await NotificationService.markRead(id);
     await this.refreshBadge();
-    await this.loadList();
+    if (postSlug) {
+      const hash = commentId ? `#comment-${commentId}` : '';
+      window.location.href = `../blog-public/post.html?slug=${postSlug}${hash}`;
+    } else {
+      await this.loadList();
+    }
   },
 
   timeAgo(dateStr) {

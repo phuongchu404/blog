@@ -2,6 +2,7 @@ package me.phuongcm.blog.controller;
 
 import jakarta.validation.Valid;
 import me.phuongcm.blog.annotation.Auditable;
+import me.phuongcm.blog.dto.MembershipRequest;
 import me.phuongcm.blog.dto.UserDTO;
 import me.phuongcm.blog.service.AuthService;
 import me.phuongcm.blog.service.UserService;
@@ -122,5 +123,28 @@ public class UserController {
     public ResponseEntity<Void> assignRolesToUser(@PathVariable Long id, @RequestBody List<Long> roleIds) {
         userService.assignRolesToUser(id, roleIds);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     * PUT /api/users/{id}/membership — Cấp membership cho user.
+     * Yêu cầu permission "membership:manage" (chỉ ROLE_ADMIN).
+     */
+    @PutMapping("/{id}/membership")
+    @PreAuthorize("hasAuthority('membership:manage')")
+    public ResponseEntity<UserDTO> grantMembership(@PathVariable Long id,
+                                                    @RequestBody(required = false) MembershipRequest request) {
+        UserDTO updated = userService.grantMembership(id, request != null ? request.getExpiredAt() : null);
+        return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * DELETE /api/users/{id}/membership — Thu hồi membership của user.
+     * Yêu cầu permission "membership:manage".
+     */
+    @DeleteMapping("/{id}/membership")
+    @PreAuthorize("hasAuthority('membership:manage')")
+    public ResponseEntity<UserDTO> revokeMembership(@PathVariable Long id) {
+        UserDTO updated = userService.revokeMembership(id);
+        return ResponseEntity.ok(updated);
     }
 }

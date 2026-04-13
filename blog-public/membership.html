@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <script>document.documentElement.dataset.theme = localStorage.getItem('blog-theme') || 'light';</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag</title>
+  <title>Membership - Blog</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
@@ -23,6 +23,7 @@
         </button>
         <div class="cat-megamenu" id="cat-megamenu"></div>
       </div>
+      <a href="membership.html" class="nav-active">Membership</a>
     </div>
     <form class="nav-search" onsubmit="handleNavSearch(event)">
       <input type="search" id="nav-search-input" placeholder="Tìm kiếm bài viết..." autocomplete="off" />
@@ -41,36 +42,62 @@
   </nav>
 </header>
 
-<div class="page-header">
-  <div class="container">
-    <p style="font-size:.85rem;opacity:.6;margin-bottom:.35rem">🏷️ Tag</p>
-    <h1 id="page-title">Đang tải...</h1>
-    <p id="page-desc"></p>
-  </div>
-</div>
+<main class="container" style="max-width:780px;margin:0 auto;padding:2.5rem 1rem 4rem">
 
-<main class="container layout">
-  <div>
-    <div id="posts-grid" class="post-grid"></div>
-    <div id="pagination"></div>
+  <!-- Hero -->
+  <div class="membership-hero">
+    <div class="membership-hero-icon">🏆</div>
+    <h1 class="membership-hero-title">Blog Membership</h1>
+    <p class="membership-hero-desc">Truy cập toàn bộ nội dung độc quyền, bài viết chuyên sâu và nhiều hơn nữa dành riêng cho thành viên.</p>
   </div>
-  <aside class="sidebar">
-    <div class="sidebar-widget">
-      <div class="sidebar-widget-title">Danh mục</div>
-      <div class="sidebar-widget-body" id="sidebar-categories"></div>
+
+  <!-- Status card -->
+  <div id="membership-status-card" class="membership-status-card">
+    <div class="loading-spinner"><div class="spinner"></div><span>Đang tải...</span></div>
+  </div>
+
+  <!-- Benefits -->
+  <div class="membership-benefits">
+    <h2 class="membership-section-title">Quyền lợi thành viên</h2>
+    <div class="membership-benefits-grid">
+      <div class="benefit-item">
+        <div class="benefit-icon">📖</div>
+        <div>
+          <div class="benefit-title">Bài viết độc quyền</div>
+          <div class="benefit-desc">Đọc toàn bộ các bài viết chuyên sâu, phân tích, case study được đánh dấu Member Only.</div>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">🔔</div>
+        <div>
+          <div class="benefit-title">Thông báo sớm</div>
+          <div class="benefit-desc">Nhận thông báo ngay khi có bài viết mới dành cho thành viên được đăng tải.</div>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">💬</div>
+        <div>
+          <div class="benefit-title">Bình luận ưu tiên</div>
+          <div class="benefit-desc">Tham gia thảo luận và nhận phản hồi ưu tiên từ tác giả.</div>
+        </div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-icon">🎓</div>
+        <div>
+          <div class="benefit-title">Nội dung chuyên sâu</div>
+          <div class="benefit-desc">Truy cập tài liệu học tập, hướng dẫn chi tiết và nội dung premium.</div>
+        </div>
+      </div>
     </div>
-    <div class="sidebar-widget">
-      <div class="sidebar-widget-title">Tất cả tags</div>
-      <div class="sidebar-widget-body" id="sidebar-tags"></div>
-    </div>
-  </aside>
+  </div>
+
 </main>
 
-<footer class="site-footer">
+<footer class="site-footer" style="margin-top:3rem">
   <div class="container">
     <div class="footer-bottom">
       <span>© 2024 MyBlog.</span>
-      <a href="blog.html" style="color:#94a3b8">← Tất cả bài viết</a>
+      <a href="index.html" style="color:#94a3b8">← Về trang chủ</a>
     </div>
   </div>
 </footer>
@@ -78,10 +105,9 @@
 <script src="js/http.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/ui.js"></script>
-<script src="js/post.service.js"></script>
 <script src="js/category.service.js"></script>
 <script src="js/tag.service.js"></script>
 <script src="js/notification.service.js"></script>
-<script src="js/tag.js"></script>
+<script src="js/membership.js"></script>
 </body>
 </html>

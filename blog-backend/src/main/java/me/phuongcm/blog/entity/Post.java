@@ -67,6 +67,9 @@ public class Post {
     @Column(name = "view_count", nullable = false)
     private Long viewCount = 0L;
 
+    @Column(name = "member_only", nullable = false, columnDefinition = "TINYINT(1) DEFAULT 0")
+    private boolean memberOnly = false;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostComment> comments;
 

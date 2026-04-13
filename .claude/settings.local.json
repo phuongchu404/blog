@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xargs -I {} basename {})"
+      "Bash(xargs -I {} basename {})",
+      "Bash(grep -r \"NotificationService\\\\|notification\\\\|bell\\\\|unread\" /Users/phuongchu/phuongcm/blog/blog-public/js/*.js)",
+      "Bash(grep -A 30 \"CREATE TABLE \\\\`user\\\\`\" /Users/phuongchu/phuongcm/blog/blog.sql)"
     ]
   }
 }

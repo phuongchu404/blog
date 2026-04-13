@@ -28,6 +28,7 @@ public interface PostMapper {
     @Mapping(target = "metaTitle", ignore = true)
     @Mapping(target = "metaDescription", ignore = true)
     @Mapping(target = "metaKeywords", ignore = true)
+    @Mapping(target = "contentLocked", ignore = true)
     PostDTO toDTO(Post post);
 
     List<PostDTO> toDTOs(List<Post> posts);

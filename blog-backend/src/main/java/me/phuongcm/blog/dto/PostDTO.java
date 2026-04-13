@@ -62,6 +62,9 @@ public class PostDTO {
     private List<TagDTO> tags;
     private List<CategoryDTO> categories;
 
+    private boolean memberOnly;
+    private boolean contentLocked; // true khi bài là member-only nhưng user chưa có membership
+
     @Getter
     @Setter
     @NoArgsConstructor
