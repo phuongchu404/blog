@@ -21,6 +21,7 @@ import me.phuongcm.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,18 +52,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO getCurrentUser(String username) {
-
-        User user = userRepository.findByUsername(username).orElseThrow(()-> new ServiceException(Error.USER_NOT_FOUND));
+        User user = userRepository.findByUsername(username).orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
         return userMapper.toDTO(user);
     }
 
     @Override
+    @Transactional
     public UserDTO register(RegisterRequest registerRequest) {
-        if(userRepository.existsByUsername(registerRequest.getUsername())) {
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
             log.error("Username already exists: {}", registerRequest.getUsername());
             throw new ServiceException(Error.USERNAME_ALREADY_EXIST);
         }
-        if(userRepository.existsByEmail(registerRequest.getEmail())) {
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
             log.error("Email already exists: {}", registerRequest.getEmail());
             throw new ServiceException(Error.EMAIL_ALREADY_EXIST);
         }
@@ -76,7 +77,7 @@ public class UserServiceImpl implements UserService {
         user.setProvider(AuthProvider.local);
         user = userRepository.save(user);
 
-        Role role = roleRepository.findByName(ERole.ROLE_USER.getValue()).orElseThrow(()->new ServiceException(Error.ROLE_NOT_FOUND));
+        Role role = roleRepository.findByName(ERole.ROLE_USER.getValue()).orElseThrow(() -> new ServiceException(Error.ROLE_NOT_FOUND));
 
         UserRole userRole = new UserRole();
         userRole.setRole(role);
@@ -110,6 +111,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO createUser(UserDTO userDTO, String password) {
         User user = new User();
         user.setFirstName(userDTO.getFirstName());
@@ -128,6 +130,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO updateUser(Long id, UserDTO userDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
@@ -144,6 +147,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
@@ -156,6 +160,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO requestMembership(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
@@ -189,6 +194,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO grantMembership(Long userId, LocalDateTime expiredAt) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
@@ -198,6 +204,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDTO revokeMembership(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
@@ -207,7 +214,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @org.springframework.transaction.annotation.Transactional
+    @Transactional
     public void assignRolesToUser(Long userId, List<Long> roleIds) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));

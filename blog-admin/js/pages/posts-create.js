@@ -7,6 +7,7 @@ const urlParams = new URLSearchParams(window.location.search);
 const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
 
 let ckEditor = null;
+let publishDatePicker = null;
 
 // ── CKEditor Upload Adapter ────────────────────────────────────────────────────
 
@@ -175,6 +176,21 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
+  // ── BS5 DateTime Picker (Publish Date) ──────────────────────────────
+  const publishDateInput = document.getElementById('publishDate');
+  const publishDateToggle = document.getElementById('publishDateToggle');
+  if (publishDateInput && publishDateToggle) {
+    setDatetimeLocale('en-us');
+    createDatetimeTemplate();
+    publishDatePicker = createDatetimePicker(publishDateInput, publishDateToggle, null, {
+      format: 'YYYY-MM-DD HH:mm',
+      showTime: true,
+      use24Hour: true,
+      startDay: 1,
+    });
+    publishDateInput.addEventListener('click', () => publishDatePicker.open());
+  }
+
   // ── Auto slug từ title ──────────────────────────────────────────────
   const titleInput = document.getElementById('postTitle');
   if (titleInput) {
@@ -329,11 +345,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       if (post.publishedAt) {
         const container = document.getElementById('publishDateContainer');
-        const pubDateInput = document.getElementById('publishDate');
         if (container) container.classList.remove('d-none');
-        if (pubDateInput) {
-          pubDateInput.value = post.publishedAt.substring(0, 16);
-          pubDateInput.disabled = true;
+        if (publishDatePicker) {
+          // Convert ISO string to YYYY-MM-DD HH:mm for the picker
+          const d = new Date(post.publishedAt);
+          publishDatePicker.setDate(d);
         }
       }
 

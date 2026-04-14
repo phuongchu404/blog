@@ -30,11 +30,12 @@ const Http = {
         // Retry original request
         res = await fetch(`${API_BASE}${path}`, options);
       } catch (err) {
-        // Refresh failed, clear session
+        // Refresh failed — clear session and redirect to login
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('user');
-        // Let UI handle redirect if needed
+        const returnUrl = encodeURIComponent(window.location.href);
+        window.location.href = `login.html?returnUrl=${returnUrl}`;
         throw new Error('Session expired');
       }
     }
@@ -57,7 +58,7 @@ const Http = {
       try {
         const body = await res.json();
         msg = body.message || body.error || msg;
-      } catch (_) {}
+      } catch (_) { }
       throw new Error(msg);
     }
 

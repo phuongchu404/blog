@@ -9,9 +9,13 @@ import me.phuongcm.blog.repository.UserRepository;
 import me.phuongcm.blog.service.CommentService;
 import me.phuongcm.blog.service.KafkaProducerService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 @Service
 public class CommentServiceImpl implements CommentService {
     private final PostCommentRepository commentRepository;
@@ -50,6 +54,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public PostComment createComment(Long postId, Long userId, String title, String content, Long parentId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
@@ -73,39 +78,43 @@ public class CommentServiceImpl implements CommentService {
                     .orElseThrow(() -> new RuntimeException("Parent comment not found with id: " + parentId));
             comment.setParent(parentComment);
         }
-        
+
         PostComment savedComment = commentRepository.save(comment);
 
-        // Async Notification via Kafka
-        try {
-            Long parentCommentUserId = null;
-            if (parentId != null) {
-                PostComment parentComment = savedComment.getParent();
-                if (parentComment != null && parentComment.getUser() != null) {
-                    parentCommentUserId = parentComment.getUser().getId();
+        // Send Kafka notification only after DB transaction commits successfully
+        Long parentCommentUserId;
+        if (parentId != null && savedComment.getParent() != null && savedComment.getParent().getUser() != null) {
+            parentCommentUserId = savedComment.getParent().getUser().getId();
+        } else {
+            parentCommentUserId = null;
+        }
+        me.phuongcm.blog.dto.CommentEvent event = new me.phuongcm.blog.dto.CommentEvent(
+                savedComment.getId(),
+                post.getId(),
+                post.getSlug(),
+                post.getTitle(),
+                post.getAuthor().getId(),
+                user.getId(),
+                user.getUsername(),
+                content,
+                parentCommentUserId
+        );
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                try {
+                    kafkaProducerService.sendCommentNotificationEvent(event);
+                } catch (Exception e) {
+                    System.err.println("Failed to send Kafka comment event: " + e.getMessage());
                 }
             }
-            me.phuongcm.blog.dto.CommentEvent event = new me.phuongcm.blog.dto.CommentEvent(
-                    savedComment.getId(),
-                    post.getId(),
-                    post.getSlug(),
-                    post.getTitle(),
-                    post.getAuthor().getId(),
-                    user.getId(),
-                    user.getUsername(),
-                    content,
-                    parentCommentUserId
-            );
-            kafkaProducerService.sendCommentNotificationEvent(event);
-        } catch (Exception e) {
-            // Log the error but don't fail the comment creation process
-            System.err.println("Failed to send Kafka comment event: " + e.getMessage());
-        }
+        });
 
         return savedComment;
     }
 
     @Override
+    @Transactional
     public PostComment updateComment(Long id, String title, String content) {
         PostComment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
@@ -117,6 +126,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public void deleteComment(Long id) {
         PostComment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
@@ -125,6 +135,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public PostComment approveComment(Long id) {
         PostComment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));
@@ -136,6 +147,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    @Transactional
     public PostComment rejectComment(Long id) {
         PostComment comment = commentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comment not found with id: " + id));

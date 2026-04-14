@@ -10,9 +10,11 @@ import me.phuongcm.blog.repository.TagRepository;
 import me.phuongcm.blog.common.utils.SlugUtils;
 import me.phuongcm.blog.service.TagService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class TagServiceImpl implements TagService {
 
@@ -49,6 +51,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public TagDTO createTag(TagDTO tagDTO) {
         Tag tag = new Tag();
         tag.setTitle(tagDTO.getTitle());
@@ -59,6 +62,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public TagDTO updateTag(long id, TagDTO tagDTO) {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag not found with id: " + id));
@@ -70,6 +74,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public void deleteTag(long id) {
         Tag tag = tagRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Tag not found with id: " + id));
@@ -77,9 +82,10 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public void addTagsToPost(Post post, List<Long> tagIds) {
         if (tagIds == null) return;
-        for(Long tagId : tagIds){
+        for (Long tagId : tagIds) {
             Tag tag = tagRepository.findById(tagId)
                     .orElseThrow(() -> new RuntimeException("Tag not found with id: " + tagId));
             PostTag postTag = new PostTag();
@@ -90,6 +96,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public void clearTagsFromPost(Post post) {
         postTagRepository.deleteByPostId(post.getId());
     }

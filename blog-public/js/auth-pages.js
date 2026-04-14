@@ -44,7 +44,9 @@ function togglePassword(inputId, btn) {
 }
 
 function loginOAuth(provider) {
-  window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}?redirect_uri=${encodeURIComponent(window.location.origin + '/index.html')}`;
+  // Dùng URL của trang hiện tại (login.html) làm redirect_uri — tự động đúng với mọi cấu hình server
+  const redirectUri = window.location.origin + window.location.pathname;
+  window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}`;
 }
 
 function handleNavSearch(e) {
@@ -81,7 +83,9 @@ async function handleLogin(e) {
   try {
     await Auth.login(username, password);
     UI.toast('Đăng nhập thành công!', 'success');
-    setTimeout(() => { window.location.href = 'index.html'; }, 600);
+    const params = new URLSearchParams(window.location.search);
+    const returnUrl = params.get('returnUrl');
+    setTimeout(() => { window.location.href = returnUrl || 'index.html'; }, 600);
   } catch (err) {
     showFormError('login-error', err.message || 'Tên đăng nhập hoặc mật khẩu không đúng.');
   } finally {
@@ -97,10 +101,10 @@ async function handleRegister(e) {
   e.preventDefault();
   clearErrors('username-error', 'email-error', 'password-error', 'confirmPassword-error', 'register-error');
 
-  const fullName   = document.getElementById('fullName')?.value.trim();
-  const username   = document.getElementById('username')?.value.trim();
-  const email      = document.getElementById('email')?.value.trim();
-  const password   = document.getElementById('password')?.value;
+  const fullName = document.getElementById('fullName')?.value.trim();
+  const username = document.getElementById('username')?.value.trim();
+  const email = document.getElementById('email')?.value.trim();
+  const password = document.getElementById('password')?.value;
   const confirmPwd = document.getElementById('confirmPassword')?.value;
   let valid = true;
 
@@ -147,7 +151,7 @@ let profileUser = null;
 
 function switchTab(tab, btn) {
   document.getElementById('tab-posts').style.display = tab === 'posts' ? 'block' : 'none';
-  document.getElementById('tab-edit').style.display  = tab === 'edit'  ? 'block' : 'none';
+  document.getElementById('tab-edit').style.display = tab === 'edit' ? 'block' : 'none';
   document.querySelectorAll('.tab-btn').forEach(b => {
     b.style.color = 'var(--text-muted)';
     b.style.borderBottom = 'none';
@@ -208,12 +212,12 @@ async function handleProfileUpdate(e) {
 
   const data = {
     firstName: document.getElementById('edit-firstName')?.value.trim() || undefined,
-    lastName:  document.getElementById('edit-lastName')?.value.trim()  || undefined,
-    fullName:  document.getElementById('edit-fullName')?.value.trim()  || undefined,
-    email:     document.getElementById('edit-email')?.value.trim()     || undefined,
-    mobile:    document.getElementById('edit-mobile')?.value.trim()    || undefined,
-    intro:     document.getElementById('edit-intro')?.value.trim()     || undefined,
-    imageUrl:  document.getElementById('edit-imageUrl')?.value.trim()  || undefined,
+    lastName: document.getElementById('edit-lastName')?.value.trim() || undefined,
+    fullName: document.getElementById('edit-fullName')?.value.trim() || undefined,
+    email: document.getElementById('edit-email')?.value.trim() || undefined,
+    mobile: document.getElementById('edit-mobile')?.value.trim() || undefined,
+    intro: document.getElementById('edit-intro')?.value.trim() || undefined,
+    imageUrl: document.getElementById('edit-imageUrl')?.value.trim() || undefined,
   };
 
   setLoading('profile-save-btn', true, 'Lưu thay đổi');
@@ -236,7 +240,7 @@ async function handleProfileUpdate(e) {
 async function handleChangePassword(e) {
   e.preventDefault();
   clearErrors('confirm-password-error');
-  const newPwd     = document.getElementById('new-password')?.value;
+  const newPwd = document.getElementById('new-password')?.value;
   const confirmPwd = document.getElementById('confirm-new-password')?.value;
 
   if (!newPwd || newPwd.length < 6) {
@@ -269,9 +273,42 @@ async function handleChangePassword(e) {
 
 (async function init() {
   const path = window.location.pathname;
-  const isLogin    = path.includes('login');
+  const isLogin = path.includes('login');
   const isRegister = path.includes('register');
-  const isProfile  = path.includes('profile');
+  const isProfile = path.includes('profile');
+
+  // ── Xử lý OAuth2 redirect (chạy trước mọi thứ) ──────────────────────────
+  if (isLogin) {
+    const params = new URLSearchParams(window.location.search);
+    const oauthToken = params.get('token');
+    const oauthRefresh = params.get('refreshToken');
+    const oauthError = params.get('error');
+
+    if (oauthToken) {
+      // OAuth2 thành công — lưu token và lấy thông tin user
+      localStorage.setItem('token', oauthToken);
+      if (oauthRefresh) localStorage.setItem('refreshToken', oauthRefresh);
+      try {
+        const user = await Http.get('/auth/me');
+        localStorage.setItem('user', JSON.stringify(user));
+      } catch (_) { }
+      const returnUrl = params.get('returnUrl');
+      window.location.href = returnUrl || 'index.html';
+      return;
+    }
+
+    if (oauthError) {
+      // OAuth2 thất bại — hiển thị thông báo lỗi
+      const errorEl = document.getElementById('login-error');
+      if (errorEl) {
+        errorEl.textContent = decodeURIComponent(oauthError);
+        errorEl.style.display = 'block';
+      }
+      // Xóa query param khỏi URL cho gọn
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }
+  // ────────────────────────────────────────────────────────────────────────
 
   // Nếu đã đăng nhập và vào login/register → redirect về trang chủ
   if ((isLogin || isRegister) && Auth.isLoggedIn()) {

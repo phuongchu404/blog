@@ -99,6 +99,7 @@ public class SeriesServiceImpl implements SeriesService {
     /* ── Mutations ───────────────────────────────────────────── */
 
     @Override
+    @Transactional
     public SeriesDTO create(SeriesDTO dto) {
         Series series = new Series();
         series.setTitle(dto.getTitle());
@@ -119,6 +120,7 @@ public class SeriesServiceImpl implements SeriesService {
     }
 
     @Override
+    @Transactional
     public SeriesDTO update(Long id, SeriesDTO dto) {
         Series series = seriesRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Series not found with id: " + id));
@@ -145,6 +147,7 @@ public class SeriesServiceImpl implements SeriesService {
     }
 
     @Override
+    @Transactional
     public SeriesDTO addPost(Long seriesId, Long postId, Integer orderIndex) {
         Series series = seriesRepository.findById(seriesId)
                 .orElseThrow(() -> new RuntimeException("Series not found: " + seriesId));

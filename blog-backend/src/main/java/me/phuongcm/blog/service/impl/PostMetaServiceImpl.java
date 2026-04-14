@@ -6,9 +6,11 @@ import me.phuongcm.blog.repository.PostMetaRepository;
 import me.phuongcm.blog.repository.PostRepository;
 import me.phuongcm.blog.service.PostMetaService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class PostMetaServiceImpl implements PostMetaService {
     private final PostMetaRepository postMetaRepository;
@@ -19,6 +21,7 @@ public class PostMetaServiceImpl implements PostMetaService {
         this.postMetaRepository = postMetaRepository;
         this.postRepository = postRepository;
     }
+
     @Override
     public List<PostMeta> getMetaByPost(Long postId) {
         return postMetaRepository.findByPostId(postId);
@@ -30,6 +33,7 @@ public class PostMetaServiceImpl implements PostMetaService {
     }
 
     @Override
+    @Transactional
     public PostMeta CreateOrUpdateMeta(Long postId, String key, String content) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
@@ -50,6 +54,7 @@ public class PostMetaServiceImpl implements PostMetaService {
     }
 
     @Override
+    @Transactional
     public void deleteMeta(Long postId, String key) {
         PostMeta postMeta = postMetaRepository.findByPostIdAndKey(postId, key)
                 .orElseThrow(() -> new RuntimeException("PostMeta not found for postId: " + postId + " and key: " + key));
@@ -57,6 +62,7 @@ public class PostMetaServiceImpl implements PostMetaService {
     }
 
     @Override
+    @Transactional
     public void deleteAllMetaForPost(Long postId) {
         List<PostMeta> metaList = postMetaRepository.findByPostId(postId);
         postMetaRepository.deleteAll(metaList);

@@ -23,6 +23,7 @@ import me.phuongcm.blog.security.jwt.JwtUtil;
 import me.phuongcm.blog.service.AuthService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import me.phuongcm.blog.entity.RefreshToken;
 import me.phuongcm.blog.security.service.RefreshTokenService;
@@ -79,6 +80,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public UserDTO register(RegisterRequest registerRequest) {
         if (userRepository.existsByUsername(registerRequest.getUsername())) {
             log.error("Username already exists: {}", registerRequest.getUsername());
@@ -115,18 +117,20 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
-        
+
         java.util.Set<Role> roles = userRoleRepository.findRoleByUsername(username);
         if (roles != null) {
             user.setRoles(roles.stream().map(Role::getName).collect(java.util.stream.Collectors.toList()));
         }
-        
+
         return userMapper.toDTO(user);
     }
 
     @Override
+    @Transactional
     public UserDTO changePassword(ChangePasswordRequestDTO changePasswordRequest) {
-        User user = userRepository.findByUsername(changePasswordRequest.getUserName()).orElseThrow(()-> new ServiceException(Error.USER_NOT_FOUND));
+        User user = userRepository.findByUsername(changePasswordRequest.getUserName())
+                .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
         user.setPassword(passwordEncoder.encode(changePasswordRequest.getNewPassword()));
         userRepository.save(user);
         return userMapper.toDTO(user);

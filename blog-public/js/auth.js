@@ -59,10 +59,11 @@ const Auth = {
     window.location.href = 'index.html'; // Chuyển về home sau khi logout ở public site
   },
 
-  /** Yêu cầu đăng nhập để thực hiện hành động (không redirect, trả về false) */
+  /** Yêu cầu đăng nhập để thực hiện hành động — redirect về login.html nếu chưa đăng nhập */
   requireLogin() {
     if (!this.isLoggedIn()) {
-      UI.toast('Bạn cần đăng nhập để thực hiện thao tác này.', 'info');
+      const returnUrl = encodeURIComponent(window.location.href);
+      window.location.href = `login.html?returnUrl=${returnUrl}`;
       return false;
     }
     return true;

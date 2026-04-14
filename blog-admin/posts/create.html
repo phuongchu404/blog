@@ -14,6 +14,8 @@
     crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
   <link rel="stylesheet" href="../css/custom.css" />
+  <!-- BS5 DateTime Picker -->
+  <link rel="stylesheet" href="../css/bs5-datetime.min.css" />
   <!-- CKEditor 5 v43 CSS -->
   <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
   <!-- Tom Select (multi-select, vanilla JS) -->
@@ -64,6 +66,7 @@
       background: #fff !important;
       border-radius: 3px !important;
     }
+
     .ck-widget__resizer__handle:hover {
       background: #1976d2 !important;
     }
@@ -100,7 +103,8 @@
             <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width:300px;max-width:340px">
               <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
                 <span class="fw-semibold small">Thông báo</span>
-                <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">Đọc tất cả</button>
+                <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">Đọc tất
+                  cả</button>
               </div>
               <div id="admin-notif-list" style="max-height:320px;overflow-y:auto">
                 <div class="dropdown-item text-center text-muted py-3">Đang tải...</div>
@@ -209,7 +213,9 @@
             </li>
             <li class="nav-header">SETTINGS</li>
             <li class="nav-item">
-              <a href="../audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i><p>Audit Logs</p></a>
+              <a href="../audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i>
+                <p>Audit Logs</p>
+              </a>
             </li>
             <li class="nav-item">
               <a href="../settings.html" class="nav-link">
@@ -345,7 +351,14 @@
                     </div>
                     <div class="mb-3 d-none" id="publishDateContainer">
                       <label for="publishDate" class="form-label">Publish Date</label>
-                      <input type="datetime-local" class="form-control" id="publishDate" disabled />
+                      <div class="input-group">
+                        <input id="publishDate" class="form-control" autocomplete="off"
+                          placeholder="Select date and time" />
+                        <button class="btn btn-outline-secondary" id="publishDateToggle" type="button"
+                          aria-label="Toggle datetime picker">
+                          <i class="bi bi-calendar3"></i>
+                        </button>
+                      </div>
                     </div>
                     <!-- Member Only Toggle -->
                     <div class="mb-0">
@@ -457,6 +470,8 @@
   <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
   <!-- Tom Select (vanilla JS multi-select) -->
   <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  <!-- BS5 DateTime Picker -->
+  <script src="../js/bs5-datetime.min.js"></script>
   <!-- App JS -->
   <script src="../js/http.js"></script>
   <script src="../js/auth.js"></script>

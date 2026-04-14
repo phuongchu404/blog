@@ -22,11 +22,15 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class PostServiceImpl implements PostService {
 
@@ -62,6 +66,7 @@ public class PostServiceImpl implements PostService {
         this.postMapper = postMapper;
         this.postMetaService = postMetaService;
     }
+
     @Override
     public List<PostDTO> getAllPosts() {
         return postMapper.toDTOs(postRepository.findAll());
@@ -158,6 +163,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     @CacheEvict(value = "posts", allEntries = true)
     public PostDTO createPost(PostDTO postDTO) {
         User author = userRepository.findById(postDTO.getAuthorId())
@@ -190,7 +196,7 @@ public class PostServiceImpl implements PostService {
 
         saveMetaFields(savedPost.getId(), postDTO);
 
-        // Send Kafka Event for Elasticsearch Sync
+        // Send Kafka Event only after DB transaction commits successfully
         PostEvent event = new PostEvent(
                 savedPost.getId(),
                 PostEvent.EventType.CREATED,
@@ -201,7 +207,12 @@ public class PostServiceImpl implements PostService {
                 savedPost.getAuthor().getUsername(),
                 savedPost.getStatus()
         );
-        kafkaProducerService.sendPostSyncEvent(event);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                kafkaProducerService.sendPostSyncEvent(event);
+            }
+        });
 
         // Mark any uploaded files in content as explicitly USED
         uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
@@ -210,9 +221,10 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     @CacheEvict(value = "posts", allEntries = true)
     public PostDTO updatePost(Long id, PostDTO postDTO) {
-        Post post =  postRepository.findById(id)
+        Post post = postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
         post.setTitle(postDTO.getTitle());
@@ -247,7 +259,9 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        // Send Kafka Event for Elasticsearch Sync
+        saveMetaFields(savedPost.getId(), postDTO);
+
+        // Send Kafka Event only after DB transaction commits successfully
         PostEvent event = new PostEvent(
                 savedPost.getId(),
                 PostEvent.EventType.UPDATED,
@@ -258,9 +272,12 @@ public class PostServiceImpl implements PostService {
                 savedPost.getAuthor().getUsername(),
                 savedPost.getStatus()
         );
-        kafkaProducerService.sendPostSyncEvent(event);
-
-        saveMetaFields(savedPost.getId(), postDTO);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                kafkaProducerService.sendPostSyncEvent(event);
+            }
+        });
 
         // Mark any uploaded files in content as explicitly USED
         uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
@@ -291,7 +308,7 @@ public class PostServiceImpl implements PostService {
             // Fallback to MySQL if ES has no results (or indexing pending)
             return postMapper.toDTOs(postRepository.searchByKeyword(keyword));
         }
-        
+
         List<Long> postIds = documents.stream().map(PostDocument::getPostId).collect(Collectors.toList());
         List<Post> posts = postRepository.findAllById(postIds).stream()
                    .filter(p -> p.getStatus() == 1) // Ensure they are published since we might fetch mixed
@@ -300,6 +317,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Transactional
     @CacheEvict(value = "posts", allEntries = true)
     public PostDTO publishPost(Long id) {
         Post post = postRepository.findById(id)
@@ -319,12 +337,18 @@ public class PostServiceImpl implements PostService {
         event.setContent(savedPost.getContent());
         event.setAuthorName(savedPost.getAuthor().getUsername());
         event.setStatus(1);
-        kafkaProducerService.sendPostSyncEvent(event);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                kafkaProducerService.sendPostSyncEvent(event);
+            }
+        });
 
         return postMapper.toDTO(savedPost);
     }
 
     @Override
+    @Transactional
     @CacheEvict(value = "posts", allEntries = true)
     public PostDTO unpublishPost(Long id) {
         Post post = postRepository.findById(id)
@@ -343,7 +367,12 @@ public class PostServiceImpl implements PostService {
         event.setContent(savedPost.getContent());
         event.setAuthorName(savedPost.getAuthor().getUsername());
         event.setStatus(0);
-        kafkaProducerService.sendPostSyncEvent(event);
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                kafkaProducerService.sendPostSyncEvent(event);
+            }
+        });
 
         return postMapper.toDTO(savedPost);
     }

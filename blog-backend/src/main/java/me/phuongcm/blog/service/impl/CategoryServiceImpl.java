@@ -10,9 +10,11 @@ import me.phuongcm.blog.repository.PostCategoryRepository;
 import me.phuongcm.blog.common.utils.SlugUtils;
 import me.phuongcm.blog.service.CategoryService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
@@ -40,19 +42,16 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryDTO> getRootCategories() {
-
         return categoryMapper.toDTOs(categoryRepository.findRootCategories());
     }
 
     @Override
     public Optional<CategoryDTO> getCategoryById(Long id) {
-
         return categoryRepository.findById(id).map(categoryMapper::toDTO);
     }
 
     @Override
     public Optional<CategoryDTO> getCategoryBySlug(String slug) {
-
         return categoryRepository.findBySlug(slug).map(categoryMapper::toDTO);
     }
 
@@ -62,6 +61,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryDTO createCategory(CategoryDTO categoryDTO) {
         Category category = new Category();
         category.setTitle(categoryDTO.getTitle());
@@ -69,24 +69,28 @@ public class CategoryServiceImpl implements CategoryService {
         category.setMetaTitle(categoryDTO.getTitle());
         category.setSlug(categoryDTO.getSlug() != null ? categoryDTO.getSlug() : generateSlug(categoryDTO.getTitle()));
 
-        if(categoryDTO.getParentId() != null) {
-            Category parent = categoryRepository.findById(categoryDTO.getParentId()).orElseThrow(() -> new RuntimeException("Parent category not found with id: " + categoryDTO.getParentId()));
+        if (categoryDTO.getParentId() != null) {
+            Category parent = categoryRepository.findById(categoryDTO.getParentId())
+                    .orElseThrow(() -> new RuntimeException("Parent category not found with id: " + categoryDTO.getParentId()));
             category.setParent(parent);
         }
         return categoryMapper.toDTO(categoryRepository.save(category));
     }
 
     @Override
+    @Transactional
     public CategoryDTO updateCategory(Long id, CategoryDTO categoryDTO) {
-        Category category = categoryRepository.findById(id).orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
+        Category category = categoryRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
 
         category.setTitle(categoryDTO.getTitle());
         category.setContent(categoryDTO.getContent());
         category.setMetaTitle(categoryDTO.getTitle());
         category.setSlug(categoryDTO.getSlug() != null ? categoryDTO.getSlug() : generateSlug(categoryDTO.getTitle()));
 
-        if(categoryDTO.getParentId() != null) {
-            Category parent = categoryRepository.findById(categoryDTO.getParentId()).orElseThrow(() -> new RuntimeException("Parent category not found with id: " + categoryDTO.getParentId()));
+        if (categoryDTO.getParentId() != null) {
+            Category parent = categoryRepository.findById(categoryDTO.getParentId())
+                    .orElseThrow(() -> new RuntimeException("Parent category not found with id: " + categoryDTO.getParentId()));
             category.setParent(parent);
         } else {
             category.setParent(null);
@@ -95,6 +99,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found with id: " + id));
@@ -109,12 +114,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void addCategoriesToPost(Post post, List<Long> categoryIds) {
         if (categoryIds == null) return;
         for (Long categoryId : categoryIds) {
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
-            
+
             PostCategory postCategory = new PostCategory();
             postCategory.setPost(post);
             postCategory.setCategory(category);
@@ -124,6 +130,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void clearCategoriesFromPost(Post post) {
         postCategoryRepository.deleteByPostId(post.getId());
     }
