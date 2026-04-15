@@ -71,7 +71,7 @@ const Http = {
   },
 
   async get(path) {
-    return this._fetch(path, { method: 'GET', headers: this._headers(false) });
+    return this._fetch(path, { method: 'GET', headers: this._headers(false), cache: 'no-store' });
   },
 
   async post(path, data) {

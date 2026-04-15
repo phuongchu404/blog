@@ -8,6 +8,7 @@ import me.phuongcm.blog.entity.Tag;
 import me.phuongcm.blog.repository.PostTagRepository;
 import me.phuongcm.blog.repository.TagRepository;
 import me.phuongcm.blog.common.utils.SlugUtils;
+import me.phuongcm.blog.service.MinIOService;
 import me.phuongcm.blog.service.TagService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,30 +25,33 @@ public class TagServiceImpl implements TagService {
 
     private final TagMapper tagMapper;
 
-    public TagServiceImpl(TagRepository tagRepository, PostTagRepository postTagRepository, TagMapper tagMapper) {
+    private final MinIOService minIOService;
+
+    public TagServiceImpl(TagRepository tagRepository, PostTagRepository postTagRepository, TagMapper tagMapper, MinIOService minIOService) {
         this.tagRepository = tagRepository;
         this.postTagRepository = postTagRepository;
         this.tagMapper = tagMapper;
+        this.minIOService = minIOService;
     }
 
     @Override
     public List<TagDTO> getAllTags() {
-        return tagMapper.toDTOs(tagRepository.findAll());
+        return resolveUrls(tagMapper.toDTOs(tagRepository.findAll()));
     }
 
     @Override
     public List<TagDTO> searchTags(String keyword) {
-        return tagMapper.toDTOs(tagRepository.findByTitleContaining(keyword));
+        return resolveUrls(tagMapper.toDTOs(tagRepository.findByTitleContaining(keyword)));
     }
 
     @Override
     public Optional<TagDTO> getTagById(long id) {
-        return tagRepository.findById(id).map(tagMapper::toDTO);
+        return tagRepository.findById(id).map(tagMapper::toDTO).map(this::resolveUrl);
     }
 
     @Override
     public Optional<TagDTO> getTagBySlug(String slug) {
-        return tagRepository.findBySlug(slug).map(tagMapper::toDTO);
+        return tagRepository.findBySlug(slug).map(tagMapper::toDTO).map(this::resolveUrl);
     }
 
     @Override
@@ -58,7 +62,8 @@ public class TagServiceImpl implements TagService {
         tag.setContent(tagDTO.getContent());
         tag.setSlug(tagDTO.getSlug() != null && !tagDTO.getSlug().isBlank() ? tagDTO.getSlug() : generateSlug(tag.getTitle()));
         tag.setMetaTitle(tagDTO.getTitle());
-        return tagMapper.toDTO(tagRepository.save(tag));
+        tag.setImageUrl(tagDTO.getImageUrl());
+        return resolveUrl(tagMapper.toDTO(tagRepository.save(tag)));
     }
 
     @Override
@@ -70,7 +75,8 @@ public class TagServiceImpl implements TagService {
         tag.setContent(tagDTO.getContent());
         tag.setSlug(tagDTO.getSlug() != null && !tagDTO.getSlug().isBlank() ? tagDTO.getSlug() : generateSlug(tag.getTitle()));
         tag.setMetaTitle(tagDTO.getTitle());
-        return tagMapper.toDTO(tagRepository.save(tag));
+        tag.setImageUrl(tagDTO.getImageUrl());
+        return resolveUrl(tagMapper.toDTO(tagRepository.save(tag)));
     }
 
     @Override
@@ -99,6 +105,19 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public void clearTagsFromPost(Post post) {
         postTagRepository.deleteByPostId(post.getId());
+    }
+
+    /** Nếu imageUrl là path tương đối (không phải http) thì tạo full URL từ MinIO config */
+    private TagDTO resolveUrl(TagDTO dto) {
+        if (dto != null && dto.getImageUrl() != null && !dto.getImageUrl().startsWith("http")) {
+            dto.setImageUrl(minIOService.getPublicFileUrl(dto.getImageUrl()));
+        }
+        return dto;
+    }
+
+    private List<TagDTO> resolveUrls(List<TagDTO> dtos) {
+        dtos.forEach(this::resolveUrl);
+        return dtos;
     }
 
     private String generateSlug(String title) {

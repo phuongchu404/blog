@@ -154,6 +154,20 @@ function openEditTag(id) {
   if (submitBtn)    submitBtn.textContent = 'Update Tag';
   if (cancelEditBtn) cancelEditBtn.classList.remove('d-none');
 
+  // Populate image
+  const imgUrlInput = document.getElementById('tagImageUrl');
+  const imgPreview  = document.getElementById('tagImgPreview');
+  const dropZone    = document.getElementById('tagImgDropZone');
+  if (imgUrlInput) imgUrlInput.value = tag.imageUrl || '';
+  if (tag.imageUrl && imgPreview) {
+    imgPreview.src = tag.imageUrl;
+    imgPreview.classList.remove('d-none');
+    if (dropZone) dropZone.classList.add('d-none');
+  } else if (imgPreview) {
+    imgPreview.classList.add('d-none');
+    if (dropZone) dropZone.classList.remove('d-none');
+  }
+
   nameInput?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   nameInput?.focus();
 }
@@ -248,9 +262,84 @@ document.addEventListener('DOMContentLoaded', async function () {
     cancelEditBtn.addEventListener('click', function () {
       editingTagId = null;
       document.getElementById('addTagForm')?.reset();
+      document.getElementById('tagImageUrl').value = '';
+      const imgPreview = document.getElementById('tagImgPreview');
+      if (imgPreview) imgPreview.classList.add('d-none');
+      document.getElementById('tagImgDropZone')?.classList.remove('d-none');
       this.classList.add('d-none');
       const submitBtn = document.getElementById('submitBtn');
       if (submitBtn) submitBtn.textContent = 'Add Tag';
+    });
+  }
+
+  // Edit Tag modal submit
+  const editTagForm = document.getElementById('editTagForm');
+  if (editTagForm) {
+    editTagForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!editingTagId) return;
+      const payload = {
+        title:    document.getElementById('editTagName').value.trim(),
+        slug:     document.getElementById('editTagSlug').value.trim() || UI.toSlug(document.getElementById('editTagName').value),
+        imageUrl: document.getElementById('editTagImageUrl').value.trim() || null,
+      };
+      try {
+        await TagService.update(editingTagId, payload);
+        UI.toast('Tag updated.');
+        bootstrap.Modal.getInstance(document.getElementById('editTagModal'))?.hide();
+        editingTagId = null;
+        await loadTags();
+      } catch (err) { UI.toast(err.message, 'danger'); }
+    });
+  }
+
+  // ── Image upload — Add form ─────────────────────────────────────────────────
+  const tagFileInput = document.getElementById('tagImageFile');
+  if (tagFileInput) {
+    tagFileInput.addEventListener('change', async function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('tagImgPreview');
+        if (preview) { preview.src = e.target.result; preview.classList.remove('d-none'); }
+        document.getElementById('tagImgDropZone')?.classList.add('d-none');
+      };
+      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('upload', file);
+      try {
+        const res = await Http.upload('/api/files/upload?folder=blog/tags', formData);
+        if (res && res.path) {
+          document.getElementById('tagImageUrl').value = res.path; // lưu path tương đối vào DB
+          UI.toast('Image uploaded.');
+        }
+      } catch (err) { UI.toast('Failed to upload image: ' + err.message, 'danger'); }
+    });
+  }
+
+  // ── Image upload — Edit modal ───────────────────────────────────────────────
+  const editTagFileInput = document.getElementById('editTagImageFile');
+  if (editTagFileInput) {
+    editTagFileInput.addEventListener('change', async function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('editTagImgPreview');
+        if (preview) { preview.src = e.target.result; preview.classList.remove('d-none'); }
+        document.getElementById('editTagImgDropZone')?.classList.add('d-none');
+      };
+      reader.readAsDataURL(file);
+      const formData = new FormData();
+      formData.append('upload', file);
+      try {
+        const res = await Http.upload('/api/files/upload?folder=blog/tags', formData);
+        if (res && res.path) {
+          document.getElementById('editTagImageUrl').value = res.path; // lưu path tương đối vào DB
+          UI.toast('Image uploaded.');
+        }
+      } catch (err) { UI.toast('Failed to upload image: ' + err.message, 'danger'); }
     });
   }
 
@@ -260,8 +349,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     addTagForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       const payload = {
-        title: document.getElementById('tagName').value.trim(),
-        slug:  document.getElementById('tagSlug').value.trim() || UI.toSlug(document.getElementById('tagName').value),
+        title:    document.getElementById('tagName').value.trim(),
+        slug:     document.getElementById('tagSlug').value.trim() || UI.toSlug(document.getElementById('tagName').value),
+        imageUrl: document.getElementById('tagImageUrl').value.trim() || null,
       };
       try {
         if (editingTagId) {

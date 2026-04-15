@@ -16,12 +16,17 @@ const Auth = {
 
   /** Đăng nhập — lưu token vào localStorage */
   async login(username, password) {
+    // Xóa session cũ TRƯỚC KHI gọi API để tránh refreshToken cũ can thiệp
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+
     const data = await Http.post('/auth/login', { username, password });
     if (!data?.accessToken) throw new Error('Đăng nhập thất bại: không nhận được token.');
-    
+
     localStorage.setItem('token', data.accessToken);
     if (data.refreshToken) localStorage.setItem('refreshToken', data.refreshToken);
-    
+
     // Lấy thông tin user
     const user = await Http.get('/auth/me');
     localStorage.setItem('user', JSON.stringify(user));
@@ -48,10 +53,14 @@ const Auth = {
   },
 
   /** Đăng xuất */
-  logout() {
+  async logout() {
     const refreshToken = localStorage.getItem('refreshToken');
     if (refreshToken) {
-      Http.post('/auth/logout', { refreshToken }).catch(() => {});
+      try {
+        await Http.post('/auth/logout', { refreshToken });
+      } catch (e) {
+        console.error("Logout failed:", e);
+      }
     }
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');

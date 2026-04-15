@@ -9,7 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -31,7 +34,9 @@ public class FileController {
     @Auditable(action = "UPLOAD", resource = "FILE")
     @PostMapping("/upload")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<Map<String, Object>> upload(@RequestParam("upload") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> upload(
+            @RequestParam("upload") MultipartFile file,
+            @RequestParam(value = "folder", defaultValue = "blog/posts") String folder) {
         try {
             if (file.isEmpty()) {
                 return ResponseEntity.badRequest().body(Collections.singletonMap("error", "File is empty"));
@@ -53,11 +58,16 @@ public class FileController {
                     .isPublic(true)
                     .build();
 
-            // Thực hiện upload vào thư mục blog/posts
+            // Tạo subfolder theo ngày: ddMMyyyy (vd: 15042026)
+            String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
+            // Cấu trúc: blog/posts/ddMMyyyy, blog/tags/ddMMyyyy, blog/categories/ddMMyyyy
+            String fullFolder = folder + "/" + dateFolder;
+
+            // Upload vào folder được chỉ định
             String uploadedFileName = minIOService.uploadFile(
                     file.getInputStream(),
                     file.getOriginalFilename(),
-                    "blog/posts",
+                    fullFolder,
                     uploadOption,
                     true
             );
@@ -66,17 +76,20 @@ public class FileController {
                 return ResponseEntity.status(500).body(Collections.singletonMap("error", "Upload to MinIO failed"));
             }
 
-            // Lấy URL công khai
-            MinIOService.DownloadOption downloadOption = MinIOService.DownloadOption.builder()
-                    .isPublic(true)
-                    .build();
+            // Đường dẫn tương đối lưu vào DB (không chứa domain/bucket)
+            // Format: blog/posts/ddMMyyyy/ten_file
+            String filePath = fullFolder + "/" + uploadedFileName;
 
-            String fileUrl = minIOService.getFileUrl(uploadedFileName, "blog/posts", downloadOption);
+            // URL đầy đủ để hiển thị ngay trên trình duyệt
+            String fileUrl = minIOService.getPublicFileUrl(filePath);
 
             // Ghi nhận Tracker
             uploadTrackerService.trackUpload(uploadedFileName, fileUrl);
 
-            return ResponseEntity.ok(Collections.singletonMap("url", fileUrl));
+            Map<String, Object> response = new HashMap<>();
+            response.put("url", fileUrl);   // dùng để preview ảnh ngay lập tức
+            response.put("path", filePath); // dùng để lưu vào DB
+            return ResponseEntity.ok(response);
         } catch (IOException e) {
             return ResponseEntity.status(500).body(Collections.singletonMap("error", e.getMessage()));
         }

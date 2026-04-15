@@ -36,17 +36,20 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
         try {
             String token = parseJwt(request);
-            if(token != null && jwtUtil.validateToken(token)) {
+            if (token != null && jwtUtil.validateToken(token)) {
                 String username = jwtUtil.getUsernameFromToken(token);
+                log.info("AuthTokenFilter parsed token for username: {}", username);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             log.error("Cannot set user authentication: {}", e.getMessage());
         }
 
@@ -57,7 +60,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private String parseJwt(HttpServletRequest request) {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(StringUtils.hasText(header) && header.startsWith(tokenPrefix)) {
+        if (StringUtils.hasText(header) && header.startsWith(tokenPrefix)) {
             return header.substring(tokenPrefix.length());
         }
         return null;

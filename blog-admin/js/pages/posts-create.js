@@ -62,7 +62,7 @@ async function savePost(status) {
     summary: document.getElementById('postExcerpt').value.trim(),
     content,
     status: status === 'PUBLISHED' ? 1 : (status === 'ARCHIVED' ? 2 : 0),
-    imageUrl: window.featuredImageUrl || null,
+    imageUrl: window.featuredImagePath || window.featuredImageUrl || null,
     metaTitle: document.getElementById('metaTitle').value.trim(),
     metaDescription: document.getElementById('metaDescription').value.trim(),
     metaKeywords: document.getElementById('metaKeywords').value.trim(),
@@ -230,9 +230,10 @@ document.addEventListener('DOMContentLoaded', async function () {
       const formData = new FormData();
       formData.append('upload', file);
       try {
-        const res = await Http.upload('/api/files/upload', formData);
+        const res = await Http.upload('/api/files/upload?folder=blog/posts', formData);
         if (res && res.url) {
-          window.featuredImageUrl = res.url;
+          window.featuredImageUrl  = res.url;   // dùng để hiển thị preview
+          window.featuredImagePath = res.path;  // lưu vào DB (path tương đối)
           UI.toast('Featured image uploaded.');
         }
       } catch (err) {

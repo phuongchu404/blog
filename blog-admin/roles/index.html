@@ -10,25 +10,22 @@
     <meta name="color-scheme" content="light dark" />
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+      href="../assets/css/source-sans-3.css"
       crossorigin="anonymous"
       media="print"
       onload="this.media = 'all'"
     />
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
+      href="../assets/css/overlayscrollbars.min.css"
       crossorigin="anonymous"
     />
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+      href="../assets/css/bootstrap-icons.min.css"
       crossorigin="anonymous"
     />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css"
-    />
+    <link rel="stylesheet" href="../assets/css/adminlte.min.css" />
     <link rel="stylesheet" href="../css/custom.css" />
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -63,17 +60,42 @@
             </li>
             <!-- Notification Bell -->
             <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
+              <a
+                class="nav-link"
+                data-bs-toggle="dropdown"
+                href="#"
+                id="admin-notif-dropdown-toggle"
+              >
                 <i class="bi bi-bell-fill"></i>
-                <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display:none">0</span>
+                <span
+                  class="badge bg-danger navbar-badge"
+                  id="admin-notif-badge"
+                  style="display: none"
+                  >0</span
+                >
               </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width:300px;max-width:340px">
-                <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+              <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-end"
+                style="min-width: 300px; max-width: 340px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom"
+                >
                   <span class="fw-semibold small">Thông báo</span>
-                  <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">Đọc tất cả</button>
+                  <button
+                    class="btn btn-sm btn-link p-0 text-decoration-none"
+                    id="admin-notif-mark-all"
+                  >
+                    Đọc tất cả
+                  </button>
                 </div>
-                <div id="admin-notif-list" style="max-height:320px;overflow-y:auto">
-                  <div class="dropdown-item text-center text-muted py-3">Đang tải...</div>
+                <div
+                  id="admin-notif-list"
+                  style="max-height: 320px; overflow-y: auto"
+                >
+                  <div class="dropdown-item text-center text-muted py-3">
+                    Đang tải...
+                  </div>
                 </div>
               </div>
             </li>
@@ -84,7 +106,7 @@
                 data-bs-toggle="dropdown"
               >
                 <img
-                  src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
+                  src="../assets/images/user2-160x160.jpg"
                   class="user-image rounded-circle shadow"
                   alt="Admin"
                 />
@@ -93,7 +115,7 @@
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <li class="user-header text-bg-primary">
                   <img
-                    src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
+                    src="../assets/images/user2-160x160.jpg"
                     class="rounded-circle shadow"
                     alt="Admin"
                   />
@@ -120,7 +142,7 @@
         <div class="sidebar-brand">
           <a href="../index.html" class="brand-link">
             <img
-              src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png"
+              src="../assets/images/AdminLTELogo.png"
               alt="Logo"
               class="brand-image opacity-75 shadow"
             />
@@ -201,7 +223,10 @@
               </li>
               <li class="nav-header">SETTINGS</li>
               <li class="nav-item">
-                <a href="../audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i><p>Audit Logs</p></a>
+                <a href="../audit-logs/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-journal-text"></i>
+                  <p>Audit Logs</p></a
+                >
               </li>
               <li class="nav-item">
                 <a href="../settings.html" class="nav-link"
@@ -251,7 +276,12 @@
                     placeholder="Search roles..."
                     autocomplete="off"
                   />
-                  <button id="roles-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
+                  <button
+                    id="roles-refresh-btn"
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    title="Refresh"
+                  >
                     <i class="bi bi-arrow-clockwise"></i>
                   </button>
                 </div>
@@ -274,7 +304,9 @@
                   <i class="bi bi-shield-check me-2"></i>All Roles
                 </h3>
                 <div class="card-tools ms-auto">
-                  <span class="badge text-bg-primary" id="roles-count-badge">0 total</span>
+                  <span class="badge text-bg-primary" id="roles-count-badge"
+                    >0 total</span
+                  >
                 </div>
               </div>
               <div class="card-body p-0">
@@ -302,7 +334,10 @@
                 </table>
               </div>
               <div class="card-footer clearfix">
-                <ul class="pagination pagination-sm m-0 float-end" id="roles-pagination"></ul>
+                <ul
+                  class="pagination pagination-sm m-0 float-end"
+                  id="roles-pagination"
+                ></ul>
               </div>
             </div>
           </div>
@@ -586,24 +621,21 @@ Can moderate comments and manage content</textarea
     </div>
 
     <script
-      src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
+      src="../js/template/overlayscrollbars.browser.es6.min.js"
       crossorigin="anonymous"
     ></script>
+    <script src="../js/template/popper.min.js" crossorigin="anonymous"></script>
     <script
-      src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+      src="../js/template/bootstrap.min.js"
       crossorigin="anonymous"
     ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js"
-      crossorigin="anonymous"
-    ></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script src="../js/template/adminlte.min.js"></script>
     <script src="../js/http.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/ui.js"></script>
-    <script src="../js/role.service.js"></script>
-    <script src="../js/permission.service.js"></script>
-    <script src="../js/notification.service.js"></script>
+    <script src="../js/services/role.service.js"></script>
+    <script src="../js/services/permission.service.js"></script>
+    <script src="../js/services/notification.service.js"></script>
     <script>
       Auth.guard();
       AdminNotif.init();

@@ -46,5 +46,9 @@ public interface MinIOService {
 
     String getFileUrl(String fileName, String directory, DownloadOption option);
 
+    /** Trả về public URL đơn giản (không presigned) cho file trong public bucket.
+     *  filePath là đường dẫn tương đối, ví dụ: blog/posts/image.jpg */
+    String getPublicFileUrl(String filePath);
+
     boolean removeFile(String fileName, String directory, DownloadOption option);
 }

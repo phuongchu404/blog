@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (email)     email.value     = currentUser.email || '';
     if (bio)       bio.value       = currentUser.bio || '';
     if (website)   website.value   = currentUser.website || '';
-    if (preview && currentUser.avatarUrl) preview.src = currentUser.avatarUrl;
+    if (preview && currentUser.imageUrl) preview.src = currentUser.imageUrl;
 
     // Roles
     const roleBadges = (currentUser.roles || []).map(r => `<span class="badge text-bg-danger me-1">${r}</span>`).join('');
@@ -55,11 +55,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         lastName:  document.getElementById('lastName').value.trim(),
         username:  document.getElementById('username').value.trim(),
         email:     document.getElementById('email').value.trim(),
-        bio:       document.getElementById('bio').value.trim(),
-        website:   document.getElementById('website').value.trim(),
+        intro:     document.getElementById('bio').value.trim(),
+        imageUrl:  window.profileImagePath || currentUser.imageUrl || null,
       };
       try {
         await UserService.update(currentUser.id, payload);
+        currentUser = await Auth.me();
+        localStorage.setItem('user', JSON.stringify(currentUser));
+        await UI.renderCurrentUser();
         UI.toast('Profile updated successfully.');
       } catch (err) { UI.toast(err.message, 'danger'); }
     });
@@ -120,15 +123,28 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
   }
 
-  // ── Photo upload preview ────────────────────────────────────────────
+  // ── Photo upload — preview + upload thật lên MinIO ─────────────────
   const photoUpload = document.getElementById('photoUpload');
   if (photoUpload) {
-    photoUpload.addEventListener('change', function () {
-      if (this.files && this.files[0]) {
-        const reader  = new FileReader();
-        const preview = document.getElementById('profilePhotoPreview');
-        reader.onload = e => { if (preview) preview.src = e.target.result; };
-        reader.readAsDataURL(this.files[0]);
+    photoUpload.addEventListener('change', async function () {
+      const file = this.files && this.files[0];
+      if (!file) return;
+      // Preview ngay lập tức
+      const reader  = new FileReader();
+      const preview = document.getElementById('profilePhotoPreview');
+      reader.onload = e => { if (preview) preview.src = e.target.result; };
+      reader.readAsDataURL(file);
+      // Upload lên MinIO
+      const formData = new FormData();
+      formData.append('upload', file);
+      try {
+        const res = await Http.upload('/api/files/upload?folder=blog/avatars', formData);
+        if (res && res.path) {
+          window.profileImagePath = res.path;
+          UI.toast('Ảnh đã tải lên. Nhấn Save để lưu.', 'success');
+        }
+      } catch (err) {
+        UI.toast('Upload thất bại: ' + err.message, 'danger');
       }
     });
   }

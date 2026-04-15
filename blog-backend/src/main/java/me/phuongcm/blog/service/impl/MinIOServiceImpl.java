@@ -32,6 +32,9 @@ public class MinIOServiceImpl implements MinIOService {
 
     private final MinioClient minioClient;
 
+    @Value("${minio.url}")
+    private String minioUrl;
+
     @Value("${minio.bucket-private}")
     private String bucketPrivate;
 
@@ -102,6 +105,12 @@ public class MinIOServiceImpl implements MinIOService {
             log.error(e.getMessage(), e);
         }
         return null;
+    }
+
+    @Override
+    public String getPublicFileUrl(String filePath) {
+        if (filePath == null || filePath.isBlank()) return null;
+        return minioUrl + "/" + bucketPublic + "/" + filePath;
     }
 
     @Override

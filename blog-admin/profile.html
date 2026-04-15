@@ -3,23 +3,45 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Blog Admin | Profile</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+    <link
+      rel="stylesheet"
+      href="assets/css/source-sans-3.css"
+      crossorigin="anonymous"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/css/overlayscrollbars.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/css/bootstrap-icons.min.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="assets/css/adminlte.min.css" />
     <link rel="stylesheet" href="css/custom.css" />
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-
       <!-- ======= Header ======= -->
       <nav class="app-header navbar navbar-expand bg-body">
         <div class="container-fluid">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+              <a
+                class="nav-link"
+                data-lte-toggle="sidebar"
+                href="#"
+                role="button"
+                ><i class="bi bi-list"></i
+              ></a>
             </li>
             <li class="nav-item d-none d-md-block">
               <a href="index.html" class="nav-link">Dashboard</a>
@@ -29,38 +51,83 @@
             <li class="nav-item">
               <a class="nav-link" href="#" data-lte-toggle="fullscreen">
                 <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+                <i
+                  data-lte-icon="minimize"
+                  class="bi bi-fullscreen-exit"
+                  style="display: none"
+                ></i>
               </a>
             </li>
             <!-- Notification Bell -->
             <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
+              <a
+                class="nav-link"
+                data-bs-toggle="dropdown"
+                href="#"
+                id="admin-notif-dropdown-toggle"
+              >
                 <i class="bi bi-bell-fill"></i>
-                <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display:none">0</span>
+                <span
+                  class="badge bg-danger navbar-badge"
+                  id="admin-notif-badge"
+                  style="display: none"
+                  >0</span
+                >
               </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width:300px;max-width:340px">
-                <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+              <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-end"
+                style="min-width: 300px; max-width: 340px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom"
+                >
                   <span class="fw-semibold small">Thông báo</span>
-                  <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">Đọc tất cả</button>
+                  <button
+                    class="btn btn-sm btn-link p-0 text-decoration-none"
+                    id="admin-notif-mark-all"
+                  >
+                    Đọc tất cả
+                  </button>
                 </div>
-                <div id="admin-notif-list" style="max-height:320px;overflow-y:auto">
-                  <div class="dropdown-item text-center text-muted py-3">Đang tải...</div>
+                <div
+                  id="admin-notif-list"
+                  style="max-height: 320px; overflow-y: auto"
+                >
+                  <div class="dropdown-item text-center text-muted py-3">
+                    Đang tải...
+                  </div>
                 </div>
               </div>
             </li>
             <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+              <a
+                href="#"
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="assets/images/user2-160x160.jpg"
+                  class="user-image rounded-circle shadow"
+                  alt="Admin"
+                />
                 <span class="d-none d-md-inline">Admin</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <li class="user-header text-bg-primary">
-                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <img
+                    src="assets/images/user2-160x160.jpg"
+                    class="rounded-circle shadow"
+                    alt="Admin"
+                  />
                   <p>Admin <small>Blog Administrator</small></p>
                 </li>
                 <li class="user-footer">
-                  <a href="profile.html" class="btn btn-outline-secondary">Profile</a>
-                  <a href="login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                  <a href="profile.html" class="btn btn-outline-secondary"
+                    >Profile</a
+                  >
+                  <a href="login.html" class="btn btn-outline-danger float-end"
+                    >Sign out</a
+                  >
                 </li>
               </ul>
             </li>
@@ -72,16 +139,28 @@
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <div class="sidebar-brand">
           <a href="index.html" class="brand-link">
-            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <img
+              src="assets/images/AdminLTELogo.png"
+              alt="Logo"
+              class="brand-image opacity-75 shadow"
+            />
             <span class="brand-text fw-light">Blog Admin</span>
           </a>
         </div>
         <div class="sidebar-wrapper">
           <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+            <ul
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="navigation"
+              data-accordion="false"
+            >
               <li class="nav-header">MAIN MENU</li>
               <li class="nav-item">
-                <a href="index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p></a>
+                <a href="index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-speedometer2"></i>
+                  <p>Dashboard</p></a
+                >
               </li>
               <li class="nav-item">
                 <a href="#" class="nav-link">
@@ -89,38 +168,75 @@
                   <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
                 </a>
                 <ul class="nav nav-treeview">
-                  <li class="nav-item"><a href="posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>All Posts</p></a></li>
-                  <li class="nav-item"><a href="posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>Create Post</p></a></li>
+                  <li class="nav-item">
+                    <a href="posts/index.html" class="nav-link"
+                      ><i class="nav-icon bi bi-circle"></i>
+                      <p>All Posts</p></a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a href="posts/create.html" class="nav-link"
+                      ><i class="nav-icon bi bi-circle"></i>
+                      <p>Create Post</p></a
+                    >
+                  </li>
                 </ul>
               </li>
               <li class="nav-item">
-                <a href="categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categories</p></a>
+                <a href="categories/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-tags"></i>
+                  <p>Categories</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i><p>Tags</p></a>
+                <a href="tags/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-hash"></i>
+                  <p>Tags</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i><p>Comments</p></a>
+                <a href="comments/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-chat-dots"></i>
+                  <p>Comments</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Users</p></a>
+                <a href="users/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-people"></i>
+                  <p>Users</p></a
+                >
               </li>
               <li class="nav-header">ACCESS CONTROL</li>
               <li class="nav-item">
-                <a href="roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i><p>Roles</p></a>
+                <a href="roles/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-shield-check"></i>
+                  <p>Roles</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="permissions/index.html" class="nav-link"><i class="nav-icon bi bi-key"></i><p>Permissions</p></a>
+                <a href="permissions/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-key"></i>
+                  <p>Permissions</p></a
+                >
               </li>
               <li class="nav-header">SETTINGS</li>
               <li class="nav-item">
-                <a href="audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i><p>Audit Logs</p></a>
+                <a href="audit-logs/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-journal-text"></i>
+                  <p>Audit Logs</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i><p>Settings</p></a>
+                <a href="settings.html" class="nav-link"
+                  ><i class="nav-icon bi bi-gear"></i>
+                  <p>Settings</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p></a>
+                <a href="login.html" class="nav-link"
+                  ><i class="nav-icon bi bi-box-arrow-right"></i>
+                  <p>Logout</p></a
+                >
               </li>
             </ul>
           </nav>
@@ -146,17 +262,33 @@
         <div class="app-content">
           <div class="container-fluid">
             <div class="row">
-
               <!-- Profile Card -->
               <div class="col-md-4">
                 <div class="card card-primary card-outline">
                   <div class="card-body text-center pt-4">
                     <div class="position-relative d-inline-block mb-3">
-                      <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" width="120" height="120" alt="Profile Photo" id="profilePhotoPreview" />
-                      <label for="photoUpload" class="position-absolute bottom-0 end-0 btn btn-sm btn-primary rounded-circle p-1" style="cursor:pointer" title="Change photo">
+                      <img
+                        src="assets/images/user2-160x160.jpg"
+                        class="rounded-circle shadow"
+                        width="120"
+                        height="120"
+                        alt="Profile Photo"
+                        id="profilePhotoPreview"
+                      />
+                      <label
+                        for="photoUpload"
+                        class="position-absolute bottom-0 end-0 btn btn-sm btn-primary rounded-circle p-1"
+                        style="cursor: pointer"
+                        title="Change photo"
+                      >
                         <i class="bi bi-camera"></i>
                       </label>
-                      <input type="file" id="photoUpload" accept="image/*" class="d-none" />
+                      <input
+                        type="file"
+                        id="photoUpload"
+                        accept="image/*"
+                        class="d-none"
+                      />
                     </div>
                     <h4 class="mb-0">Admin</h4>
                     <p class="text-muted mb-1">admin@blog.com</p>
@@ -184,11 +316,15 @@
                 <!-- Roles & Permissions Summary -->
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-shield-check me-2"></i>My Roles</h3>
+                    <h3 class="card-title">
+                      <i class="bi bi-shield-check me-2"></i>My Roles
+                    </h3>
                   </div>
                   <div class="card-body">
                     <span class="badge text-bg-danger me-1 mb-1">ADMIN</span>
-                    <p class="text-muted small mt-2 mb-0">Full access to all system features.</p>
+                    <p class="text-muted small mt-2 mb-0">
+                      Full access to all system features.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -200,12 +336,26 @@
                   <div class="card-header p-0">
                     <ul class="nav nav-tabs" id="profileTabs" role="tablist">
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                        <button
+                          class="nav-link active"
+                          id="info-tab"
+                          data-bs-toggle="tab"
+                          data-bs-target="#info"
+                          type="button"
+                          role="tab"
+                        >
                           <i class="bi bi-person me-1"></i>Personal Info
                         </button>
                       </li>
                       <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
+                        <button
+                          class="nav-link"
+                          id="password-tab"
+                          data-bs-toggle="tab"
+                          data-bs-target="#password"
+                          type="button"
+                          role="tab"
+                        >
                           <i class="bi bi-lock me-1"></i>Change Password
                         </button>
                       </li>
@@ -213,43 +363,93 @@
                   </div>
                   <div class="card-body">
                     <div class="tab-content" id="profileTabContent">
-
                       <!-- Personal Info Tab -->
-                      <div class="tab-pane fade show active" id="info" role="tabpanel">
+                      <div
+                        class="tab-pane fade show active"
+                        id="info"
+                        role="tabpanel"
+                      >
                         <form id="profileInfoForm">
                           <div class="row">
                             <div class="col-md-6 mb-3">
-                              <label for="firstName" class="form-label">First Name</label>
-                              <input type="text" class="form-control" id="firstName" value="Admin" />
+                              <label for="firstName" class="form-label"
+                                >First Name</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="firstName"
+                                value="Admin"
+                              />
                             </div>
                             <div class="col-md-6 mb-3">
-                              <label for="lastName" class="form-label">Last Name</label>
-                              <input type="text" class="form-control" id="lastName" value="" placeholder="Last name" />
+                              <label for="lastName" class="form-label"
+                                >Last Name</label
+                              >
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="lastName"
+                                value=""
+                                placeholder="Last name"
+                              />
                             </div>
                           </div>
                           <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
+                            <label for="username" class="form-label"
+                              >Username</label
+                            >
                             <div class="input-group">
-                              <span class="input-group-text"><i class="bi bi-at"></i></span>
-                              <input type="text" class="form-control" id="username" value="admin" />
+                              <span class="input-group-text"
+                                ><i class="bi bi-at"></i
+                              ></span>
+                              <input
+                                type="text"
+                                class="form-control"
+                                id="username"
+                                value="admin"
+                              />
                             </div>
                           </div>
                           <div class="mb-3">
-                            <label for="email" class="form-label">Email Address</label>
+                            <label for="email" class="form-label"
+                              >Email Address</label
+                            >
                             <div class="input-group">
-                              <span class="input-group-text"><i class="bi bi-envelope"></i></span>
-                              <input type="email" class="form-control" id="email" value="admin@blog.com" />
+                              <span class="input-group-text"
+                                ><i class="bi bi-envelope"></i
+                              ></span>
+                              <input
+                                type="email"
+                                class="form-control"
+                                id="email"
+                                value="admin@blog.com"
+                              />
                             </div>
                           </div>
                           <div class="mb-3">
                             <label for="bio" class="form-label">Bio</label>
-                            <textarea class="form-control" id="bio" rows="3" placeholder="Tell something about yourself..."></textarea>
+                            <textarea
+                              class="form-control"
+                              id="bio"
+                              rows="3"
+                              placeholder="Tell something about yourself..."
+                            ></textarea>
                           </div>
                           <div class="mb-4">
-                            <label for="website" class="form-label">Website</label>
+                            <label for="website" class="form-label"
+                              >Website</label
+                            >
                             <div class="input-group">
-                              <span class="input-group-text"><i class="bi bi-globe"></i></span>
-                              <input type="url" class="form-control" id="website" placeholder="https://your-website.com" />
+                              <span class="input-group-text"
+                                ><i class="bi bi-globe"></i
+                              ></span>
+                              <input
+                                type="url"
+                                class="form-control"
+                                id="website"
+                                placeholder="https://your-website.com"
+                              />
                             </div>
                           </div>
                           <button type="submit" class="btn btn-primary">
@@ -262,34 +462,81 @@
                       <div class="tab-pane fade" id="password" role="tabpanel">
                         <form id="changePasswordForm">
                           <div class="mb-3">
-                            <label for="currentPassword" class="form-label">Current Password <span class="text-danger">*</span></label>
+                            <label for="currentPassword" class="form-label"
+                              >Current Password
+                              <span class="text-danger">*</span></label
+                            >
                             <div class="input-group">
-                              <input type="password" class="form-control" id="currentPassword" placeholder="Current password" required />
-                              <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="currentPassword">
+                              <input
+                                type="password"
+                                class="form-control"
+                                id="currentPassword"
+                                placeholder="Current password"
+                                required
+                              />
+                              <button
+                                class="btn btn-outline-secondary toggle-pw"
+                                type="button"
+                                data-target="currentPassword"
+                              >
                                 <i class="bi bi-eye"></i>
                               </button>
                             </div>
                           </div>
                           <div class="mb-3">
-                            <label for="newPassword" class="form-label">New Password <span class="text-danger">*</span></label>
+                            <label for="newPassword" class="form-label"
+                              >New Password
+                              <span class="text-danger">*</span></label
+                            >
                             <div class="input-group">
-                              <input type="password" class="form-control" id="newPassword" placeholder="New password (min 8 chars)" required minlength="8" />
-                              <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="newPassword">
+                              <input
+                                type="password"
+                                class="form-control"
+                                id="newPassword"
+                                placeholder="New password (min 8 chars)"
+                                required
+                                minlength="8"
+                              />
+                              <button
+                                class="btn btn-outline-secondary toggle-pw"
+                                type="button"
+                                data-target="newPassword"
+                              >
                                 <i class="bi bi-eye"></i>
                               </button>
                             </div>
                             <div class="mt-2">
-                              <div class="progress" style="height:6px">
-                                <div class="progress-bar" id="pwStrengthBar" role="progressbar" style="width:0%"></div>
+                              <div class="progress" style="height: 6px">
+                                <div
+                                  class="progress-bar"
+                                  id="pwStrengthBar"
+                                  role="progressbar"
+                                  style="width: 0%"
+                                ></div>
                               </div>
-                              <small class="text-muted" id="pwStrengthLabel">Enter a password</small>
+                              <small class="text-muted" id="pwStrengthLabel"
+                                >Enter a password</small
+                              >
                             </div>
                           </div>
                           <div class="mb-4">
-                            <label for="confirmPassword" class="form-label">Confirm New Password <span class="text-danger">*</span></label>
+                            <label for="confirmPassword" class="form-label"
+                              >Confirm New Password
+                              <span class="text-danger">*</span></label
+                            >
                             <div class="input-group">
-                              <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat new password" required />
-                              <button class="btn btn-outline-secondary toggle-pw" type="button" data-target="confirmPassword">
+                              <input
+                                type="password"
+                                class="form-control"
+                                id="confirmPassword"
+                                placeholder="Repeat new password"
+                                required
+                              />
+                              <button
+                                class="btn btn-outline-secondary toggle-pw"
+                                type="button"
+                                data-target="confirmPassword"
+                              >
                                 <i class="bi bi-eye"></i>
                               </button>
                             </div>
@@ -299,12 +546,10 @@
                           </button>
                         </form>
                       </div>
-
                     </div>
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -312,19 +557,23 @@
 
       <footer class="app-footer">
         <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
+        rights reserved.
       </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script
+      src="js/template/overlayscrollbars.browser.es6.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/template/popper.min.js" crossorigin="anonymous"></script>
+    <script src="js/template/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="js/template/adminlte.min.js"></script>
     <script src="js/http.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/user.service.js"></script>
-    <script src="js/notification.service.js"></script>
+    <script src="js/services/user.service.js"></script>
+    <script src="js/services/notification.service.js"></script>
     <script>
       Auth.guard();
       AdminNotif.init();

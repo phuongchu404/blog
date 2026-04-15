@@ -6,12 +6,13 @@ application:
     jwt:
       # QUAN TRỌNG: Đặt secret là chuỗi Base64 ít nhất 32 bytes (256-bit) để dùng với HMAC-SHA256+
       # Tạo bằng lệnh: openssl rand -base64 32
-      secret: jwt-secret-key-which-is-at-least-256-bits-long-and-base64-encoded
+#      secret: jwt-secret-key-which-is-at-least-256-bits-long-and-base64-encoded
+      secret:
       token-validity-in-seconds: 3600         # Giảm xuống 1 giờ (trước đó là 24h)
       token-validity-in-seconds-for-remember-me: 2592000  # 30 ngày
       token-validity-in-seconds-for-refresh: 604800 # 7 days
     oauth2:
-      authorizedRedirectUris: http://localhost:3000/oauth2/redirect,http://localhost:8080/oauth2/redirect,myandroidapp://oauth2/redirect,myiosapp://oauth2/redirect
+      authorizedRedirectUris: http://localhost:5500/login.html,http://127.0.0.1:5500/login.html,http://localhost:5500/blog-public/login.html,http://127.0.0.1:5500/blog-public/login.html,myandroidapp://oauth2/redirect,myiosapp://oauth2/redirect
 
 
 spring:
@@ -79,7 +80,7 @@ spring:
         registration:
             google:
               client-id:
-              client-secret: 
+              client-secret:
               redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
               scope:
                 - email
@@ -103,6 +104,26 @@ spring:
             authorization-uri: https://www.facebook.com/v3.0/dialog/oauth
             token-uri: https://graph.facebook.com/v3.0/oauth/access_token
             user-info-uri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
+
+  # Mail Configuration (Gmail SMTP — dùng App Password, không dùng mật khẩu thường)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: phuongchu404@gmail.com      # ← Thay bằng Gmail của bạn
+    password:            # ← Thay bằng App Password (16 ký tự)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: false
+
+# App-level config
+app:
+  base-url: http://localhost:8055          # URL của backend (dùng trong confirm link)
+  public-url: http://127.0.0.1:5500       # URL của blog-public (dùng để redirect)
 
 minio:
     url: http://localhost:9000

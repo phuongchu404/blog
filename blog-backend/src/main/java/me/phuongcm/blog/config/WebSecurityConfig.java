@@ -2,6 +2,7 @@ package me.phuongcm.blog.config;
 
 import me.phuongcm.blog.security.jwt.AuthEntryPointJwt;
 import me.phuongcm.blog.security.jwt.AuthTokenFilter;
+import me.phuongcm.blog.security.oauth2.CustomAuthorizationRequestResolver;
 import me.phuongcm.blog.security.oauth2.CustomOAuth2UserService;
 import me.phuongcm.blog.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import me.phuongcm.blog.security.oauth2.OAuth2AuthenticationFailureHandler;
@@ -55,6 +56,9 @@ public class WebSecurityConfig {
 
     @Autowired
     private HttpCookieOAuth2AuthorizationRequestRepository cookieOAuth2AuthorizationRequestRepository;
+
+    @Autowired
+    private CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
 
     @Bean
     public AuthEntryPointJwt authEntryPointJwt() {
@@ -111,6 +115,11 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/comments/post/*/published").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/comments/*/replies").permitAll()
 
+                        // Newsletter — subscribe/confirm/unsubscribe không cần đăng nhập
+                        .requestMatchers(HttpMethod.POST, "/api/newsletter/subscribe").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/newsletter/confirm").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/newsletter/unsubscribe").permitAll()
+
                         // ----- Mọi request còn lại cần đăng nhập -----
                         // (chi tiết quyền hạn kiểm tra bằng @PreAuthorize)
                         .anyRequest().authenticated())
@@ -119,7 +128,8 @@ public class WebSecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(endpoint -> endpoint
                                 .baseUri("/oauth2/authorize")
-                                .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository))
+                                .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository)
+                                .authorizationRequestResolver(customAuthorizationRequestResolver))
                         .redirectionEndpoint(endpoint -> endpoint
                                 .baseUri("/login/oauth2/code/*"))
                         .userInfoEndpoint(endpoint -> endpoint

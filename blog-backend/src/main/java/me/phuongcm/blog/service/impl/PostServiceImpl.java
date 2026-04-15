@@ -12,6 +12,7 @@ import me.phuongcm.blog.entity.PostDocument;
 import me.phuongcm.blog.repository.PostSearchRepository;
 import me.phuongcm.blog.service.KafkaProducerService;
 import me.phuongcm.blog.common.utils.SlugUtils;
+import me.phuongcm.blog.service.MinIOService;
 import me.phuongcm.blog.service.PostMetaService;
 import me.phuongcm.blog.service.PostService;
 import me.phuongcm.blog.service.TagService;
@@ -54,7 +55,9 @@ public class PostServiceImpl implements PostService {
 
     private final PostMetaService postMetaService;
 
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService, CategoryService categoryService, RedisTemplate<String, Object> redisTemplate, KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository, UploadTrackerService uploadTrackerService, PostMapper postMapper, PostMetaService postMetaService) {
+    private final MinIOService minIOService;
+
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService, CategoryService categoryService, RedisTemplate<String, Object> redisTemplate, KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository, UploadTrackerService uploadTrackerService, PostMapper postMapper, PostMetaService postMetaService, MinIOService minIOService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.tagService = tagService;
@@ -65,6 +68,7 @@ public class PostServiceImpl implements PostService {
         this.uploadTrackerService = uploadTrackerService;
         this.postMapper = postMapper;
         this.postMetaService = postMetaService;
+        this.minIOService = minIOService;
     }
 
     @Override
@@ -387,8 +391,12 @@ public class PostServiceImpl implements PostService {
             postMetaService.CreateOrUpdateMeta(postId, "metaKeywords", dto.getMetaKeywords());
     }
 
-    /** Đọc metaTitle, metaDescription, metaKeywords từ post_meta và gắn vào DTO. */
+    /** Đọc metaTitle, metaDescription, metaKeywords từ post_meta và gắn vào DTO.
+     *  Đồng thời resolve imageUrl: nếu là path tương đối thì tạo full URL. */
     private PostDTO enrichWithMeta(PostDTO dto) {
+        if (dto.getImageUrl() != null && !dto.getImageUrl().startsWith("http")) {
+            dto.setImageUrl(minIOService.getPublicFileUrl(dto.getImageUrl()));
+        }
         if (dto.getId() == null) return dto;
         postMetaService.getMetaByPost(dto.getId()).forEach(m -> {
             switch (m.getKey()) {

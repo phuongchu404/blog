@@ -56,6 +56,10 @@ async function init() {
     document.getElementById('page-title').textContent = cat?.title || slug;
     if (cat?.content) document.getElementById('page-desc').textContent = cat.content;
     document.title = `${cat?.title || slug} - Blog`;
+    if (cat?.imageUrl) {
+      const heroImg = document.getElementById('page-hero-img');
+      if (heroImg) { heroImg.src = cat.imageUrl; heroImg.alt = cat.title || slug; heroImg.style.display = 'block'; }
+    }
 
     allPosts = Array.isArray(posts) ? posts : (posts?.content || []);
     renderPage();

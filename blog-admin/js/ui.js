@@ -91,6 +91,14 @@ const UI = {
         el.innerHTML = `${displayName} <small>${roleText}</small>`;
       });
 
+      // Cập nhật avatar nếu user có ảnh đại diện
+      if (user.imageUrl) {
+        document.querySelectorAll('.user-image, .user-header img').forEach(img => {
+          img.src = user.imageUrl;
+          img.onerror = function() { this.onerror = null; };
+        });
+      }
+
       // Cập nhật giao diện theo quyền (với data mới từ server)
       this.applyAccessControl(user);
     } catch (_) {}

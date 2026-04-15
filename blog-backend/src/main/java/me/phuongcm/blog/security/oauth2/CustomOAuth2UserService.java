@@ -62,9 +62,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         try {
             return processOAuth2User(oAuth2UserRequest, oAuth2User);
-        } catch (Exception e) {
+        } catch (OAuth2AuthenticationProcessingException e) {
+            // Ném thẳng — Spring Security sẽ gọi OAuth2AuthenticationFailureHandler
             log.error("OAuth2 authentication failed: {}", e.getMessage());
-            throw new InternalAuthenticationServiceException(e.getMessage(), e.getCause());
+            throw e;
+        } catch (Exception e) {
+            log.error("OAuth2 authentication failed (unexpected): {}", e.getMessage());
+            throw new InternalAuthenticationServiceException(e.getMessage(), e);
         }
     }
 
@@ -78,17 +82,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                     "Email not found from OAuth2 provider: " + registrationId);
         }
 
+        log.info("START processOAuth2User: registrationId={}, email={}", registrationId, oAuth2UserInfo.getEmail());
         Long userId = userRepository.findByEmail(oAuth2UserInfo.getEmail())
                 .map(existingUser -> {
                     AuthProvider requestedProvider = AuthProvider.valueOf(registrationId);
                     if (!existingUser.getProvider().equals(requestedProvider)) {
                         throw new OAuth2AuthenticationProcessingException(
                                 "Signed up with " + existingUser.getProvider() +
-                                ". Please use " + existingUser.getProvider() + " to login.");
+                                        ". Please use " + existingUser.getProvider() + " to login.");
                     }
+                    log.info("Found existing user with username={}, provider={}", existingUser.getUsername(),
+                            existingUser.getProvider());
                     return updateExistingUser(existingUser, oAuth2UserInfo);
                 })
-                .orElseGet(() -> registerNewUser(oAuth2UserRequest, oAuth2UserInfo));
+                .orElseGet(() -> {
+                    log.info("No existing user found for {}, registering new user...", oAuth2UserInfo.getEmail());
+                    return registerNewUser(oAuth2UserRequest, oAuth2UserInfo);
+                });
 
         // Load auth: roles + permissions (giống CustomUserDetailsService)
         Set<String> combinedAuthorities = buildAuthorities(userId);
@@ -103,8 +113,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 user.getEmail(),
                 combinedAuthorities,
                 user.getPassword(),
-                oAuth2User.getAttributes()
-        );
+                oAuth2User.getAttributes());
     }
 
     /**

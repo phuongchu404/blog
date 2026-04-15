@@ -82,8 +82,11 @@ const UI = {
   /* ── Render nav (header) ────────────────────────────────── */
   renderNav() {
     this.initTheme();
+
     const user = Auth.getUser();
+    console.log('[renderNav] localStorage.user =', user?.username);
     const navAuth = document.getElementById('nav-auth');
+    console.log('[renderNav] navAuth element:', navAuth);
     if (!navAuth) return;
 
     if (Auth.isLoggedIn() && user) {
@@ -118,6 +121,10 @@ const UI = {
             <a href="profile.html">
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4z"/></svg>
               Trang cá nhân
+            </a>
+            <a href="profile.html#doi-mat-khau">
+              <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+              Đổi mật khẩu
             </a>
             <hr>
             <button onclick="Auth.logout()">
@@ -423,12 +430,27 @@ const UI = {
   },
 
   /* ── Newsletter submit handler ──────────────────────────── */
-  newsletterSubmit(e) {
+  async newsletterSubmit(e) {
     e.preventDefault();
-    const input = e.target.querySelector('input[type="email"]');
-    if (input?.value) {
-      this.toast('Đăng ký thành công! Cảm ơn bạn.', 'success');
+    const form  = e.target;
+    const input = form.querySelector('input[type="email"]');
+    const btn   = form.querySelector('button[type="submit"]');
+    const email = input?.value?.trim();
+    if (!email) return;
+
+    const origText = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = 'Đang đăng ký...';
+
+    try {
+      await Http.post('/api/newsletter/subscribe', { email });
+      this.toast('Đăng ký thành công! Vui lòng kiểm tra email để xác nhận.', 'success');
       input.value = '';
+    } catch (err) {
+      this.toast(err.message || 'Đăng ký thất bại. Vui lòng thử lại.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = origText;
     }
   },
 

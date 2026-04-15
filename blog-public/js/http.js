@@ -20,15 +20,22 @@ const Http = {
   async _fetch(path, options) {
     let res = await fetch(`${API_BASE}${path}`, options);
 
-    // Auto-refresh token if 401 and not already a refresh request
-    if (res.status === 401 && typeof Auth !== 'undefined' && !path.includes('/auth/refresh')) {
+    // Auto-refresh token if 401 and not already a refresh/login request
+    if (res.status === 401 && typeof Auth !== 'undefined'
+      && !path.includes('/auth/refresh') && !path.includes('/auth/login')) {
       try {
+        const tokenBeforeRefresh = localStorage.getItem('token');
         const newData = await Auth.refresh();
-        if (options.headers && options.headers['Authorization']) {
-          options.headers['Authorization'] = `Bearer ${newData.accessToken}`;
+        // Chỉ retry nếu refresh trả về token KHÁC với token hiện tại —
+        // tránh retry với token đã bị ghi đè bởi luồng khác (vd: Auth.login)
+        const tokenAfterRefresh = localStorage.getItem('token');
+        if (newData?.accessToken && tokenBeforeRefresh === tokenAfterRefresh) {
+          if (options.headers && options.headers['Authorization']) {
+            options.headers['Authorization'] = `Bearer ${newData.accessToken}`;
+          }
+          // Retry original request
+          res = await fetch(`${API_BASE}${path}`, options);
         }
-        // Retry original request
-        res = await fetch(`${API_BASE}${path}`, options);
       } catch (err) {
         // Refresh failed — clear session and redirect to login
         localStorage.removeItem('token');
@@ -73,7 +80,7 @@ const Http = {
   },
 
   async get(path) {
-    return this._fetch(path, { method: 'GET', headers: this._headers(false) });
+    return this._fetch(path, { method: 'GET', headers: this._headers(false), cache: 'no-store' });
   },
 
   async post(path, data) {

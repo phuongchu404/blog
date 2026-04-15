@@ -2,7 +2,10 @@
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <script>document.documentElement.dataset.theme = localStorage.getItem('blog-theme') || 'light';</script>
+    <script>
+      document.documentElement.dataset.theme =
+        localStorage.getItem("blog-theme") || "light";
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blog - Trang chủ</title>
     <meta
@@ -43,10 +46,17 @@
         </div>
 
         <form class="nav-search" onsubmit="handleNavSearch(event)">
-          <input type="search" id="nav-search-input" placeholder="Tìm kiếm bài viết..." autocomplete="off" />
+          <input
+            type="search"
+            id="nav-search-input"
+            placeholder="Tìm kiếm bài viết..."
+            autocomplete="off"
+          />
           <button type="submit" class="nav-search-submit">
             <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
-              <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+              <path
+                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"
+              />
             </svg>
           </button>
         </form>
@@ -68,11 +78,11 @@
     <section class="hero">
       <div class="container">
         <div class="hero-badge">Khám phá kiến thức công nghệ hiện đại</div>
-        <h1>Chia sẻ về AI, Backend<br />& DevOps</h1>
-        <p>
+        <h1>Chia sẻ các thông tin mới nhất</h1>
+        <!-- <p>
           Bài viết chất lượng về lập trình, kiến trúc hệ thống và xu hướng công
           nghệ mới nhất
-        </p>
+        </p> -->
         <div class="hero-cta">
           <a href="blog.html" class="btn btn-hero-primary">Đọc bài mới nhất</a>
           <a href="blog.html" class="btn btn-hero-outline">Xem danh mục</a>
@@ -83,10 +93,8 @@
     <!-- ── Main layout ───────────────────────────────────────── -->
     <section class="home-section">
       <div class="container home-body">
-
         <!-- Cột chính -->
         <div class="home-main">
-
           <!-- Bài viết nổi bật -->
           <div class="section-header">
             <h2 class="section-title">Bài viết nổi bật</h2>
@@ -95,12 +103,11 @@
           <div id="featured-posts" class="featured-grid"></div>
 
           <!-- Bài viết mới nhất -->
-          <div class="section-header" style="margin-top:2.5rem">
+          <div class="section-header" style="margin-top: 2.5rem">
             <h2 class="section-title">Bài viết mới nhất</h2>
             <a href="blog.html" class="view-all">Xem tất cả →</a>
           </div>
           <div id="recent-posts" class="post-grid"></div>
-
         </div>
 
         <!-- Sidebar -->
@@ -111,18 +118,17 @@
               <a href="blog.html" class="view-all">Tất cả →</a>
             </div>
             <div id="categories-pills" class="home-cat-list">
-              <div class="spinner" style="display:block;margin:0 auto"></div>
+              <div class="spinner" style="display: block; margin: 0 auto"></div>
             </div>
           </div>
 
           <div class="sidebar-widget">
             <h3 class="section-title">Tags phổ biến</h3>
             <div id="home-tags" class="home-tags-cloud">
-              <div class="spinner" style="display:block;margin:0 auto"></div>
+              <div class="spinner" style="display: block; margin: 0 auto"></div>
             </div>
           </div>
         </aside>
-
       </div>
     </section>
 

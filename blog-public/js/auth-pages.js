@@ -46,7 +46,11 @@ function togglePassword(inputId, btn) {
 function loginOAuth(provider) {
   // Dùng URL của trang hiện tại (login.html) làm redirect_uri — tự động đúng với mọi cấu hình server
   const redirectUri = window.location.origin + window.location.pathname;
+  console.log(`[OAuth] Redirecting to provider ${provider} with redirect_uri:`, redirectUri);
+  console.log("window.location.origin:", window.location.origin);
+  console.log("window.location.pathname:", window.location.pathname);
   window.location.href = `${API_BASE_URL}/oauth2/authorize/${provider}?redirect_uri=${encodeURIComponent(redirectUri)}`;
+  console.log("window.location.href set to:", window.location.href);
 }
 
 function handleNavSearch(e) {
@@ -184,12 +188,65 @@ function renderProfileHeader(user) {
 }
 
 function populateEditForm(user) {
-  const fields = { firstName: user.firstName, lastName: user.lastName, fullName: user.fullName, email: user.email, mobile: user.mobile, intro: user.intro, imageUrl: user.imageUrl };
+  const fields = { firstName: user.firstName, lastName: user.lastName, fullName: user.fullName, email: user.email, mobile: user.mobile, intro: user.intro };
   for (const [key, val] of Object.entries(fields)) {
     const el = document.getElementById(`edit-${key}`);
     if (el) el.value = val || '';
   }
+
+  const isOAuth = user.provider && user.provider !== 'local';
+
+  if (isOAuth) {
+    // OAuth2: hiển thị ảnh từ provider, không cho upload
+    document.getElementById('avatar-oauth').style.display = 'block';
+    document.getElementById('avatar-local').style.display = 'none';
+    const oauthImg = document.getElementById('oauth-avatar-img');
+    if (oauthImg && user.imageUrl) oauthImg.src = user.imageUrl;
+    const providerEl = document.getElementById('oauth-provider-name');
+    if (providerEl) providerEl.textContent = user.provider;
+  } else {
+    // Local: cho upload ảnh
+    document.getElementById('avatar-local').style.display = 'block';
+    document.getElementById('avatar-oauth').style.display = 'none';
+    const imgUrlInput = document.getElementById('edit-imageUrl');
+    if (imgUrlInput) imgUrlInput.value = user.imageUrl || '';
+    if (user.imageUrl) {
+      const preview = document.getElementById('avatar-preview');
+      if (preview) { preview.src = user.imageUrl; preview.style.display = 'block'; }
+    }
+  }
 }
+
+// Upload ảnh đại diện — chỉ chạy cho local user
+(function initAvatarUpload() {
+  document.addEventListener('DOMContentLoaded', () => {
+    const fileInput = document.getElementById('avatar-file-input');
+    if (!fileInput) return;
+    fileInput.addEventListener('change', async function () {
+      const file = this.files[0];
+      if (!file) return;
+      // Preview ngay lập tức
+      const reader = new FileReader();
+      reader.onload = e => {
+        const preview = document.getElementById('avatar-preview');
+        if (preview) { preview.src = e.target.result; preview.style.display = 'block'; }
+      };
+      reader.readAsDataURL(file);
+      // Upload lên MinIO
+      const formData = new FormData();
+      formData.append('upload', file);
+      try {
+        const res = await Http.upload('/api/files/upload?folder=blog/avatars', formData);
+        if (res && res.path) {
+          document.getElementById('edit-imageUrl').value = res.path;
+          UI.toast('Ảnh đại diện đã được tải lên!', 'success');
+        }
+      } catch (err) {
+        UI.toast('Upload thất bại: ' + err.message, 'danger');
+      }
+    });
+  });
+})();
 
 async function loadMyPosts(userId) {
   const grid = document.getElementById('my-posts-grid');
@@ -285,20 +342,62 @@ async function handleChangePassword(e) {
     const oauthError = params.get('error');
 
     if (oauthToken) {
-      // OAuth2 thành công — lưu token và lấy thông tin user
+      // OAuth2 thành công — xóa session cũ, lưu token mới và lấy thông tin user
+      // Giải mã JWT payload để xem token thuộc về user nào
+      let jwtSubject = null;
+      try {
+        const parts = oauthToken.split('.');
+        if (parts.length === 3) {
+          const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
+          jwtSubject = payload.sub;
+        }
+      } catch (_) {}
+      const _dbg = { step: 'callback-start', time: new Date().toISOString(), tokenPrefix: oauthToken.slice(0, 20), jwtSubject };
+      console.log('[OAuth] Callback nhận token → JWT subject (username):', jwtSubject);
+      sessionStorage.setItem('_oauthDebug', JSON.stringify(_dbg));
+
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+
       localStorage.setItem('token', oauthToken);
       if (oauthRefresh) localStorage.setItem('refreshToken', oauthRefresh);
       try {
         const user = await Http.get('/auth/me');
+        console.log('[OAuth] /auth/me trả về user:', user?.username);
+        _dbg.step = 'me-success';
+        _dbg.username = user?.username;
+        _dbg.email = user?.email;
+        _dbg.provider = user?.provider;
+        sessionStorage.setItem('_oauthDebug', JSON.stringify(_dbg));
         localStorage.setItem('user', JSON.stringify(user));
-      } catch (_) { }
+        console.log('[OAuth] Đã lưu user vào localStorage:', user?.username);
+      } catch (err) {
+        // Nếu không lấy được user info, xóa token để tránh hiển thị sai
+        _dbg.step = 'me-error';
+        _dbg.error = err.message;
+        sessionStorage.setItem('_oauthDebug', JSON.stringify(_dbg));
+        localStorage.removeItem('token');
+        localStorage.removeItem('refreshToken');
+        const errorEl = document.getElementById('login-error');
+        if (errorEl) {
+          errorEl.textContent = 'Đăng nhập thành công nhưng không thể lấy thông tin tài khoản. Vui lòng thử lại.';
+          errorEl.style.display = 'block';
+        }
+        return;
+      }
       const returnUrl = params.get('returnUrl');
       window.location.href = returnUrl || 'index.html';
       return;
     }
 
     if (oauthError) {
-      // OAuth2 thất bại — hiển thị thông báo lỗi
+      // OAuth2 thất bại — hiển thị thông báo lỗi, giữ nguyên trên trang login
+      // Xóa session cũ để tránh redirect về index.html
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+      localStorage.removeItem('user');
+
       const errorEl = document.getElementById('login-error');
       if (errorEl) {
         errorEl.textContent = decodeURIComponent(oauthError);
@@ -306,13 +405,39 @@ async function handleChangePassword(e) {
       }
       // Xóa query param khỏi URL cho gọn
       window.history.replaceState({}, document.title, window.location.pathname);
+      return; // Dừng lại để hiển thị lỗi, không redirect về index.html
     }
   }
   // ────────────────────────────────────────────────────────────────────────
 
-  // Nếu đã đăng nhập và vào login/register → redirect về trang chủ
+  // Nếu đã đăng nhập và vào login/register → hiển thị thông báo thay vì redirect im lặng
   if ((isLogin || isRegister) && Auth.isLoggedIn()) {
-    window.location.href = 'index.html';
+    const user = Auth.getUser();
+    const username = user?.username || user?.fullName || 'của bạn';
+    const card = document.querySelector('.auth-card');
+    if (card) {
+      card.innerHTML = `
+        <div class="auth-logo">
+          <a href="index.html">My<span style="color:var(--text-dark)">Blog</span></a>
+        </div>
+        <div style="text-align:center;padding:1rem 0">
+          <div style="font-size:2.5rem;margin-bottom:1rem">👤</div>
+          <h2 style="margin-bottom:.5rem">Bạn đã đăng nhập</h2>
+          <p style="color:var(--text-muted);margin-bottom:1.5rem">
+            Đang đăng nhập với tài khoản <strong>${username}</strong>
+          </p>
+          <div style="display:flex;flex-direction:column;gap:.75rem">
+            <a href="index.html" class="btn btn-primary" style="justify-content:center;text-align:center">
+              Về trang chủ
+            </a>
+            <button onclick="Auth.logout()" class="btn btn-ghost" style="justify-content:center">
+              Đăng xuất để đổi tài khoản
+            </button>
+          </div>
+        </div>`;
+    } else {
+      window.location.href = 'index.html';
+    }
     return;
   }
 
@@ -335,6 +460,15 @@ async function handleChangePassword(e) {
       renderProfileHeader(profileUser);
       populateEditForm(profileUser);
       await loadMyPosts(profileUser.id);
+
+      // Nếu vào từ link #doi-mat-khau → chuyển sang tab edit và scroll đến form
+      if (window.location.hash === '#doi-mat-khau') {
+        const editBtn = document.querySelectorAll('.tab-btn')[1];
+        switchTab('edit', editBtn);
+        setTimeout(() => {
+          document.getElementById('doi-mat-khau')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+      }
     } catch (err) {
       document.getElementById('profile-header').innerHTML =
         `<div class="empty-state"><h3>Không thể tải hồ sơ</h3><p>${err.message}</p></div>`;

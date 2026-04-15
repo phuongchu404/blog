@@ -3,23 +3,45 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Blog Admin | Comments</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css" crossorigin="anonymous" media="print" onload="this.media='all'" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+    <link
+      rel="stylesheet"
+      href="../assets/css/source-sans-3.css"
+      crossorigin="anonymous"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <link
+      rel="stylesheet"
+      href="../assets/css/overlayscrollbars.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="../assets/css/bootstrap-icons.min.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../assets/css/adminlte.min.css" />
     <link rel="stylesheet" href="../css/custom.css" />
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-
       <!-- ======= Header ======= -->
       <nav class="app-header navbar navbar-expand bg-body">
         <div class="container-fluid">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
+              <a
+                class="nav-link"
+                data-lte-toggle="sidebar"
+                href="#"
+                role="button"
+                ><i class="bi bi-list"></i
+              ></a>
             </li>
             <li class="nav-item d-none d-md-block">
               <a href="../index.html" class="nav-link">Dashboard</a>
@@ -29,38 +51,83 @@
             <li class="nav-item">
               <a class="nav-link" href="#" data-lte-toggle="fullscreen">
                 <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+                <i
+                  data-lte-icon="minimize"
+                  class="bi bi-fullscreen-exit"
+                  style="display: none"
+                ></i>
               </a>
             </li>
             <!-- Notification Bell -->
             <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
+              <a
+                class="nav-link"
+                data-bs-toggle="dropdown"
+                href="#"
+                id="admin-notif-dropdown-toggle"
+              >
                 <i class="bi bi-bell-fill"></i>
-                <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display:none">0</span>
+                <span
+                  class="badge bg-danger navbar-badge"
+                  id="admin-notif-badge"
+                  style="display: none"
+                  >0</span
+                >
               </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width:300px;max-width:340px">
-                <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+              <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-end"
+                style="min-width: 300px; max-width: 340px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom"
+                >
                   <span class="fw-semibold small">Thông báo</span>
-                  <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">Đọc tất cả</button>
+                  <button
+                    class="btn btn-sm btn-link p-0 text-decoration-none"
+                    id="admin-notif-mark-all"
+                  >
+                    Đọc tất cả
+                  </button>
                 </div>
-                <div id="admin-notif-list" style="max-height:320px;overflow-y:auto">
-                  <div class="dropdown-item text-center text-muted py-3">Đang tải...</div>
+                <div
+                  id="admin-notif-list"
+                  style="max-height: 320px; overflow-y: auto"
+                >
+                  <div class="dropdown-item text-center text-muted py-3">
+                    Đang tải...
+                  </div>
                 </div>
               </div>
             </li>
             <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+              <a
+                href="#"
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="../assets/images/user2-160x160.jpg"
+                  class="user-image rounded-circle shadow"
+                  alt="Admin"
+                />
                 <span class="d-none d-md-inline">Admin</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <li class="user-header text-bg-primary">
-                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <img
+                    src="../assets/images/user2-160x160.jpg"
+                    class="rounded-circle shadow"
+                    alt="Admin"
+                  />
                   <p>Admin <small>Blog Administrator</small></p>
                 </li>
                 <li class="user-footer">
-                  <a href="#" class="btn btn-outline-secondary">Profile</a>
-                  <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                  <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
+                  <a
+                    href="../login.html"
+                    class="btn btn-outline-danger float-end"
+                    >Sign out</a
+                  >
                 </li>
               </ul>
             </li>
@@ -72,16 +139,28 @@
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <div class="sidebar-brand">
           <a href="../index.html" class="brand-link">
-            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <img
+              src="../assets/images/AdminLTELogo.png"
+              alt="Logo"
+              class="brand-image opacity-75 shadow"
+            />
             <span class="brand-text fw-light">Blog Admin</span>
           </a>
         </div>
         <div class="sidebar-wrapper">
           <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
+            <ul
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="navigation"
+              data-accordion="false"
+            >
               <li class="nav-header">MAIN MENU</li>
               <li class="nav-item">
-                <a href="../index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i><p>Dashboard</p></a>
+                <a href="../index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-speedometer2"></i>
+                  <p>Dashboard</p></a
+                >
               </li>
               <li class="nav-item">
                 <a href="#" class="nav-link">
@@ -89,38 +168,75 @@
                   <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
                 </a>
                 <ul class="nav nav-treeview">
-                  <li class="nav-item"><a href="../posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>All Posts</p></a></li>
-                  <li class="nav-item"><a href="../posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i><p>Create Post</p></a></li>
+                  <li class="nav-item">
+                    <a href="../posts/index.html" class="nav-link"
+                      ><i class="nav-icon bi bi-circle"></i>
+                      <p>All Posts</p></a
+                    >
+                  </li>
+                  <li class="nav-item">
+                    <a href="../posts/create.html" class="nav-link"
+                      ><i class="nav-icon bi bi-circle"></i>
+                      <p>Create Post</p></a
+                    >
+                  </li>
                 </ul>
               </li>
               <li class="nav-item">
-                <a href="../categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i><p>Categories</p></a>
+                <a href="../categories/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-tags"></i>
+                  <p>Categories</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="../tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i><p>Tags</p></a>
+                <a href="../tags/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-hash"></i>
+                  <p>Tags</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="index.html" class="nav-link active"><i class="nav-icon bi bi-chat-dots"></i><p>Comments</p></a>
+                <a href="index.html" class="nav-link active"
+                  ><i class="nav-icon bi bi-chat-dots"></i>
+                  <p>Comments</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="../users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i><p>Users</p></a>
+                <a href="../users/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-people"></i>
+                  <p>Users</p></a
+                >
               </li>
               <li class="nav-header">ACCESS CONTROL</li>
               <li class="nav-item">
-                <a href="../roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i><p>Roles</p></a>
+                <a href="../roles/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-shield-check"></i>
+                  <p>Roles</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="../permissions/index.html" class="nav-link"><i class="nav-icon bi bi-key"></i><p>Permissions</p></a>
+                <a href="../permissions/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-key"></i>
+                  <p>Permissions</p></a
+                >
               </li>
               <li class="nav-header">SETTINGS</li>
               <li class="nav-item">
-                <a href="../audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i><p>Audit Logs</p></a>
+                <a href="../audit-logs/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-journal-text"></i>
+                  <p>Audit Logs</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="../settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i><p>Settings</p></a>
+                <a href="../settings.html" class="nav-link"
+                  ><i class="nav-icon bi bi-gear"></i>
+                  <p>Settings</p></a
+                >
               </li>
               <li class="nav-item">
-                <a href="../login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i><p>Logout</p></a>
+                <a href="../login.html" class="nav-link"
+                  ><i class="nav-icon bi bi-box-arrow-right"></i>
+                  <p>Logout</p></a
+                >
               </li>
             </ul>
           </nav>
@@ -135,7 +251,9 @@
               <div class="col-sm-6"><h3 class="mb-0">Comments</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                  <li class="breadcrumb-item">
+                    <a href="../index.html">Home</a>
+                  </li>
                   <li class="breadcrumb-item active">Comments</li>
                 </ol>
               </div>
@@ -145,12 +263,13 @@
 
         <div class="app-content">
           <div class="container-fluid">
-
             <!-- Stats -->
             <div class="row mb-3">
               <div class="col-md-3 col-6">
                 <div class="info-box">
-                  <span class="info-box-icon text-bg-primary"><i class="bi bi-chat-dots"></i></span>
+                  <span class="info-box-icon text-bg-primary"
+                    ><i class="bi bi-chat-dots"></i
+                  ></span>
                   <div class="info-box-content">
                     <span class="info-box-text">Total</span>
                     <span class="info-box-number">128</span>
@@ -159,7 +278,9 @@
               </div>
               <div class="col-md-3 col-6">
                 <div class="info-box">
-                  <span class="info-box-icon text-bg-warning"><i class="bi bi-hourglass-split"></i></span>
+                  <span class="info-box-icon text-bg-warning"
+                    ><i class="bi bi-hourglass-split"></i
+                  ></span>
                   <div class="info-box-content">
                     <span class="info-box-text">Pending</span>
                     <span class="info-box-number">14</span>
@@ -168,7 +289,9 @@
               </div>
               <div class="col-md-3 col-6">
                 <div class="info-box">
-                  <span class="info-box-icon text-bg-success"><i class="bi bi-check-circle"></i></span>
+                  <span class="info-box-icon text-bg-success"
+                    ><i class="bi bi-check-circle"></i
+                  ></span>
                   <div class="info-box-content">
                     <span class="info-box-text">Approved</span>
                     <span class="info-box-number">108</span>
@@ -177,7 +300,9 @@
               </div>
               <div class="col-md-3 col-6">
                 <div class="info-box">
-                  <span class="info-box-icon text-bg-danger"><i class="bi bi-slash-circle"></i></span>
+                  <span class="info-box-icon text-bg-danger"
+                    ><i class="bi bi-slash-circle"></i
+                  ></span>
                   <div class="info-box-content">
                     <span class="info-box-text">Spam</span>
                     <span class="info-box-number">6</span>
@@ -190,8 +315,19 @@
             <div class="row mb-3">
               <div class="col-md-5">
                 <div class="input-group">
-                  <input type="text" id="comments-search" class="form-control" placeholder="Search comments..." autocomplete="off" />
-                  <button id="comments-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
+                  <input
+                    type="text"
+                    id="comments-search"
+                    class="form-control"
+                    placeholder="Search comments..."
+                    autocomplete="off"
+                  />
+                  <button
+                    id="comments-refresh-btn"
+                    class="btn btn-outline-secondary"
+                    type="button"
+                    title="Refresh"
+                  >
                     <i class="bi bi-arrow-clockwise"></i>
                   </button>
                 </div>
@@ -205,24 +341,36 @@
                 </select>
               </div>
               <div class="col-md-4 text-end">
-                <button id="btn-approve-all" class="btn btn-success me-1"><i class="bi bi-check-all me-1"></i>Approve All Pending</button>
-                <button class="btn btn-danger"><i class="bi bi-trash me-1"></i>Delete Spam</button>
+                <button id="btn-approve-all" class="btn btn-success me-1">
+                  <i class="bi bi-check-all me-1"></i>Approve All Pending
+                </button>
+                <button class="btn btn-danger">
+                  <i class="bi bi-trash me-1"></i>Delete Spam
+                </button>
               </div>
             </div>
 
             <!-- Comments Table -->
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title"><i class="bi bi-chat-dots me-2"></i>All Comments</h3>
+                <h3 class="card-title">
+                  <i class="bi bi-chat-dots me-2"></i>All Comments
+                </h3>
                 <div class="card-tools ms-auto">
-                  <span class="badge text-bg-primary" id="comments-total-badge">0 total</span>
+                  <span class="badge text-bg-primary" id="comments-total-badge"
+                    >0 total</span
+                  >
                 </div>
               </div>
               <div class="card-body p-0">
-                <table class="table table-striped table-hover align-middle mb-0">
+                <table
+                  class="table table-striped table-hover align-middle mb-0"
+                >
                   <thead>
                     <tr>
-                      <th><input type="checkbox" class="form-check-input" /></th>
+                      <th>
+                        <input type="checkbox" class="form-check-input" />
+                      </th>
                       <th>Author</th>
                       <th>Comment</th>
                       <th>Post</th>
@@ -233,100 +381,207 @@
                   </thead>
                   <tbody id="comments-tbody">
                     <tr>
-                      <td><input type="checkbox" class="form-check-input" /></td>
+                      <td>
+                        <input type="checkbox" class="form-check-input" />
+                      </td>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user1-128x128.jpg" class="rounded-circle me-2" width="32" height="32" alt="User" />
+                          <img
+                            src="../assets/images/user1-128x128.jpg"
+                            class="rounded-circle me-2"
+                            width="32"
+                            height="32"
+                            alt="User"
+                          />
                           <div>
                             <strong class="d-block">John Doe</strong>
                             <small class="text-muted">john@example.com</small>
                           </div>
                         </div>
                       </td>
-                      <td style="max-width:280px">
-                        <p class="mb-0 text-truncate">Great article on Spring Boot! I learned a lot from this post.</p>
+                      <td style="max-width: 280px">
+                        <p class="mb-0 text-truncate">
+                          Great article on Spring Boot! I learned a lot from
+                          this post.
+                        </p>
                       </td>
-                      <td><a href="../posts/index.html">Getting Started with Spring Boot</a></td>
-                      <td><span class="badge text-bg-success">Approved</span></td>
+                      <td>
+                        <a href="../posts/index.html"
+                          >Getting Started with Spring Boot</a
+                        >
+                      </td>
+                      <td>
+                        <span class="badge text-bg-success">Approved</span>
+                      </td>
                       <td>2026-04-01 09:12</td>
                       <td>
-                        <button class="btn btn-sm btn-outline-danger" title="Spam"><i class="bi bi-slash-circle"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          title="Spam"
+                        >
+                          <i class="bi bi-slash-circle"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                     <tr>
-                      <td><input type="checkbox" class="form-check-input" /></td>
+                      <td>
+                        <input type="checkbox" class="form-check-input" />
+                      </td>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user3-128x128.jpg" class="rounded-circle me-2" width="32" height="32" alt="User" />
+                          <img
+                            src="../assets/images/user3-128x128.jpg"
+                            class="rounded-circle me-2"
+                            width="32"
+                            height="32"
+                            alt="User"
+                          />
                           <div>
                             <strong class="d-block">Jane Smith</strong>
                             <small class="text-muted">jane@example.com</small>
                           </div>
                         </div>
                       </td>
-                      <td style="max-width:280px">
-                        <p class="mb-0 text-truncate">Very helpful tutorial, thanks for sharing your knowledge!</p>
+                      <td style="max-width: 280px">
+                        <p class="mb-0 text-truncate">
+                          Very helpful tutorial, thanks for sharing your
+                          knowledge!
+                        </p>
                       </td>
-                      <td><a href="../posts/index.html">React Hooks Deep Dive</a></td>
-                      <td><span class="badge text-bg-success">Approved</span></td>
+                      <td>
+                        <a href="../posts/index.html">React Hooks Deep Dive</a>
+                      </td>
+                      <td>
+                        <span class="badge text-bg-success">Approved</span>
+                      </td>
                       <td>2026-03-30 14:45</td>
                       <td>
-                        <button class="btn btn-sm btn-outline-danger" title="Spam"><i class="bi bi-slash-circle"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          title="Spam"
+                        >
+                          <i class="bi bi-slash-circle"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                     <tr class="table-warning">
-                      <td><input type="checkbox" class="form-check-input" /></td>
+                      <td>
+                        <input type="checkbox" class="form-check-input" />
+                      </td>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user5-128x128.jpg" class="rounded-circle me-2" width="32" height="32" alt="User" />
+                          <img
+                            src="../assets/images/user5-128x128.jpg"
+                            class="rounded-circle me-2"
+                            width="32"
+                            height="32"
+                            alt="User"
+                          />
                           <div>
                             <strong class="d-block">Bob Johnson</strong>
                             <small class="text-muted">bob@example.com</small>
                           </div>
                         </div>
                       </td>
-                      <td style="max-width:280px">
-                        <p class="mb-0 text-truncate">Can you cover Kubernetes next? Would love a follow-up post!</p>
+                      <td style="max-width: 280px">
+                        <p class="mb-0 text-truncate">
+                          Can you cover Kubernetes next? Would love a follow-up
+                          post!
+                        </p>
                       </td>
-                      <td><a href="../posts/index.html">Understanding Docker Containers</a></td>
-                      <td><span class="badge text-bg-warning text-dark">Pending</span></td>
+                      <td>
+                        <a href="../posts/index.html"
+                          >Understanding Docker Containers</a
+                        >
+                      </td>
+                      <td>
+                        <span class="badge text-bg-warning text-dark"
+                          >Pending</span
+                        >
+                      </td>
                       <td>2026-03-29 11:20</td>
                       <td>
-                        <button class="btn btn-sm btn-success" title="Approve"><i class="bi bi-check-lg"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" title="Spam"><i class="bi bi-slash-circle"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm btn-success" title="Approve">
+                          <i class="bi bi-check-lg"></i>
+                        </button>
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          title="Spam"
+                        >
+                          <i class="bi bi-slash-circle"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                     <tr class="table-warning">
-                      <td><input type="checkbox" class="form-check-input" /></td>
+                      <td>
+                        <input type="checkbox" class="form-check-input" />
+                      </td>
                       <td>
                         <div class="d-flex align-items-center">
-                          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user7-128x128.jpg" class="rounded-circle me-2" width="32" height="32" alt="User" />
+                          <img
+                            src="../assets/images/user7-128x128.jpg"
+                            class="rounded-circle me-2"
+                            width="32"
+                            height="32"
+                            alt="User"
+                          />
                           <div>
                             <strong class="d-block">Alice Wu</strong>
                             <small class="text-muted">alice@example.com</small>
                           </div>
                         </div>
                       </td>
-                      <td style="max-width:280px">
-                        <p class="mb-0 text-truncate">This helped me fix a bug I've been struggling with for days!</p>
+                      <td style="max-width: 280px">
+                        <p class="mb-0 text-truncate">
+                          This helped me fix a bug I've been struggling with for
+                          days!
+                        </p>
                       </td>
-                      <td><a href="../posts/index.html">PostgreSQL Performance Tuning</a></td>
-                      <td><span class="badge text-bg-warning text-dark">Pending</span></td>
+                      <td>
+                        <a href="../posts/index.html"
+                          >PostgreSQL Performance Tuning</a
+                        >
+                      </td>
+                      <td>
+                        <span class="badge text-bg-warning text-dark"
+                          >Pending</span
+                        >
+                      </td>
                       <td>2026-03-28 17:05</td>
                       <td>
-                        <button class="btn btn-sm btn-success" title="Approve"><i class="bi bi-check-lg"></i></button>
-                        <button class="btn btn-sm btn-outline-danger" title="Spam"><i class="bi bi-slash-circle"></i></button>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm btn-success" title="Approve">
+                          <i class="bi bi-check-lg"></i>
+                        </button>
+                        <button
+                          class="btn btn-sm btn-outline-danger"
+                          title="Spam"
+                        >
+                          <i class="bi bi-slash-circle"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                     <tr class="table-danger">
-                      <td><input type="checkbox" class="form-check-input" /></td>
+                      <td>
+                        <input type="checkbox" class="form-check-input" />
+                      </td>
                       <td>
                         <div class="d-flex align-items-center">
-                          <div class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center" style="width:32px;height:32px">
+                          <div
+                            class="rounded-circle bg-secondary me-2 d-flex align-items-center justify-content-center"
+                            style="width: 32px; height: 32px"
+                          >
                             <i class="bi bi-person text-white"></i>
                           </div>
                           <div>
@@ -335,14 +590,22 @@
                           </div>
                         </div>
                       </td>
-                      <td style="max-width:280px">
-                        <p class="mb-0 text-truncate text-danger">Buy cheap meds online! Click here for great deals...</p>
+                      <td style="max-width: 280px">
+                        <p class="mb-0 text-truncate text-danger">
+                          Buy cheap meds online! Click here for great deals...
+                        </p>
                       </td>
-                      <td><a href="../posts/index.html">CI/CD with GitHub Actions</a></td>
+                      <td>
+                        <a href="../posts/index.html"
+                          >CI/CD with GitHub Actions</a
+                        >
+                      </td>
                       <td><span class="badge text-bg-danger">Spam</span></td>
                       <td>2026-03-27 02:33</td>
                       <td>
-                        <button class="btn btn-sm btn-danger" title="Delete"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-sm btn-danger" title="Delete">
+                          <i class="bi bi-trash"></i>
+                        </button>
                       </td>
                     </tr>
                   </tbody>
@@ -360,27 +623,33 @@
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </main>
 
       <footer class="app-footer">
         <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
+        rights reserved.
       </footer>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script
+      src="../js/template/overlayscrollbars.browser.es6.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../js/template/popper.min.js" crossorigin="anonymous"></script>
+    <script
+      src="../js/template/bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../js/template/adminlte.min.js"></script>
     <script src="../js/http.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/ui.js"></script>
-    <script src="../js/post.service.js"></script>
-    <script src="../js/comment.service.js"></script>
-    <script src="../js/notification.service.js"></script>
+    <script src="../js/services/post.service.js"></script>
+    <script src="../js/services/comment.service.js"></script>
+    <script src="../js/services/notification.service.js"></script>
     <script>
       Auth.guard();
       AdminNotif.init();

@@ -17,6 +17,7 @@ import me.phuongcm.blog.repository.NotificationRepository;
 import me.phuongcm.blog.repository.RoleRepository;
 import me.phuongcm.blog.repository.UserRepository;
 import me.phuongcm.blog.repository.UserRoleRepository;
+import me.phuongcm.blog.service.MinIOService;
 import me.phuongcm.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -50,10 +51,21 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Autowired
+    private MinIOService minIOService;
+
     @Override
     public UserDTO getCurrentUser(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
-        return userMapper.toDTO(user);
+        return resolveImageUrl(userMapper.toDTO(user));
+    }
+
+    /** Nếu imageUrl là path tương đối thì tạo full URL từ MinIO config, full URL (http) thì giữ nguyên */
+    private UserDTO resolveImageUrl(UserDTO dto) {
+        if (dto != null && dto.getImageUrl() != null && !dto.getImageUrl().startsWith("http")) {
+            dto.setImageUrl(minIOService.getPublicFileUrl(dto.getImageUrl()));
+        }
+        return dto;
     }
 
     @Override
@@ -142,8 +154,11 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setIntro(userDTO.getIntro());
         user.setProfile(userDTO.getProfile());
+        if (userDTO.getImageUrl() != null) {
+            user.setImageUrl(userDTO.getImageUrl());
+        }
 
-        return userMapper.toDTO(userRepository.save(user));
+        return resolveImageUrl(userMapper.toDTO(userRepository.save(user)));
     }
 
     @Override

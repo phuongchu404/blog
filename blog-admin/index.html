@@ -3,31 +3,54 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Blog Admin | Dashboard</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
     <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#007bff" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+    <meta
+      name="theme-color"
+      content="#007bff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#1a1a1a"
+      media="(prefers-color-scheme: dark)"
+    />
     <link
       rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
+      href="assets/css/source-sans-3.css"
       crossorigin="anonymous"
       media="print"
       onload="this.media = 'all'"
     />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
+    <link
+      rel="stylesheet"
+      href="assets/css/overlayscrollbars.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/css/bootstrap-icons.min.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="assets/css/adminlte.min.css" />
     <link rel="stylesheet" href="css/custom.css" />
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-
       <!-- ======= Header ======= -->
       <nav class="app-header navbar navbar-expand bg-body">
         <div class="container-fluid">
           <ul class="navbar-nav">
             <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+              <a
+                class="nav-link"
+                data-lte-toggle="sidebar"
+                href="#"
+                role="button"
+              >
                 <i class="bi bi-list"></i>
               </a>
             </li>
@@ -39,39 +62,84 @@
             <li class="nav-item">
               <a class="nav-link" href="#" data-lte-toggle="fullscreen">
                 <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+                <i
+                  data-lte-icon="minimize"
+                  class="bi bi-fullscreen-exit"
+                  style="display: none"
+                ></i>
               </a>
             </li>
             <!-- Notification Bell -->
             <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
+              <a
+                class="nav-link"
+                data-bs-toggle="dropdown"
+                href="#"
+                id="admin-notif-dropdown-toggle"
+              >
                 <i class="bi bi-bell-fill"></i>
-                <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display:none">0</span>
+                <span
+                  class="badge bg-danger navbar-badge"
+                  id="admin-notif-badge"
+                  style="display: none"
+                  >0</span
+                >
               </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width:300px;max-width:340px">
-                <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+              <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-end"
+                style="min-width: 300px; max-width: 340px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom"
+                >
                   <span class="fw-semibold small">Thông báo</span>
-                  <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">Đọc tất cả</button>
+                  <button
+                    class="btn btn-sm btn-link p-0 text-decoration-none"
+                    id="admin-notif-mark-all"
+                  >
+                    Đọc tất cả
+                  </button>
                 </div>
-                <div id="admin-notif-list" style="max-height:320px;overflow-y:auto">
-                  <div class="dropdown-item text-center text-muted py-3">Đang tải...</div>
+                <div
+                  id="admin-notif-list"
+                  style="max-height: 320px; overflow-y: auto"
+                >
+                  <div class="dropdown-item text-center text-muted py-3">
+                    Đang tải...
+                  </div>
                 </div>
               </div>
             </li>
             <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
+              <a
+                href="#"
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  src="assets/images/user2-160x160.jpg"
+                  class="user-image rounded-circle shadow"
+                  alt="Admin"
+                />
                 <span class="d-none d-md-inline">Admin</span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <li class="user-header text-bg-primary">
-                  <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
+                  <img
+                    src="assets/images/user2-160x160.jpg"
+                    class="rounded-circle shadow"
+                    alt="Admin"
+                  />
                   <p>Admin <small>Blog Administrator</small></p>
                 </li>
                 <li class="user-footer">
-                  <a href="profile.html" class="btn btn-outline-secondary">Profile</a>
+                  <a href="profile.html" class="btn btn-outline-secondary"
+                    >Profile</a
+                  >
 
-                  <a href="login.html" class="btn btn-outline-danger float-end">Sign out</a>
+                  <a href="login.html" class="btn btn-outline-danger float-end"
+                    >Sign out</a
+                  >
                 </li>
               </ul>
             </li>
@@ -83,14 +151,23 @@
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <div class="sidebar-brand">
           <a href="index.html" class="brand-link">
-            <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
+            <img
+              src="assets/images/AdminLTELogo.png"
+              alt="Logo"
+              class="brand-image opacity-75 shadow"
+            />
             <span class="brand-text fw-light">Blog Admin</span>
           </a>
         </div>
         <div class="sidebar-wrapper">
           <nav class="mt-2">
-            <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" aria-label="Main navigation" data-accordion="false">
-
+            <ul
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="navigation"
+              aria-label="Main navigation"
+              data-accordion="false"
+            >
               <li class="nav-header">MAIN MENU</li>
 
               <li class="nav-item">
@@ -168,7 +245,10 @@
               <li class="nav-header">SETTINGS</li>
 
               <li class="nav-item">
-                <a href="audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i><p>Audit Logs</p></a>
+                <a href="audit-logs/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-journal-text"></i>
+                  <p>Audit Logs</p></a
+                >
               </li>
 
               <li class="nav-item">
@@ -184,7 +264,6 @@
                   <p>Logout</p>
                 </a>
               </li>
-
             </ul>
           </nav>
         </div>
@@ -210,7 +289,6 @@
 
         <div class="app-content">
           <div class="container-fluid">
-
             <!-- Stats Row -->
             <div class="row">
               <div class="col-lg-3 col-6">
@@ -220,7 +298,10 @@
                     <p>Total Posts</p>
                   </div>
                   <i class="small-box-icon bi bi-file-earmark-text"></i>
-                  <a href="posts/index.html" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                  <a
+                    href="posts/index.html"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
                     View Posts <i class="bi bi-link-45deg"></i>
                   </a>
                 </div>
@@ -232,7 +313,10 @@
                     <p>Categories</p>
                   </div>
                   <i class="small-box-icon bi bi-tags"></i>
-                  <a href="categories/index.html" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                  <a
+                    href="categories/index.html"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
                     View Categories <i class="bi bi-link-45deg"></i>
                   </a>
                 </div>
@@ -244,7 +328,10 @@
                     <p>Comments</p>
                   </div>
                   <i class="small-box-icon bi bi-chat-dots"></i>
-                  <a href="comments/index.html" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                  <a
+                    href="comments/index.html"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
                     View Comments <i class="bi bi-link-45deg"></i>
                   </a>
                 </div>
@@ -256,7 +343,10 @@
                     <p>Users</p>
                   </div>
                   <i class="small-box-icon bi bi-people"></i>
-                  <a href="users/index.html" class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
+                  <a
+                    href="users/index.html"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
                     View Users <i class="bi bi-link-45deg"></i>
                   </a>
                 </div>
@@ -273,7 +363,9 @@
                       <i class="bi bi-file-earmark-text me-2"></i>Recent Posts
                     </h3>
                     <div class="card-tools ms-auto">
-                      <a href="posts/index.html" class="btn btn-sm btn-primary">View All</a>
+                      <a href="posts/index.html" class="btn btn-sm btn-primary"
+                        >View All</a
+                      >
                     </div>
                   </div>
                   <div class="card-body p-0">
@@ -293,55 +385,105 @@
                           <td>1</td>
                           <td>Getting Started with Spring Boot</td>
                           <td><span class="badge text-bg-info">Java</span></td>
-                          <td><span class="badge text-bg-success">Published</span></td>
+                          <td>
+                            <span class="badge text-bg-success">Published</span>
+                          </td>
                           <td>2026-04-01</td>
                           <td>
-                            <a href="posts/create.html" class="btn btn-xs btn-warning"><i class="bi bi-pencil"></i></a>
-                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                            <a
+                              href="posts/create.html"
+                              class="btn btn-xs btn-warning"
+                              ><i class="bi bi-pencil"></i
+                            ></a>
+                            <button class="btn btn-xs btn-danger">
+                              <i class="bi bi-trash"></i>
+                            </button>
                           </td>
                         </tr>
                         <tr>
                           <td>2</td>
                           <td>React Hooks Deep Dive</td>
-                          <td><span class="badge text-bg-primary">JavaScript</span></td>
-                          <td><span class="badge text-bg-success">Published</span></td>
+                          <td>
+                            <span class="badge text-bg-primary"
+                              >JavaScript</span
+                            >
+                          </td>
+                          <td>
+                            <span class="badge text-bg-success">Published</span>
+                          </td>
                           <td>2026-03-28</td>
                           <td>
-                            <a href="posts/create.html" class="btn btn-xs btn-warning"><i class="bi bi-pencil"></i></a>
-                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                            <a
+                              href="posts/create.html"
+                              class="btn btn-xs btn-warning"
+                              ><i class="bi bi-pencil"></i
+                            ></a>
+                            <button class="btn btn-xs btn-danger">
+                              <i class="bi bi-trash"></i>
+                            </button>
                           </td>
                         </tr>
                         <tr>
                           <td>3</td>
                           <td>Understanding Docker Containers</td>
-                          <td><span class="badge text-bg-secondary">DevOps</span></td>
-                          <td><span class="badge text-bg-warning">Draft</span></td>
+                          <td>
+                            <span class="badge text-bg-secondary">DevOps</span>
+                          </td>
+                          <td>
+                            <span class="badge text-bg-warning">Draft</span>
+                          </td>
                           <td>2026-03-25</td>
                           <td>
-                            <a href="posts/create.html" class="btn btn-xs btn-warning"><i class="bi bi-pencil"></i></a>
-                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                            <a
+                              href="posts/create.html"
+                              class="btn btn-xs btn-warning"
+                              ><i class="bi bi-pencil"></i
+                            ></a>
+                            <button class="btn btn-xs btn-danger">
+                              <i class="bi bi-trash"></i>
+                            </button>
                           </td>
                         </tr>
                         <tr>
                           <td>4</td>
                           <td>PostgreSQL Performance Tuning</td>
-                          <td><span class="badge text-bg-danger">Database</span></td>
-                          <td><span class="badge text-bg-success">Published</span></td>
+                          <td>
+                            <span class="badge text-bg-danger">Database</span>
+                          </td>
+                          <td>
+                            <span class="badge text-bg-success">Published</span>
+                          </td>
                           <td>2026-03-20</td>
                           <td>
-                            <a href="posts/create.html" class="btn btn-xs btn-warning"><i class="bi bi-pencil"></i></a>
-                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                            <a
+                              href="posts/create.html"
+                              class="btn btn-xs btn-warning"
+                              ><i class="bi bi-pencil"></i
+                            ></a>
+                            <button class="btn btn-xs btn-danger">
+                              <i class="bi bi-trash"></i>
+                            </button>
                           </td>
                         </tr>
                         <tr>
                           <td>5</td>
                           <td>CI/CD with GitHub Actions</td>
-                          <td><span class="badge text-bg-secondary">DevOps</span></td>
-                          <td><span class="badge text-bg-warning">Draft</span></td>
+                          <td>
+                            <span class="badge text-bg-secondary">DevOps</span>
+                          </td>
+                          <td>
+                            <span class="badge text-bg-warning">Draft</span>
+                          </td>
                           <td>2026-03-15</td>
                           <td>
-                            <a href="posts/create.html" class="btn btn-xs btn-warning"><i class="bi bi-pencil"></i></a>
-                            <button class="btn btn-xs btn-danger"><i class="bi bi-trash"></i></button>
+                            <a
+                              href="posts/create.html"
+                              class="btn btn-xs btn-warning"
+                              ><i class="bi bi-pencil"></i
+                            ></a>
+                            <button class="btn btn-xs btn-danger">
+                              <i class="bi bi-trash"></i>
+                            </button>
                           </td>
                         </tr>
                       </tbody>
@@ -354,7 +496,9 @@
               <div class="col-md-4">
                 <div class="card">
                   <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-lightning-charge me-2"></i>Quick Actions</h3>
+                    <h3 class="card-title">
+                      <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+                    </h3>
                   </div>
                   <div class="card-body d-grid gap-2">
                     <a href="posts/create.html" class="btn btn-primary">
@@ -367,24 +511,31 @@
                       <i class="bi bi-person-plus me-2"></i>Manage Users
                     </a>
                     <a href="comments/index.html" class="btn btn-warning">
-                      <i class="bi bi-chat-square-dots me-2"></i>Moderate Comments
+                      <i class="bi bi-chat-square-dots me-2"></i>Moderate
+                      Comments
                     </a>
                   </div>
                 </div>
 
                 <div class="card mt-3">
                   <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-chat-dots me-2"></i>Latest Comments</h3>
+                    <h3 class="card-title">
+                      <i class="bi bi-chat-dots me-2"></i>Latest Comments
+                    </h3>
                   </div>
                   <div class="card-body p-0">
-                    <ul class="list-group list-group-flush" id="latest-comments-list">
-                      <li class="list-group-item text-center text-muted">Đang tải...</li>
+                    <ul
+                      class="list-group list-group-flush"
+                      id="latest-comments-list"
+                    >
+                      <li class="list-group-item text-center text-muted">
+                        Đang tải...
+                      </li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </main>
@@ -392,24 +543,27 @@
       <!-- ======= Footer ======= -->
       <footer class="app-footer">
         <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
+        rights reserved.
       </footer>
-
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
+    <script
+      src="js/template/overlayscrollbars.browser.es6.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="js/template/popper.min.js" crossorigin="anonymous"></script>
+    <script src="js/template/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="js/template/adminlte.min.js"></script>
     <script src="js/http.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/ui.js"></script>
-    <script src="js/post.service.js"></script>
-    <script src="js/category.service.js"></script>
-    <script src="js/tag.service.js"></script>
-    <script src="js/user.service.js"></script>
-    <script src="js/comment.service.js"></script>
-    <script src="js/notification.service.js"></script>
+    <script src="js/services/post.service.js"></script>
+    <script src="js/services/category.service.js"></script>
+    <script src="js/services/tag.service.js"></script>
+    <script src="js/services/user.service.js"></script>
+    <script src="js/services/comment.service.js"></script>
+    <script src="js/services/notification.service.js"></script>
     <script>
       Auth.guard();
       AdminNotif.init();

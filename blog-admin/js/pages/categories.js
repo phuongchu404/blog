@@ -33,8 +33,12 @@ const elements = {
   inputs: {
     title: document.getElementById('catTitle'),
     slug: document.getElementById('catSlug'),
-    content: document.getElementById('catDescription')
-  }
+    content: document.getElementById('catDescription'),
+    imageUrl: document.getElementById('catImageUrl')
+  },
+  imgDropZone: document.getElementById('catImgDropZone'),
+  imgPreview: document.getElementById('catImgPreview'),
+  imgFileInput: document.getElementById('catImageFile')
 };
 
 // --- 3. Core Initialization ---
@@ -179,7 +183,8 @@ function setupEventListeners() {
       title: elements.inputs.title.value.trim(),
       slug: elements.inputs.slug.value.trim() || UI.toSlug(elements.inputs.title.value),
       content: elements.inputs.content.value.trim(),
-      parentId: elements.parentDropdown.value || null
+      parentId: elements.parentDropdown.value || null,
+      imageUrl: elements.inputs.imageUrl?.value.trim() || null
     };
 
     try {
@@ -220,6 +225,24 @@ function setupEventListeners() {
 
   // 6. Cancel Edit
   elements.cancelBtn?.addEventListener('click', resetForm);
+
+  // 7. Image upload
+  elements.imgFileInput?.addEventListener('change', async function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      if (elements.imgPreview) { elements.imgPreview.src = e.target.result; elements.imgPreview.classList.remove('d-none'); }
+      elements.imgDropZone?.classList.add('d-none');
+    };
+    reader.readAsDataURL(file);
+    const formData = new FormData();
+    formData.append('upload', file);
+    try {
+      const res = await Http.upload('/api/files/upload?folder=blog/categories', formData);
+      if (res && res.path) { elements.inputs.imageUrl.value = res.path; UI.toast('Image uploaded.'); } // lưu path tương đối vào DB
+    } catch (err) { UI.toast('Failed to upload image: ' + err.message, 'danger'); }
+  });
 }
 
 // --- 7. Action Functions ---
@@ -250,6 +273,17 @@ window.editCategory = (id) => {
   elements.inputs.slug.value = cat.slug;
   elements.inputs.content.value = cat.content || '';
   elements.parentDropdown.value = cat.parentId || '';
+
+  // Populate image
+  if (elements.inputs.imageUrl) elements.inputs.imageUrl.value = cat.imageUrl || '';
+  if (cat.imageUrl && elements.imgPreview) {
+    elements.imgPreview.src = cat.imageUrl;
+    elements.imgPreview.classList.remove('d-none');
+    elements.imgDropZone?.classList.add('d-none');
+  } else if (elements.imgPreview) {
+    elements.imgPreview.classList.add('d-none');
+    elements.imgDropZone?.classList.remove('d-none');
+  }
 
   elements.submitBtn.textContent = 'Update Category';
   elements.cancelBtn?.classList.remove('d-none');
@@ -289,6 +323,9 @@ async function deleteSelected() {
 function resetForm() {
   state.editingId = null;
   elements.form.reset();
+  if (elements.inputs.imageUrl) elements.inputs.imageUrl.value = '';
+  if (elements.imgPreview) elements.imgPreview.classList.add('d-none');
+  elements.imgDropZone?.classList.remove('d-none');
   elements.submitBtn.textContent = 'Add Category';
   elements.cancelBtn?.classList.add('d-none');
 }

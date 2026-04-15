@@ -1,490 +1,709 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Blog Admin | Create Post</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
+    <meta name="color-scheme" content="light dark" />
+    <link
+      rel="stylesheet"
+      href="../assets/css/source-sans-3.css"
+      crossorigin="anonymous"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <link
+      rel="stylesheet"
+      href="../assets/css/overlayscrollbars.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="../assets/css/bootstrap-icons.min.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../assets/css/adminlte.min.css" />
+    <link rel="stylesheet" href="../css/custom.css" />
+    <!-- BS5 DateTime Picker -->
+    <link rel="stylesheet" href="../css/bs5-datetime.min.css" />
+    <!-- CKEditor 5 v43 CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css"
+    />
+    <!-- Tom Select (multi-select, vanilla JS) -->
+    <link rel="stylesheet" href="../assets/css/tom-select.bootstrap5.min.css" />
+    <style>
+      /* CKEditor chiều cao tối thiểu */
+      .ck-editor__editable_inline {
+        min-height: 400px !important;
+        font-size: 1rem;
+      }
 
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <title>Blog Admin | Create Post</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <meta name="color-scheme" content="light dark" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/source-sans-3@5.0.12/index.css"
-    crossorigin="anonymous" media="print" onload="this.media='all'" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/styles/overlayscrollbars.min.css"
-    crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
-    crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/css/adminlte.min.css" />
-  <link rel="stylesheet" href="../css/custom.css" />
-  <!-- BS5 DateTime Picker -->
-  <link rel="stylesheet" href="../css/bs5-datetime.min.css" />
-  <!-- CKEditor 5 v43 CSS -->
-  <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css" />
-  <!-- Tom Select (multi-select, vanilla JS) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" />
-  <style>
-    /* CKEditor chiều cao tối thiểu */
-    .ck-editor__editable_inline {
-      min-height: 400px !important;
-      font-size: 1rem;
-    }
+      .ck.ck-editor {
+        border-radius: 0.375rem;
+      }
 
-    .ck.ck-editor {
-      border-radius: 0.375rem;
-    }
+      /* Cho phép toolbar wrap nhiều hàng */
+      .ck.ck-editor__top .ck-sticky-panel .ck-toolbar {
+        flex-wrap: wrap;
+      }
 
-    /* Cho phép toolbar wrap nhiều hàng */
-    .ck.ck-editor__top .ck-sticky-panel .ck-toolbar {
-      flex-wrap: wrap;
-    }
+      /* Tom Select tag multi-select */
+      .ts-wrapper.form-control,
+      .ts-wrapper.form-select {
+        padding: 0;
+      }
 
-    /* Tom Select tag multi-select */
-    .ts-wrapper.form-control,
-    .ts-wrapper.form-select {
-      padding: 0;
-    }
+      .ts-dropdown {
+        z-index: 1050 !important;
+      }
 
-    .ts-dropdown {
-      z-index: 1050 !important;
-    }
+      /* Char counter */
+      #metaDescCount {
+        font-size: 0.75rem;
+      }
 
-    /* Char counter */
-    #metaDescCount {
-      font-size: 0.75rem;
-    }
+      /* Image preview */
+      #imgPreview {
+        max-height: 180px;
+        object-fit: cover;
+        border-radius: 0.375rem;
+      }
 
-    /* Image preview */
-    #imgPreview {
-      max-height: 180px;
-      object-fit: cover;
-      border-radius: 0.375rem;
-    }
+      /* ── CKEditor image resize handle – làm nổi bật hơn ── */
+      .ck-widget__resizer__handle {
+        width: 14px !important;
+        height: 14px !important;
+        border: 2px solid #1976d2 !important;
+        background: #fff !important;
+        border-radius: 3px !important;
+      }
 
-    /* ── CKEditor image resize handle – làm nổi bật hơn ── */
-    .ck-widget__resizer__handle {
-      width: 14px !important;
-      height: 14px !important;
-      border: 2px solid #1976d2 !important;
-      background: #fff !important;
-      border-radius: 3px !important;
-    }
+      .ck-widget__resizer__handle:hover {
+        background: #1976d2 !important;
+      }
+    </style>
+  </head>
 
-    .ck-widget__resizer__handle:hover {
-      background: #1976d2 !important;
-    }
-  </style>
-</head>
-
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
-  <div class="app-wrapper">
-
-    <!-- ======= Header ======= -->
-    <nav class="app-header navbar navbar-expand bg-body">
-      <div class="container-fluid">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
-          </li>
-          <li class="nav-item d-none d-md-block">
-            <a href="../index.html" class="nav-link">Dashboard</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-              <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-              <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-            </a>
-          </li>
-          <!-- Notification Bell -->
-          <li class="nav-item dropdown">
-            <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
-              <i class="bi bi-bell-fill"></i>
-              <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display:none">0</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width:300px;max-width:340px">
-              <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                <span class="fw-semibold small">Thông báo</span>
-                <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">Đọc tất
-                  cả</button>
-              </div>
-              <div id="admin-notif-list" style="max-height:320px;overflow-y:auto">
-                <div class="dropdown-item text-center text-muted py-3">Đang tải...</div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item dropdown user-menu">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-              <img id="headerUserAvatar"
-                src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
-                class="user-image rounded-circle shadow" alt="Admin" />
-              <span class="d-none d-md-inline" id="headerUserName">Admin</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-              <li class="user-header text-bg-primary">
-                <img id="menuUserAvatar"
-                  src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/user2-160x160.jpg"
-                  class="rounded-circle shadow" alt="Admin" />
-                <p id="menuUserName">Admin <small>Blog Administrator</small></p>
-              </li>
-              <li class="user-footer">
-                <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
-                <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- ======= Sidebar ======= -->
-    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-      <div class="sidebar-brand">
-        <a href="../index.html" class="brand-link">
-          <img src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/assets/img/AdminLTELogo.png" alt="Logo"
-            class="brand-image opacity-75 shadow" />
-          <span class="brand-text fw-light">Blog Admin</span>
-        </a>
-      </div>
-      <div class="sidebar-wrapper">
-        <nav class="mt-2">
-          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
-            <li class="nav-header">MAIN MENU</li>
+  <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+    <div class="app-wrapper">
+      <!-- ======= Header ======= -->
+      <nav class="app-header navbar navbar-expand bg-body">
+        <div class="container-fluid">
+          <ul class="navbar-nav">
             <li class="nav-item">
-              <a href="../index.html" class="nav-link">
-                <i class="nav-icon bi bi-speedometer2"></i>
-                <p>Dashboard</p>
+              <a
+                class="nav-link"
+                data-lte-toggle="sidebar"
+                href="#"
+                role="button"
+                ><i class="bi bi-list"></i
+              ></a>
+            </li>
+            <li class="nav-item d-none d-md-block">
+              <a href="../index.html" class="nav-link">Dashboard</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                <i
+                  data-lte-icon="minimize"
+                  class="bi bi-fullscreen-exit"
+                  style="display: none"
+                ></i>
               </a>
             </li>
-            <li class="nav-item menu-open">
-              <a href="#" class="nav-link active">
-                <i class="nav-icon bi bi-file-earmark-text"></i>
-                <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
+            <!-- Notification Bell -->
+            <li class="nav-item dropdown">
+              <a
+                class="nav-link"
+                data-bs-toggle="dropdown"
+                href="#"
+                id="admin-notif-dropdown-toggle"
+              >
+                <i class="bi bi-bell-fill"></i>
+                <span
+                  class="badge bg-danger navbar-badge"
+                  id="admin-notif-badge"
+                  style="display: none"
+                  >0</span
+                >
               </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="index.html" class="nav-link">
-                    <i class="nav-icon bi bi-circle"></i>
-                    <p>All Posts</p>
-                  </a>
+              <div
+                class="dropdown-menu dropdown-menu-lg dropdown-menu-end"
+                style="min-width: 300px; max-width: 340px"
+              >
+                <div
+                  class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom"
+                >
+                  <span class="fw-semibold small">Thông báo</span>
+                  <button
+                    class="btn btn-sm btn-link p-0 text-decoration-none"
+                    id="admin-notif-mark-all"
+                  >
+                    Đọc tất cả
+                  </button>
+                </div>
+                <div
+                  id="admin-notif-list"
+                  style="max-height: 320px; overflow-y: auto"
+                >
+                  <div class="dropdown-item text-center text-muted py-3">
+                    Đang tải...
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item dropdown user-menu">
+              <a
+                href="#"
+                class="nav-link dropdown-toggle"
+                data-bs-toggle="dropdown"
+              >
+                <img
+                  id="headerUserAvatar"
+                  src="../assets/images/user2-160x160.jpg"
+                  class="user-image rounded-circle shadow"
+                  alt="Admin"
+                />
+                <span class="d-none d-md-inline" id="headerUserName"
+                  >Admin</span
+                >
+              </a>
+              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                <li class="user-header text-bg-primary">
+                  <img
+                    id="menuUserAvatar"
+                    src="../assets/images/user2-160x160.jpg"
+                    class="rounded-circle shadow"
+                    alt="Admin"
+                  />
+                  <p id="menuUserName">
+                    Admin <small>Blog Administrator</small>
+                  </p>
                 </li>
-                <li class="nav-item">
-                  <a href="create.html" class="nav-link active">
-                    <i class="nav-icon bi bi-circle"></i>
-                    <p>Create Post</p>
-                  </a>
+                <li class="user-footer">
+                  <a href="../profile.html" class="btn btn-outline-secondary"
+                    >Profile</a
+                  >
+                  <a
+                    href="../login.html"
+                    class="btn btn-outline-danger float-end"
+                    >Sign out</a
+                  >
                 </li>
               </ul>
             </li>
-            <li class="nav-item">
-              <a href="../categories/index.html" class="nav-link">
-                <i class="nav-icon bi bi-tags"></i>
-                <p>Categories</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../tags/index.html" class="nav-link">
-                <i class="nav-icon bi bi-hash"></i>
-                <p>Tags</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../comments/index.html" class="nav-link">
-                <i class="nav-icon bi bi-chat-dots"></i>
-                <p>Comments</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../users/index.html" class="nav-link">
-                <i class="nav-icon bi bi-people"></i>
-                <p>Users</p>
-              </a>
-            </li>
-            <li class="nav-header">ACCESS CONTROL</li>
-            <li class="nav-item">
-              <a href="../roles/index.html" class="nav-link">
-                <i class="nav-icon bi bi-shield-check"></i>
-                <p>Roles</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../permissions/index.html" class="nav-link">
-                <i class="nav-icon bi bi-key"></i>
-                <p>Permissions</p>
-              </a>
-            </li>
-            <li class="nav-header">SETTINGS</li>
-            <li class="nav-item">
-              <a href="../audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i>
-                <p>Audit Logs</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../settings.html" class="nav-link">
-                <i class="nav-icon bi bi-gear"></i>
-                <p>Settings</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../login.html" class="nav-link">
-                <i class="nav-icon bi bi-box-arrow-right"></i>
-                <p>Logout</p>
-              </a>
-            </li>
           </ul>
-        </nav>
-      </div>
-    </aside>
+        </div>
+      </nav>
 
-    <!-- ======= Main Content ======= -->
-    <main class="app-main">
-      <div class="app-content-header">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-sm-6">
-              <h3 class="mb-0" id="pageTitle">Create Post</h3>
-            </div>
-            <div class="col-sm-6">
-              <ol class="breadcrumb float-sm-end">
-                <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
-                <li class="breadcrumb-item"><a href="index.html">Posts</a></li>
-                <li class="breadcrumb-item active" id="breadcrumbAction">Create</li>
-              </ol>
+      <!-- ======= Sidebar ======= -->
+      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+        <div class="sidebar-brand">
+          <a href="../index.html" class="brand-link">
+            <img
+              src="../assets/images/AdminLTELogo.png"
+              alt="Logo"
+              class="brand-image opacity-75 shadow"
+            />
+            <span class="brand-text fw-light">Blog Admin</span>
+          </a>
+        </div>
+        <div class="sidebar-wrapper">
+          <nav class="mt-2">
+            <ul
+              class="nav sidebar-menu flex-column"
+              data-lte-toggle="treeview"
+              role="navigation"
+              data-accordion="false"
+            >
+              <li class="nav-header">MAIN MENU</li>
+              <li class="nav-item">
+                <a href="../index.html" class="nav-link">
+                  <i class="nav-icon bi bi-speedometer2"></i>
+                  <p>Dashboard</p>
+                </a>
+              </li>
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link active">
+                  <i class="nav-icon bi bi-file-earmark-text"></i>
+                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
+                </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="index.html" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>All Posts</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="create.html" class="nav-link active">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Create Post</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a href="../categories/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-tags"></i>
+                  <p>Categories</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../tags/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-hash"></i>
+                  <p>Tags</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../comments/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-chat-dots"></i>
+                  <p>Comments</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../users/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-people"></i>
+                  <p>Users</p>
+                </a>
+              </li>
+              <li class="nav-header">ACCESS CONTROL</li>
+              <li class="nav-item">
+                <a href="../roles/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-shield-check"></i>
+                  <p>Roles</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../permissions/index.html" class="nav-link">
+                  <i class="nav-icon bi bi-key"></i>
+                  <p>Permissions</p>
+                </a>
+              </li>
+              <li class="nav-header">SETTINGS</li>
+              <li class="nav-item">
+                <a href="../audit-logs/index.html" class="nav-link"
+                  ><i class="nav-icon bi bi-journal-text"></i>
+                  <p>Audit Logs</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../settings.html" class="nav-link">
+                  <i class="nav-icon bi bi-gear"></i>
+                  <p>Settings</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="../login.html" class="nav-link">
+                  <i class="nav-icon bi bi-box-arrow-right"></i>
+                  <p>Logout</p>
+                </a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- ======= Main Content ======= -->
+      <main class="app-main">
+        <div class="app-content-header">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-sm-6">
+                <h3 class="mb-0" id="pageTitle">Create Post</h3>
+              </div>
+              <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-end">
+                  <li class="breadcrumb-item">
+                    <a href="../index.html">Home</a>
+                  </li>
+                  <li class="breadcrumb-item">
+                    <a href="index.html">Posts</a>
+                  </li>
+                  <li class="breadcrumb-item active" id="breadcrumbAction">
+                    Create
+                  </li>
+                </ol>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="app-content">
-        <div class="container-fluid">
-          <form id="postForm">
-            <div class="row">
-              <!-- ===== Left Column: Main Content ===== -->
-              <div class="col-md-8">
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-pencil-square me-2"></i>Post Content</h3>
-                  </div>
-                  <div class="card-body">
-                    <!-- Title -->
-                    <div class="mb-3">
-                      <label for="postTitle" class="form-label">Title <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control form-control-lg" id="postTitle"
-                        placeholder="Enter post title..." required />
+        <div class="app-content">
+          <div class="container-fluid">
+            <form id="postForm">
+              <div class="row">
+                <!-- ===== Left Column: Main Content ===== -->
+                <div class="col-md-8">
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <i class="bi bi-pencil-square me-2"></i>Post Content
+                      </h3>
                     </div>
-                    <!-- Slug -->
-                    <div class="mb-3">
-                      <label for="postSlug" class="form-label">Slug</label>
-                      <div class="input-group">
-                        <span class="input-group-text text-muted">/blog/</span>
-                        <input type="text" class="form-control" id="postSlug" placeholder="post-slug-here" />
+                    <div class="card-body">
+                      <!-- Title -->
+                      <div class="mb-3">
+                        <label for="postTitle" class="form-label"
+                          >Title <span class="text-danger">*</span></label
+                        >
+                        <input
+                          type="text"
+                          class="form-control form-control-lg"
+                          id="postTitle"
+                          placeholder="Enter post title..."
+                          required
+                        />
                       </div>
-                      <small class="text-muted">Leave blank to auto-generate from title.</small>
-                    </div>
-                    <!-- Excerpt -->
-                    <div class="mb-3">
-                      <label for="postExcerpt" class="form-label">Excerpt</label>
-                      <textarea class="form-control" id="postExcerpt" rows="2"
-                        placeholder="Short description of the post..."></textarea>
-                    </div>
-                    <!-- Content — CKEditor 5 -->
-                    <div class="mb-3">
-                      <label class="form-label">Content <span class="text-danger">*</span></label>
-                      <!-- CKEditor sẽ replace textarea này -->
-                      <div id="editor">
-                        <p>Write your post content here...</p>
+                      <!-- Slug -->
+                      <div class="mb-3">
+                        <label for="postSlug" class="form-label">Slug</label>
+                        <div class="input-group">
+                          <span class="input-group-text text-muted"
+                            >/blog/</span
+                          >
+                          <input
+                            type="text"
+                            class="form-control"
+                            id="postSlug"
+                            placeholder="post-slug-here"
+                          />
+                        </div>
+                        <small class="text-muted"
+                          >Leave blank to auto-generate from title.</small
+                        >
                       </div>
-                      <!-- Hidden textarea để submit form -->
-                      <textarea id="postContent" name="postContent" style="display:none"></textarea>
-                      <small class="text-muted mt-1 d-block"><i class="bi bi-info-circle me-1"></i>Rich text editor —
-                        supports bold, italic, headings, links, images, tables, code blocks, etc.</small>
+                      <!-- Excerpt -->
+                      <div class="mb-3">
+                        <label for="postExcerpt" class="form-label"
+                          >Excerpt</label
+                        >
+                        <textarea
+                          class="form-control"
+                          id="postExcerpt"
+                          rows="2"
+                          placeholder="Short description of the post..."
+                        ></textarea>
+                      </div>
+                      <!-- Content — CKEditor 5 -->
+                      <div class="mb-3">
+                        <label class="form-label"
+                          >Content <span class="text-danger">*</span></label
+                        >
+                        <!-- CKEditor sẽ replace textarea này -->
+                        <div id="editor">
+                          <p>Write your post content here...</p>
+                        </div>
+                        <!-- Hidden textarea để submit form -->
+                        <textarea
+                          id="postContent"
+                          name="postContent"
+                          style="display: none"
+                        ></textarea>
+                        <small class="text-muted mt-1 d-block"
+                          ><i class="bi bi-info-circle me-1"></i>Rich text
+                          editor — supports bold, italic, headings, links,
+                          images, tables, code blocks, etc.</small
+                        >
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <!-- SEO Card -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-search me-2"></i>SEO Settings</h3>
-                    <div class="card-tools">
-                      <button type="button" class="btn btn-tool" data-lte-toggle="card-collapse">
-                        <i class="bi bi-dash-lg"></i>
-                      </button>
-                    </div>
-                  </div>
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <label for="metaTitle" class="form-label">Meta Title</label>
-                      <input type="text" class="form-control" id="metaTitle"
-                        placeholder="SEO title (leave blank to use post title)" />
-                    </div>
-                    <div class="mb-3">
-                      <label for="metaDescription" class="form-label">
-                        Meta Description
-                        <small class="text-muted ms-1" id="metaDescCount">(0/160)</small>
-                      </label>
-                      <textarea class="form-control" id="metaDescription" rows="2"
-                        placeholder="SEO description (max 160 characters)" maxlength="160"></textarea>
-                    </div>
-                    <div class="mb-0">
-                      <label for="metaKeywords" class="form-label">Keywords</label>
-                      <input type="text" class="form-control" id="metaKeywords"
-                        placeholder="keyword1, keyword2, keyword3" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- ===== Right Column: Settings ===== -->
-              <div class="col-md-4">
-                <!-- Publish Card -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-send me-2"></i>Publish</h3>
-                  </div>
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <label for="postStatus" class="form-label">Status</label>
-                      <select class="form-select" id="postStatus">
-                        <option value="DRAFT">Draft</option>
-                        <option value="PUBLISHED">Published</option>
-                        <option value="ARCHIVED">Archived</option>
-                      </select>
-                    </div>
-                    <div class="mb-3 d-none" id="publishDateContainer">
-                      <label for="publishDate" class="form-label">Publish Date</label>
-                      <div class="input-group">
-                        <input id="publishDate" class="form-control" autocomplete="off"
-                          placeholder="Select date and time" />
-                        <button class="btn btn-outline-secondary" id="publishDateToggle" type="button"
-                          aria-label="Toggle datetime picker">
-                          <i class="bi bi-calendar3"></i>
+                  <!-- SEO Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <i class="bi bi-search me-2"></i>SEO Settings
+                      </h3>
+                      <div class="card-tools">
+                        <button
+                          type="button"
+                          class="btn btn-tool"
+                          data-lte-toggle="card-collapse"
+                        >
+                          <i class="bi bi-dash-lg"></i>
                         </button>
                       </div>
                     </div>
-                    <!-- Member Only Toggle -->
-                    <div class="mb-0">
-                      <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="memberOnly" />
-                        <label class="form-check-label fw-semibold" for="memberOnly">
-                          <i class="bi bi-lock-fill text-warning me-1"></i> Member Only
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="metaTitle" class="form-label"
+                          >Meta Title</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="metaTitle"
+                          placeholder="SEO title (leave blank to use post title)"
+                        />
+                      </div>
+                      <div class="mb-3">
+                        <label for="metaDescription" class="form-label">
+                          Meta Description
+                          <small class="text-muted ms-1" id="metaDescCount"
+                            >(0/160)</small
+                          >
                         </label>
+                        <textarea
+                          class="form-control"
+                          id="metaDescription"
+                          rows="2"
+                          placeholder="SEO description (max 160 characters)"
+                          maxlength="160"
+                        ></textarea>
                       </div>
-                      <small class="text-muted">Chỉ thành viên có membership mới đọc được toàn bộ nội dung.</small>
+                      <div class="mb-0">
+                        <label for="metaKeywords" class="form-label"
+                          >Keywords</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="metaKeywords"
+                          placeholder="keyword1, keyword2, keyword3"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <!-- Category Card -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-tags me-2"></i>Category</h3>
+                <!-- ===== Right Column: Settings ===== -->
+                <div class="col-md-4">
+                  <!-- Publish Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <i class="bi bi-send me-2"></i>Publish
+                      </h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="postStatus" class="form-label"
+                          >Status</label
+                        >
+                        <select class="form-select" id="postStatus">
+                          <option value="DRAFT">Draft</option>
+                          <option value="PUBLISHED">Published</option>
+                          <option value="ARCHIVED">Archived</option>
+                        </select>
+                      </div>
+                      <div class="mb-3 d-none" id="publishDateContainer">
+                        <label for="publishDate" class="form-label"
+                          >Publish Date</label
+                        >
+                        <div class="input-group">
+                          <input
+                            id="publishDate"
+                            class="form-control"
+                            autocomplete="off"
+                            placeholder="Select date and time"
+                          />
+                          <button
+                            class="btn btn-outline-secondary"
+                            id="publishDateToggle"
+                            type="button"
+                            aria-label="Toggle datetime picker"
+                          >
+                            <i class="bi bi-calendar3"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <!-- Member Only Toggle -->
+                      <div class="mb-0">
+                        <div class="form-check form-switch">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="memberOnly"
+                          />
+                          <label
+                            class="form-check-label fw-semibold"
+                            for="memberOnly"
+                          >
+                            <i class="bi bi-lock-fill text-warning me-1"></i>
+                            Member Only
+                          </label>
+                        </div>
+                        <small class="text-muted"
+                          >Chỉ thành viên có membership mới đọc được toàn bộ nội
+                          dung.</small
+                        >
+                      </div>
+                    </div>
                   </div>
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <label for="postCategory" class="form-label">Select Category <span
-                          class="text-danger">*</span></label>
+
+                  <!-- Category Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <i class="bi bi-tags me-2"></i>Category
+                      </h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <label for="postCategory" class="form-label"
+                          >Select Category
+                          <span class="text-danger">*</span></label
+                        >
+                        <!-- Populated dynamically from API -->
+                        <select class="form-select" id="postCategory" required>
+                          <option value="">-- Choose Category --</option>
+                        </select>
+                      </div>
+                      <div class="mb-0">
+                        <label for="postTags" class="form-label">Tags</label>
+                        <!-- Select2 multi-select — populated from API -->
+                        <select
+                          class="form-select"
+                          id="postTags"
+                          multiple
+                        ></select>
+                        <small class="text-muted"
+                          >Select existing tags or type to add new ones.</small
+                        >
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Featured Image Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <i class="bi bi-image me-2"></i>Featured Image
+                      </h3>
+                    </div>
+                    <div class="card-body">
+                      <div class="mb-3">
+                        <div
+                          id="imgDropZone"
+                          class="border rounded p-3 text-center bg-body-secondary"
+                          style="min-height: 120px; cursor: pointer"
+                          onclick="
+                            document.getElementById('featuredImageFile').click()
+                          "
+                        >
+                          <i
+                            class="bi bi-cloud-upload fs-2 text-muted d-block mb-2"
+                          ></i>
+                          <span class="text-muted"
+                            >Click to upload or drag &amp; drop</span
+                          >
+                          <br /><small class="text-muted"
+                            >PNG, JPG, GIF up to 5MB</small
+                          >
+                        </div>
+                        <img
+                          id="imgPreview"
+                          class="img-fluid w-100 mt-2 d-none"
+                          alt="Preview"
+                        />
+                        <input
+                          type="file"
+                          id="featuredImageFile"
+                          class="form-control mt-2"
+                          accept="image/*"
+                        />
+                      </div>
+                      <div class="mb-0">
+                        <label for="imageAlt" class="form-label"
+                          >Alt Text</label
+                        >
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="imageAlt"
+                          placeholder="Image description for SEO"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Author Card -->
+                  <div class="card">
+                    <div class="card-header">
+                      <h3 class="card-title">
+                        <i class="bi bi-person me-2"></i>Author
+                      </h3>
+                    </div>
+                    <div class="card-body">
                       <!-- Populated dynamically from API -->
-                      <select class="form-select" id="postCategory" required>
-                        <option value="">-- Choose Category --</option>
+                      <select class="form-select" id="postAuthor">
+                        <option value="">-- Loading authors... --</option>
                       </select>
                     </div>
-                    <div class="mb-0">
-                      <label for="postTags" class="form-label">Tags</label>
-                      <!-- Select2 multi-select — populated from API -->
-                      <select class="form-select" id="postTags" multiple>
-                      </select>
-                      <small class="text-muted">Select existing tags or type to add new ones.</small>
-                    </div>
                   </div>
-                </div>
 
-                <!-- Featured Image Card -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-image me-2"></i>Featured Image</h3>
+                  <!-- Action Buttons -->
+                  <div class="d-grid gap-2">
+                    <button
+                      type="submit"
+                      class="btn btn-primary"
+                      id="btnPublish"
+                    >
+                      <i class="bi bi-check-circle me-1"></i> Publish Post
+                    </button>
+                    <button
+                      type="button"
+                      class="btn btn-outline-secondary"
+                      id="btnDraft"
+                    >
+                      <i class="bi bi-save me-1"></i> Save as Draft
+                    </button>
+                    <a href="index.html" class="btn btn-outline-danger">
+                      <i class="bi bi-x-circle me-1"></i> Cancel
+                    </a>
                   </div>
-                  <div class="card-body">
-                    <div class="mb-3">
-                      <div id="imgDropZone" class="border rounded p-3 text-center bg-body-secondary"
-                        style="min-height:120px; cursor:pointer;"
-                        onclick="document.getElementById('featuredImageFile').click()">
-                        <i class="bi bi-cloud-upload fs-2 text-muted d-block mb-2"></i>
-                        <span class="text-muted">Click to upload or drag &amp; drop</span>
-                        <br><small class="text-muted">PNG, JPG, GIF up to 5MB</small>
-                      </div>
-                      <img id="imgPreview" class="img-fluid w-100 mt-2 d-none" alt="Preview" />
-                      <input type="file" id="featuredImageFile" class="form-control mt-2" accept="image/*" />
-                    </div>
-                    <div class="mb-0">
-                      <label for="imageAlt" class="form-label">Alt Text</label>
-                      <input type="text" class="form-control" id="imageAlt" placeholder="Image description for SEO" />
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Author Card -->
-                <div class="card">
-                  <div class="card-header">
-                    <h3 class="card-title"><i class="bi bi-person me-2"></i>Author</h3>
-                  </div>
-                  <div class="card-body">
-                    <!-- Populated dynamically from API -->
-                    <select class="form-select" id="postAuthor">
-                      <option value="">-- Loading authors... --</option>
-                    </select>
-                  </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="d-grid gap-2">
-                  <button type="submit" class="btn btn-primary" id="btnPublish">
-                    <i class="bi bi-check-circle me-1"></i> Publish Post
-                  </button>
-                  <button type="button" class="btn btn-outline-secondary" id="btnDraft">
-                    <i class="bi bi-save me-1"></i> Save as Draft
-                  </button>
-                  <a href="index.html" class="btn btn-outline-danger">
-                    <i class="bi bi-x-circle me-1"></i> Cancel
-                  </a>
                 </div>
               </div>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
-      </div>
-    </main>
+      </main>
 
-    <footer class="app-footer">
-      <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-      <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All rights reserved.
-    </footer>
-  </div>
+      <footer class="app-footer">
+        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
+        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
+        rights reserved.
+      </footer>
+    </div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.11.0/browser/overlayscrollbars.browser.es6.min.js"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/admin-lte@4.0.0-rc7/dist/js/adminlte.min.js"></script>
-  <!-- CKEditor 5 v43 (full CDN — includes CodeBlock, Code, Underline, etc.) -->
-  <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
-  <!-- Tom Select (vanilla JS multi-select) -->
-  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
-  <!-- BS5 DateTime Picker -->
-  <script src="../js/bs5-datetime.min.js"></script>
-  <!-- App JS -->
-  <script src="../js/http.js"></script>
-  <script src="../js/auth.js"></script>
-  <script src="../js/ui.js"></script>
-  <script src="../js/post.service.js"></script>
-  <script src="../js/category.service.js"></script>
-  <script src="../js/tag.service.js"></script>
-  <script src="../js/notification.service.js"></script>
-  <script>
-    Auth.guard();
-    AdminNotif.init();
-  </script>
-  <script src="../js/pages/posts-create.js"></script>
-</body>
-
+    <!-- Scripts -->
+    <script
+      src="../js/template/overlayscrollbars.browser.es6.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../js/template/popper.min.js" crossorigin="anonymous"></script>
+    <script
+      src="../js/template/bootstrap.min.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="../js/template/adminlte.min.js"></script>
+    <!-- CKEditor 5 v43 (full CDN — includes CodeBlock, Code, Underline, etc.) -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.umd.js"></script>
+    <!-- Tom Select (vanilla JS multi-select) -->
+    <script src="../js/template/tom-select.complete.min.js"></script>
+    <!-- BS5 DateTime Picker -->
+    <script src="../js/bs5-datetime.min.js"></script>
+    <!-- App JS -->
+    <script src="../js/http.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/ui.js"></script>
+    <script src="../js/services/post.service.js"></script>
+    <script src="../js/services/category.service.js"></script>
+    <script src="../js/services/tag.service.js"></script>
+    <script src="../js/services/notification.service.js"></script>
+    <script>
+      Auth.guard();
+      AdminNotif.init();
+    </script>
+    <script src="../js/pages/posts-create.js"></script>
+  </body>
 </html>

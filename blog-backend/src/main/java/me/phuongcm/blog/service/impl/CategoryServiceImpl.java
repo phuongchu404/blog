@@ -9,6 +9,7 @@ import me.phuongcm.blog.repository.CategoryRepository;
 import me.phuongcm.blog.repository.PostCategoryRepository;
 import me.phuongcm.blog.common.utils.SlugUtils;
 import me.phuongcm.blog.service.CategoryService;
+import me.phuongcm.blog.service.MinIOService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,40 +25,43 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryMapper categoryMapper;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository, PostCategoryRepository postCategoryRepository, CategoryMapper categoryMapper) {
+    private final MinIOService minIOService;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository, PostCategoryRepository postCategoryRepository, CategoryMapper categoryMapper, MinIOService minIOService) {
         this.categoryRepository = categoryRepository;
         this.postCategoryRepository = postCategoryRepository;
         this.categoryMapper = categoryMapper;
+        this.minIOService = minIOService;
     }
 
     @Override
     public List<CategoryDTO> getAllCategories() {
-        return categoryMapper.toDTOs(categoryRepository.findAll());
+        return resolveUrls(categoryMapper.toDTOs(categoryRepository.findAll()));
     }
 
     @Override
     public List<CategoryDTO> searchCategories(String keyword) {
-        return categoryMapper.toDTOs(categoryRepository.findByTitleContainingIgnoreCase(keyword));
+        return resolveUrls(categoryMapper.toDTOs(categoryRepository.findByTitleContainingIgnoreCase(keyword)));
     }
 
     @Override
     public List<CategoryDTO> getRootCategories() {
-        return categoryMapper.toDTOs(categoryRepository.findRootCategories());
+        return resolveUrls(categoryMapper.toDTOs(categoryRepository.findRootCategories()));
     }
 
     @Override
     public Optional<CategoryDTO> getCategoryById(Long id) {
-        return categoryRepository.findById(id).map(categoryMapper::toDTO);
+        return categoryRepository.findById(id).map(categoryMapper::toDTO).map(this::resolveUrl);
     }
 
     @Override
     public Optional<CategoryDTO> getCategoryBySlug(String slug) {
-        return categoryRepository.findBySlug(slug).map(categoryMapper::toDTO);
+        return categoryRepository.findBySlug(slug).map(categoryMapper::toDTO).map(this::resolveUrl);
     }
 
     @Override
     public List<CategoryDTO> getSubcategories(Long parentId) {
-        return categoryMapper.toDTOs(categoryRepository.findByParentId(parentId));
+        return resolveUrls(categoryMapper.toDTOs(categoryRepository.findByParentId(parentId)));
     }
 
     @Override
@@ -68,13 +72,14 @@ public class CategoryServiceImpl implements CategoryService {
         category.setContent(categoryDTO.getContent());
         category.setMetaTitle(categoryDTO.getTitle());
         category.setSlug(categoryDTO.getSlug() != null ? categoryDTO.getSlug() : generateSlug(categoryDTO.getTitle()));
+        category.setImageUrl(categoryDTO.getImageUrl());
 
         if (categoryDTO.getParentId() != null) {
             Category parent = categoryRepository.findById(categoryDTO.getParentId())
                     .orElseThrow(() -> new RuntimeException("Parent category not found with id: " + categoryDTO.getParentId()));
             category.setParent(parent);
         }
-        return categoryMapper.toDTO(categoryRepository.save(category));
+        return resolveUrl(categoryMapper.toDTO(categoryRepository.save(category)));
     }
 
     @Override
@@ -87,6 +92,7 @@ public class CategoryServiceImpl implements CategoryService {
         category.setContent(categoryDTO.getContent());
         category.setMetaTitle(categoryDTO.getTitle());
         category.setSlug(categoryDTO.getSlug() != null ? categoryDTO.getSlug() : generateSlug(categoryDTO.getTitle()));
+        category.setImageUrl(categoryDTO.getImageUrl());
 
         if (categoryDTO.getParentId() != null) {
             Category parent = categoryRepository.findById(categoryDTO.getParentId())
@@ -95,7 +101,7 @@ public class CategoryServiceImpl implements CategoryService {
         } else {
             category.setParent(null);
         }
-        return categoryMapper.toDTO(categoryRepository.save(category));
+        return resolveUrl(categoryMapper.toDTO(categoryRepository.save(category)));
     }
 
     @Override
@@ -133,6 +139,19 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void clearCategoriesFromPost(Post post) {
         postCategoryRepository.deleteByPostId(post.getId());
+    }
+
+    /** Nếu imageUrl là path tương đối thì tạo full URL từ MinIO config */
+    private CategoryDTO resolveUrl(CategoryDTO dto) {
+        if (dto != null && dto.getImageUrl() != null && !dto.getImageUrl().startsWith("http")) {
+            dto.setImageUrl(minIOService.getPublicFileUrl(dto.getImageUrl()));
+        }
+        return dto;
+    }
+
+    private List<CategoryDTO> resolveUrls(List<CategoryDTO> dtos) {
+        dtos.forEach(this::resolveUrl);
+        return dtos;
     }
 
     private String generateSlug(String title) {
