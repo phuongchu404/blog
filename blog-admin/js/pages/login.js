@@ -2,12 +2,27 @@
  * Login Page Logic
  */
 
-// Nếu đã đăng nhập thì chuyển thẳng vào dashboard
+// Nếu đã đăng nhập thì kiểm tra quyền trước khi chuyển hướng
 if (Auth.isLoggedIn()) {
-  window.location.href = 'index.html';
+  try {
+    const cachedUser = localStorage.getItem('user');
+    if (cachedUser) {
+      const user = JSON.parse(cachedUser);
+      const permissions = user.permissions || [];
+      if (!permissions.includes('menu:dashboard')) {
+        window.location.href = 'unauthorized.html';
+      } else {
+        window.location.href = 'index.html';
+      }
+    } else {
+      window.location.href = 'index.html';
+    }
+  } catch (e) {
+    window.location.href = 'index.html';
+  }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   const loginForm = document.getElementById('loginForm');
   if (loginForm) {
     loginForm.addEventListener('submit', async function (e) {
@@ -25,7 +40,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
       try {
         await Auth.login(username, password);
-        window.location.href = 'index.html';
+
+        // Lấy thông tin user sau khi login để lưu và kiểm tra quyền
+        const user = await Auth.me();
+        localStorage.setItem('user', JSON.stringify(user));
+
+        const permissions = user.permissions || [];
+        if (!permissions.includes('menu:dashboard')) {
+          window.location.href = 'unauthorized.html';
+        } else {
+          window.location.href = 'index.html';
+        }
       } catch (err) {
         if (alert) {
           alert.textContent = err.message || 'Invalid username or password.';

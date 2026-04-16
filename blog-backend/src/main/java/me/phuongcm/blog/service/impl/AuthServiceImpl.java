@@ -1,5 +1,7 @@
 package me.phuongcm.blog.service.impl;
 
+import java.time.LocalDateTime;
+
 import lombok.extern.slf4j.Slf4j;
 import me.phuongcm.blog.common.exception.ServiceException;
 import me.phuongcm.blog.common.utils.AuthProvider;
@@ -15,6 +17,7 @@ import me.phuongcm.blog.dto.UserMapper;
 import me.phuongcm.blog.entity.Role;
 import me.phuongcm.blog.entity.User;
 import me.phuongcm.blog.entity.UserRole;
+import me.phuongcm.blog.repository.PermissionRepository;
 import me.phuongcm.blog.repository.RoleRepository;
 import me.phuongcm.blog.repository.UserRepository;
 import me.phuongcm.blog.repository.UserRoleRepository;
@@ -39,14 +42,16 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenService refreshTokenService;
     private final UserMapper userMapper;
+    private final PermissionRepository permissionRepository;
 
     public AuthServiceImpl(UserRepository userRepository,
-                           RoleRepository roleRepository,
-                           UserRoleRepository userRoleRepository,
-                           PasswordEncoder passwordEncoder,
-                           JwtUtil jwtUtil,
-                           RefreshTokenService refreshTokenService,
-                           UserMapper userMapper) {
+            RoleRepository roleRepository,
+            UserRoleRepository userRoleRepository,
+            PasswordEncoder passwordEncoder,
+            JwtUtil jwtUtil,
+            RefreshTokenService refreshTokenService,
+            UserMapper userMapper,
+            PermissionRepository permissionRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
@@ -54,6 +59,7 @@ public class AuthServiceImpl implements AuthService {
         this.jwtUtil = jwtUtil;
         this.refreshTokenService = refreshTokenService;
         this.userMapper = userMapper;
+        this.permissionRepository = permissionRepository;
     }
 
     @Override
@@ -64,6 +70,9 @@ public class AuthServiceImpl implements AuthService {
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new ServiceException(Error.INVALID_CREDENTIALS);
         }
+
+        user.setLastLogin(LocalDateTime.now());
+        userRepository.save(user);
 
         String token = jwtUtil.createToken(user.getUsername(), loginRequest.isRememberMe());
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
@@ -98,6 +107,7 @@ public class AuthServiceImpl implements AuthService {
         user.setStatus(Status.ACTIVE.getValue());
         user.setFullName(registerRequest.getFullName());
         user.setProvider(AuthProvider.local);
+        user.setRegisteredAt(LocalDateTime.now());
         user = userRepository.save(user);
 
         Role role = roleRepository.findByName(ERole.ROLE_USER.getValue())
@@ -123,7 +133,15 @@ public class AuthServiceImpl implements AuthService {
             user.setRoles(roles.stream().map(Role::getName).collect(java.util.stream.Collectors.toList()));
         }
 
-        return userMapper.toDTO(user);
+        UserDTO dto = userMapper.toDTO(user);
+        java.util.Set<me.phuongcm.blog.entity.Permission> permissions = permissionRepository
+                .findPermissionsByUsername(username);
+        if (permissions != null) {
+            dto.setPermissions(permissions.stream().map(me.phuongcm.blog.entity.Permission::getTag)
+                    .collect(java.util.stream.Collectors.toList()));
+        }
+
+        return dto;
     }
 
     @Override

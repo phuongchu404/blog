@@ -5,6 +5,8 @@
 const API_BASE = localStorage.getItem('apiBaseUrl') || 'http://localhost:8055';
 
 const Http = {
+  baseURL: API_BASE,
+
   _token() {
     return localStorage.getItem('token');
   },
@@ -80,7 +82,9 @@ const Http = {
   },
 
   async get(path) {
-    return this._fetch(path, { method: 'GET', headers: this._headers(false), cache: 'no-store' });
+    // const tsPath = path + (path.includes('?') ? '&' : '?') + '_t=' + Date.now();
+    const tsPath = path;
+    return this._fetch(tsPath, { method: 'GET', headers: this._headers(false), cache: 'no-store' });
   },
 
   async post(path, data) {

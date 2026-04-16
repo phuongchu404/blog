@@ -19,9 +19,9 @@ const UI = {
     }
     const icons = {
       success: 'bi-check-circle-fill',
-      danger:  'bi-x-circle-fill',
+      danger: 'bi-x-circle-fill',
       warning: 'bi-exclamation-triangle-fill',
-      info:    'bi-info-circle-fill',
+      info: 'bi-info-circle-fill',
     };
     const id = 'toast-' + Date.now();
     container.insertAdjacentHTML('beforeend', `
@@ -79,10 +79,10 @@ const UI = {
 
       document.querySelectorAll('.current-user-name, .user-menu .d-none.d-md-inline, #headerUserName')
         .forEach(el => { el.textContent = displayName; });
-        
+
       document.querySelectorAll('.current-user-email')
         .forEach(el => { el.textContent = user.email || ''; });
-        
+
       document.querySelectorAll('.current-user-role')
         .forEach(el => { el.textContent = roleText; });
 
@@ -95,42 +95,159 @@ const UI = {
       if (user.imageUrl) {
         document.querySelectorAll('.user-image, .user-header img').forEach(img => {
           img.src = user.imageUrl;
-          img.onerror = function() { this.onerror = null; };
+          img.onerror = function () { this.onerror = null; };
         });
       }
 
       // Cập nhật giao diện theo quyền (với data mới từ server)
       this.applyAccessControl(user);
-    } catch (_) {}
+    } catch (_) { }
   },
 
   /**
-   * Ẩn/Hiện menu dựa trên Roles của user.
+   * Ẩn/Hiện menu dựa trên Permissions của user.
    * @param {Object} user
    */
   applyAccessControl(user) {
-    const userRoles = (user?.roles || []).map(r => typeof r === 'string' ? r.toUpperCase() : (r.name || '').toUpperCase());
-    // Hỗ trợ cả 'ADMIN' và 'ROLE_ADMIN'
-    const isAdmin = userRoles.some(r => r.includes('ADMIN'));
+    const permissions = user?.permissions || [];
 
-    const adminOnlyNavTexts = ['USERS', 'ROLES', 'PERMISSIONS', 'SETTINGS'];
-    const adminOnlyHeaderKeywords = ['ACCESS CONTROL', 'SETTINGS'];
+    // Ánh xạ Keyword trên sidebar text thành thẻ Quyền: menu:* 
+    const permissionMap = {
+      'DASHBOARD': 'menu:dashboard',
+      'ALL POSTS': 'menu:posts',
+      'CREATE POST': 'menu:posts',
+      'POSTS': 'menu:posts', // thư mục ngoài
+      'CATEGORIES': 'menu:categories',
+      'TAGS': 'menu:tags',
+      'COMMENTS': 'menu:comment',
+      'USERS': 'menu:users',
+      'ROLES': 'menu:roles',
+      'PERMISSIONS': 'menu:permissions',
+      'AUDIT LOGS': 'menu:audit-logs', // Mặc định không có, giả sử map với menu:audit-logs
+      'SETTINGS': 'menu:settings',
+    };
+
+    const headerKeywords = ['MAIN MENU', 'ACCESS CONTROL', 'SETTINGS'];
+
+    let hasAnyPermission = false;
+    let allowedToViewCurrentPage = false;
+    // Current Path
+    const path = window.location.pathname.toLowerCase();
 
     document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
+      // Bỏ qua nếu item này là header, sẽ xử lý sau
+      if (item.classList.contains('nav-header')) return;
+
       const link = item.querySelector('a.nav-link');
       if (!link) return;
-      const text = link.textContent.trim().toUpperCase();
-      if (adminOnlyNavTexts.includes(text)) {
-        item.style.display = isAdmin ? '' : 'none';
+
+      const text = link.textContent.trim().toUpperCase()
+        // Lọc bỏ mũi tên dropdown của treeview
+        .replace(/[<>]/g, '').trim();
+
+      // Mặc định cho phép logout
+      if (text === 'LOGOUT') return;
+
+      let isAllowed = false;
+
+      // Nếu có mapping
+      for (const key of Object.keys(permissionMap)) {
+        if (text.includes(key)) {
+          const requiredPerm = permissionMap[key];
+          isAllowed = permissions.includes(requiredPerm);
+          break; // Đã match keyword thì dừng
+        }
+      }
+
+      // Những cái nào không nằm trong permissionMap thì auto cho mượn đường (hiển thị)
+      // Ví dụ submenu hoặc link đặc biệt, nhưng ở đây hầu hết đã được cover
+      if (typeof isAllowed !== 'undefined') {
+        item.style.display = isAllowed ? '' : 'none';
+
+        // Cập nhật Allowed flag nếu item link đang trỏ tới page của mình (page hiện tại)
+        if (isAllowed) {
+          hasAnyPermission = true;
+          // Nếu link chứa path hiện tại (gần đúng)
+          const linkHref = link.getAttribute('href');
+          if (linkHref && linkHref !== '#' && linkHref !== '') {
+            // Kiểm tra xem href có nằm trong pathname hiện tại không
+            const hrefPart = linkHref.replace('../', '').replace('./', '');
+            if (path.includes(hrefPart) || (hrefPart === 'index.html' && path.endsWith('/blog-admin/'))) {
+              // Allowed to view current context
+            }
+          }
+        }
       }
     });
 
+    // Ẩn Header nếu tất cả item bên dưới bị ẩn
+    // Khó phân tích nextElementSibling dễ bị sai, ở đây hardcode theo logic
+    const sections = [
+      { key: 'ACCESS CONTROL', childItems: ['ROLES', 'PERMISSIONS'] },
+      { key: 'SETTINGS', childItems: ['AUDIT LOGS', 'SETTINGS'] },
+    ];
     document.querySelectorAll('.app-sidebar .nav-header').forEach(header => {
       const text = header.textContent.trim().toUpperCase();
-      if (adminOnlyHeaderKeywords.some(kw => text.includes(kw))) {
-        header.style.display = isAdmin ? '' : 'none';
+      let headerAllowed = true;
+      const sec = sections.find(s => text.includes(s.key));
+      if (sec) {
+        // Kiểm tra xem user có quyền nào trong mục đó không
+        const requiredPerms = sec.childItems.map(c => permissionMap[c]);
+        headerAllowed = requiredPerms.some(p => permissions.includes(p));
       }
+      header.style.display = headerAllowed ? '' : 'none';
     });
+
+    // Guard route hiện hành (Nếu user không có quyền vào trang đang đứng, chuyển về trang khác)
+    this.routeGuard(permissions, path, permissionMap);
+  },
+
+  /**
+   * Chuyển hướng người dùng nếu ko có quyền truy cập trang hiện tại
+   */
+  routeGuard(permissions, path, permissionMap) {
+    if (path.includes('login.html') || path.includes('unauthorized.html')) return;
+
+    // Lọc bỏ chuỗi rỗng để tính toán đoạn URL chính xác
+    const filteredSegments = path.split('/').filter(Boolean);
+    let lastDir = '';
+    if (path.endsWith('.html')) {
+      lastDir = filteredSegments.length > 1 ? filteredSegments[filteredSegments.length - 2] : filteredSegments[0];
+    } else {
+      lastDir = filteredSegments[filteredSegments.length - 1];
+    }
+
+    let requiredPerm = null;
+    if (lastDir === 'blog-admin' || lastDir === 'index.html' || lastDir === '') requiredPerm = 'menu:dashboard';
+    else if (lastDir === 'posts') requiredPerm = 'menu:posts';
+    else if (lastDir === 'categories') requiredPerm = 'menu:categories';
+    else if (lastDir === 'tags') requiredPerm = 'menu:tags';
+    else if (lastDir === 'comments') requiredPerm = 'menu:comment';
+    else if (lastDir === 'users') requiredPerm = 'menu:users';
+    else if (lastDir === 'roles') requiredPerm = 'menu:roles';
+    else if (lastDir === 'permissions') requiredPerm = 'menu:permissions';
+    else if (lastDir === 'audit-logs') requiredPerm = 'menu:audit-logs';
+    else if (path.includes('settings.html')) requiredPerm = 'menu:settings';
+
+    // Allow user to stay if they have the necessary permission or if no permission is mapped
+    if (requiredPerm && !permissions.includes(requiredPerm)) {
+      let relativePrefix = '';
+      const uiScript = document.querySelector('script[src$="js/ui.js"]');
+      if (uiScript) {
+        const src = uiScript.getAttribute('src');
+        relativePrefix = src.replace('js/ui.js', '');
+      }
+
+      // Find a fallback page (e.g. Dashboard)
+      if (permissions.includes('menu:dashboard')) {
+        document.body.style.display = 'none';
+        window.location.href = relativePrefix + 'index.html';
+      } else {
+        // Fallback to unauthorized page if they lack admin access
+        document.body.style.display = 'none';
+        window.location.href = relativePrefix + 'unauthorized.html';
+      }
+    }
   },
 
   /**
@@ -239,5 +356,5 @@ const UI = {
     if (cachedUser) {
       UI.applyAccessControl(JSON.parse(cachedUser));
     }
-  } catch (e) {}
+  } catch (e) { }
 })();

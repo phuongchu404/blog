@@ -35,4 +35,6 @@ public interface UserService {
 
     /** User tự yêu cầu membership — status 0 → 2 (PENDING) */
     UserDTO requestMembership(Long userId);
+
+    void resetPassword(Long userId);
 }

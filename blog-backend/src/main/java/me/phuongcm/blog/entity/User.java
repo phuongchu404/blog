@@ -53,6 +53,9 @@ public class User extends AuditEntity {
     @Column(name = "image_url", columnDefinition = "TEXT")
     private String imageUrl; // chưa có
 
+    @Column(name = "registered_at")
+    private LocalDateTime registeredAt;
+
     @Column(name = "last_login")
     private LocalDateTime lastLogin;
 

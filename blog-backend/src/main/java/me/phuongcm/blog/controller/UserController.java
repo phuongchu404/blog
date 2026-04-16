@@ -132,7 +132,7 @@ public class UserController {
     @PutMapping("/{id}/membership")
     @PreAuthorize("hasAuthority('membership:manage')")
     public ResponseEntity<UserDTO> grantMembership(@PathVariable Long id,
-                                                    @RequestBody(required = false) MembershipRequest request) {
+            @RequestBody(required = false) MembershipRequest request) {
         UserDTO updated = userService.grantMembership(id, request != null ? request.getExpiredAt() : null);
         return ResponseEntity.ok(updated);
     }
@@ -146,5 +146,17 @@ public class UserController {
     public ResponseEntity<UserDTO> revokeMembership(@PathVariable Long id) {
         UserDTO updated = userService.revokeMembership(id);
         return ResponseEntity.ok(updated);
+    }
+
+    /**
+     * POST /api/users/{id}/reset-password — Khôi phục mật khẩu.
+     * Yêu cầu permission "user:update:any" hoặc ROLE_ADMIN.
+     */
+    @Auditable(action = "UPDATE", resource = "USER")
+    @PostMapping("/{id}/reset-password")
+    @PreAuthorize("hasAuthority('user:update:any') or hasRole('ADMIN')")
+    public ResponseEntity<Void> resetPassword(@PathVariable Long id) {
+        userService.resetPassword(id);
+        return ResponseEntity.ok().build();
     }
 }

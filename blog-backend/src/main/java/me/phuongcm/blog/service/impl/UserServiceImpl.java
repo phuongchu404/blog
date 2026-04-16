@@ -17,6 +17,7 @@ import me.phuongcm.blog.repository.NotificationRepository;
 import me.phuongcm.blog.repository.RoleRepository;
 import me.phuongcm.blog.repository.UserRepository;
 import me.phuongcm.blog.repository.UserRoleRepository;
+import me.phuongcm.blog.service.EmailService;
 import me.phuongcm.blog.service.MinIOService;
 import me.phuongcm.blog.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -54,13 +56,20 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MinIOService minIOService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public UserDTO getCurrentUser(String username) {
-        User user = userRepository.findByUsername(username).orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
         return resolveImageUrl(userMapper.toDTO(user));
     }
 
-    /** Nếu imageUrl là path tương đối thì tạo full URL từ MinIO config, full URL (http) thì giữ nguyên */
+    /**
+     * Nếu imageUrl là path tương đối thì tạo full URL từ MinIO config, full URL
+     * (http) thì giữ nguyên
+     */
     private UserDTO resolveImageUrl(UserDTO dto) {
         if (dto != null && dto.getImageUrl() != null && !dto.getImageUrl().startsWith("http")) {
             dto.setImageUrl(minIOService.getPublicFileUrl(dto.getImageUrl()));
@@ -89,7 +98,8 @@ public class UserServiceImpl implements UserService {
         user.setProvider(AuthProvider.local);
         user = userRepository.save(user);
 
-        Role role = roleRepository.findByName(ERole.ROLE_USER.getValue()).orElseThrow(() -> new ServiceException(Error.ROLE_NOT_FOUND));
+        Role role = roleRepository.findByName(ERole.ROLE_USER.getValue())
+                .orElseThrow(() -> new ServiceException(Error.ROLE_NOT_FOUND));
 
         UserRole userRole = new UserRole();
         userRole.setRole(role);
@@ -105,9 +115,10 @@ public class UserServiceImpl implements UserService {
         List<UserRole> allUserRoles = userRoleRepository.findAll();
         java.util.Map<Long, List<String>> userRolesMap = allUserRoles.stream()
                 .collect(java.util.stream.Collectors.groupingBy(ur -> ur.getUser().getId(),
-                         java.util.stream.Collectors.mapping(ur -> ur.getRole().getName(), java.util.stream.Collectors.toList())));
+                        java.util.stream.Collectors.mapping(ur -> ur.getRole().getName(),
+                                java.util.stream.Collectors.toList())));
         for (User user : users) {
-             user.setRoles(userRolesMap.getOrDefault(user.getId(), java.util.Collections.emptyList()));
+            user.setRoles(userRolesMap.getOrDefault(user.getId(), java.util.Collections.emptyList()));
         }
         return userMapper.toDTOs(users);
     }
@@ -126,6 +137,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO createUser(UserDTO userDTO, String password) {
         User user = new User();
+        user.setUsername(userDTO.getUsername());
+        user.setFullName(userDTO.getFullName());
         user.setFirstName(userDTO.getFirstName());
         user.setMiddleName(userDTO.getMiddleName());
         user.setLastName(userDTO.getLastName());
@@ -133,6 +146,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(password));
         user.setCreatedAt(LocalDateTime.now());
+        user.setRegisteredAt(LocalDateTime.now());
         user.setIntro(userDTO.getIntro());
         user.setProfile(userDTO.getProfile());
         user.setProvider(AuthProvider.local);
@@ -147,11 +161,31 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
 
+        String nextUsername = userDTO.getUsername() != null ? userDTO.getUsername().trim() : null;
+        if (nextUsername != null && !nextUsername.isBlank() && !nextUsername.equals(user.getUsername())) {
+            userRepository.findByUsername(nextUsername)
+                    .filter(existing -> !existing.getId().equals(id))
+                    .ifPresent(existing -> {
+                        throw new ServiceException(Error.USERNAME_ALREADY_EXIST);
+                    });
+            user.setUsername(nextUsername);
+        }
+
+        String nextEmail = userDTO.getEmail() != null ? userDTO.getEmail().trim() : null;
+        if (nextEmail != null && !nextEmail.isBlank() && !nextEmail.equalsIgnoreCase(user.getEmail())) {
+            userRepository.findByEmail(nextEmail)
+                    .filter(existing -> !existing.getId().equals(id))
+                    .ifPresent(existing -> {
+                        throw new ServiceException(Error.EMAIL_ALREADY_EXIST);
+                    });
+            user.setEmail(nextEmail);
+        }
+
+        user.setFullName(userDTO.getFullName());
         user.setFirstName(userDTO.getFirstName());
         user.setMiddleName(userDTO.getMiddleName());
         user.setLastName(userDTO.getLastName());
         user.setMobile(userDTO.getMobile());
-        user.setEmail(userDTO.getEmail());
         user.setIntro(userDTO.getIntro());
         user.setProfile(userDTO.getProfile());
         if (userDTO.getImageUrl() != null) {
@@ -194,15 +228,13 @@ public class UserServiceImpl implements UserService {
         String msg = "🔑 " + (user.getFullName() != null ? user.getFullName() : user.getUsername())
                 + " đã yêu cầu cấp membership.";
         List<Long> adminIds = userRoleRepository.findUserIdsByRoleName("ROLE_ADMIN");
-        List<Notification> notifs = adminIds.stream().map(adminId ->
-            Notification.builder()
+        List<Notification> notifs = adminIds.stream().map(adminId -> Notification.builder()
                 .recipientId(adminId)
                 .type("MEMBERSHIP_REQUEST")
                 .message(msg)
                 .createdAt(LocalDateTime.now())
                 .read(false)
-                .build()
-        ).collect(java.util.stream.Collectors.toList());
+                .build()).collect(java.util.stream.Collectors.toList());
         notificationRepository.saveAll(notifs);
 
         return userMapper.toDTO(user);
@@ -246,6 +278,35 @@ public class UserServiceImpl implements UserService {
             }).collect(java.util.stream.Collectors.toList());
 
             userRoleRepository.saveAll(urs);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void resetPassword(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ServiceException(Error.USER_NOT_FOUND));
+
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(10);
+        for (int i = 0; i < 10; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        String newPassword = sb.toString();
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
+            String subject = "Khôi phục mật khẩu - Blog Admin";
+            String text = "Xin chào " + (user.getFullName() != null ? user.getFullName() : user.getUsername()) + ",\n\n"
+                    +
+                    "Mật khẩu của bạn đã được đặt lại thành công. Dưới đây là mật khẩu mới của bạn:\n\n" +
+                    newPassword + "\n\n" +
+                    "Vui lòng đăng nhập và tiến hành đổi mật khẩu ngay lập tức.\n\n" +
+                    "Trân trọng,\nBQT Blog Admin";
+            emailService.sendTextEmail(user.getEmail(), subject, text);
         }
     }
 }

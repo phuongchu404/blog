@@ -279,6 +279,17 @@ INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag
 INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (37, '2026-04-06 09:51:07.863956', null, null, null, 'user:read:all', 'API', '2026-04-06 09:51:07.863956', 'Xem danh sách tất cả người dùng');
 INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (38, '2026-04-06 09:51:07.871063', null, null, null, 'user:update:any', 'API', '2026-04-06 09:51:07.871063', 'Cập nhật bất kỳ tài khoản');
 INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (39, '2026-04-06 14:28:46.000000', 0, null, '/admin/comments', 'menu:comment', 'MENU', '2026-04-06 14:28:46.000000', 'Comment');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (40, '2026-04-16 00:00:00.000000', 0, 'POST', '/api/roles', 'role:create', 'API', '2026-04-16 00:00:00.000000', 'Create role');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (41, '2026-04-16 00:00:00.000000', 0, 'PUT', '/api/roles/**', 'role:update', 'API', '2026-04-16 00:00:00.000000', 'Update role');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (42, '2026-04-16 00:00:00.000000', 0, 'DELETE', '/api/roles/**', 'role:delete', 'API', '2026-04-16 00:00:00.000000', 'Delete role');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (43, '2026-04-16 00:00:00.000000', 0, 'POST', '/api/roles/*/permissions', 'role:assign', 'API', '2026-04-16 00:00:00.000000', 'Assign permissions to role');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (44, '2026-04-16 00:00:00.000000', 0, 'POST', '/api/permissions', 'permission:create', 'API', '2026-04-16 00:00:00.000000', 'Create permission');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (45, '2026-04-16 00:00:00.000000', 0, 'PUT', '/api/permissions/**', 'permission:update', 'API', '2026-04-16 00:00:00.000000', 'Update permission');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (46, '2026-04-16 00:00:00.000000', 0, 'DELETE', '/api/permissions/**', 'permission:delete', 'API', '2026-04-16 00:00:00.000000', 'Delete permission');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (47, '2026-04-16 00:00:00.000000', 0, '*', '/api/users/*/membership', 'membership:manage', 'API', '2026-04-16 00:00:00.000000', 'Manage membership');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (48, '2026-04-16 00:00:00.000000', 0, 'POST', '/api/users/*/roles', 'user:assign-role', 'API', '2026-04-16 00:00:00.000000', 'Assign roles to user');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (49, '2026-04-16 00:00:00.000000', 0, null, '/admin/audit-logs', 'menu:audit-logs', 'MENU', '2026-04-16 00:00:00.000000', 'Audit Logs');
+INSERT INTO blog.permission (id, created_at, is_white_list, method, pattern, tag, type, updated_at, name) VALUES (50, '2026-04-16 00:00:00.000000', 0, null, '/admin/settings', 'menu:settings', 'MENU', '2026-04-16 00:00:00.000000', 'Settings');
 
 
 INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (32, '2026-04-06 09:34:10.000000', '2026-04-06 09:34:10.000000', 6, 1);
@@ -339,6 +350,17 @@ INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, rol
 INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (99, null, null, 32, 22);
 INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (100, null, null, 34, 22);
 INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (132, '2026-04-06 14:50:51.000000', '2026-04-06 14:50:51.000000', 39, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (133, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 40, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (134, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 41, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (135, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 42, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (136, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 43, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (137, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 44, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (138, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 45, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (139, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 46, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (140, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 47, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (141, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 48, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (142, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 49, 1);
+INSERT INTO blog.role_permission (id, created_at, updated_at, permission_id, role_id) VALUES (143, '2026-04-16 00:00:00.000000', '2026-04-16 00:00:00.000000', 50, 1);
 
 
 INSERT INTO blog.user_role (id, created_at, updated_at, role_id, user_id) VALUES (3, '2026-04-06 09:34:10.000000', '2026-04-06 09:34:10.000000', 1, 1);
