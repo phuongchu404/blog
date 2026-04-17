@@ -8,6 +8,10 @@ const editPostId = urlParams.get('id') ? Number(urlParams.get('id')) : null;
 
 let ckEditor = null;
 let publishDatePicker = null;
+let pendingEditorData = '';
+let pendingAuthorId = '';
+let pendingCategoryId = '';
+let pendingTags = [];
 
 // ── CKEditor Upload Adapter ────────────────────────────────────────────────────
 
@@ -46,7 +50,9 @@ function MyCustomUploadAdapterPlugin(editor) {
 
 async function savePost(status) {
   const title = document.getElementById('postTitle').value.trim();
-  const content = ckEditor ? ckEditor.getData() : '';
+  const content = ckEditor
+    ? ckEditor.getData()
+    : (document.getElementById('postContent')?.value || pendingEditorData || '');
 
   if (!title) { UI.toast('Title is required.', 'warning'); return; }
   if (!content || content === '<p>&nbsp;</p>') {
@@ -86,109 +92,266 @@ async function savePost(status) {
   }
 }
 
+function setEditorContent(content) {
+  const normalized = content || '';
+  pendingEditorData = normalized;
+
+  const hiddenContent = document.getElementById('postContent');
+  if (hiddenContent) hiddenContent.value = normalized;
+
+  if (ckEditor) {
+    ckEditor.setData(normalized);
+  }
+}
+
+function setTagSelections(tags) {
+  pendingTags = Array.isArray(tags) ? tags : [];
+  if (!pendingTags.length) return;
+
+  const ts = window.tomSelectTags;
+  if (ts) {
+    pendingTags.forEach(t => {
+      const value = String(t.id);
+      const text = t.title || t.name || `Tag ${t.id}`;
+      if (!ts.options[value]) ts.addOption({ value, text });
+      ts.addItem(value, true);
+    });
+    return;
+  }
+
+  const tagSelect = document.getElementById('postTags');
+  if (!tagSelect) return;
+
+  pendingTags.forEach(t => {
+    const value = String(t.id);
+    let option = Array.from(tagSelect.options).find(opt => opt.value === value);
+    if (!option) {
+      option = new Option(t.title || t.name || `Tag ${t.id}`, value, false, true);
+      tagSelect.add(option);
+    }
+    option.selected = true;
+  });
+}
+
+function applyPendingAuthorSelection() {
+  if (!pendingAuthorId) return;
+  const authorSelect = document.getElementById('postAuthor');
+  if (!authorSelect) return;
+
+  const value = String(pendingAuthorId);
+  let option = Array.from(authorSelect.options).find(opt => opt.value === value);
+  if (!option) {
+    option = new Option(`User ${value}`, value, false, true);
+    authorSelect.add(option);
+  }
+  authorSelect.value = value;
+}
+
+function applyPendingCategorySelection() {
+  if (!pendingCategoryId) return;
+  const categorySelect = document.getElementById('postCategory');
+  if (!categorySelect) return;
+
+  const value = String(pendingCategoryId);
+  let option = Array.from(categorySelect.options).find(opt => opt.value === value);
+  if (!option) {
+    option = new Option(`Category ${value}`, value, false, true);
+    categorySelect.add(option);
+  }
+  categorySelect.value = value;
+}
+
+async function loadPostForEdit(postId) {
+  const pageTitle = document.getElementById('pageTitle');
+  const breadcrumbAction = document.getElementById('breadcrumbAction');
+  const btnPublish = document.getElementById('btnPublish');
+  const publishDate = document.getElementById('publishDate');
+
+  if (pageTitle) pageTitle.textContent = 'Edit Post';
+  if (breadcrumbAction) breadcrumbAction.textContent = 'Edit';
+  if (btnPublish) btnPublish.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Post';
+  if (publishDate) publishDate.disabled = true;
+
+  try {
+    const post = await PostService.getById(postId);
+    document.getElementById('postTitle').value = post.title || '';
+    document.getElementById('postSlug').value = post.slug || '';
+    document.getElementById('postExcerpt').value = post.summary || '';
+
+    const statusMap = { 0: 'DRAFT', 1: 'PUBLISHED', 2: 'ARCHIVED' };
+    document.getElementById('postStatus').value = statusMap[post.status] ?? 'DRAFT';
+
+    setEditorContent(post.content || '');
+
+    pendingAuthorId = post.authorId ? String(post.authorId) : '';
+    applyPendingAuthorSelection();
+
+    pendingCategoryId = String(post.categories?.[0]?.id ?? post.categoryIds?.[0] ?? '');
+    applyPendingCategorySelection();
+
+    setTagSelections(post.tags || []);
+
+    if (post.imageUrl) {
+      window.featuredImageUrl = post.imageUrl;
+      window.featuredImagePath = post.imageUrl;
+      const preview = document.getElementById('imgPreview');
+      if (preview) {
+        preview.src = post.imageUrl;
+        preview.classList.remove('d-none');
+      }
+      const dropZone = document.getElementById('imgDropZone');
+      if (dropZone) dropZone.classList.add('d-none');
+    }
+
+    document.getElementById('metaTitle').value = post.metaTitle || '';
+    document.getElementById('metaDescription').value = post.metaDescription || '';
+    document.getElementById('metaKeywords').value = post.metaKeywords || '';
+
+    const memberOnlyChk = document.getElementById('memberOnly');
+    if (memberOnlyChk) memberOnlyChk.checked = post.memberOnly || false;
+
+    if (post.metaDescription) {
+      document.getElementById('metaDescCount').textContent = `(${post.metaDescription.length}/160)`;
+    }
+
+    if (post.publishedAt) {
+      const container = document.getElementById('publishDateContainer');
+      if (container) container.classList.remove('d-none');
+
+      if (publishDatePicker) {
+        publishDatePicker.setDate(new Date(post.publishedAt));
+      } else if (publishDate) {
+        publishDate.value = post.publishedAt.replace('T', ' ').slice(0, 16);
+      }
+    }
+  } catch (err) {
+    UI.toast('Failed to load post: ' + err.message, 'danger');
+  }
+}
+
 // ── DOMContentLoaded ───────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', async function () {
   UI.initSidebar();
+  const editPostPromise = editPostId ? loadPostForEdit(editPostId) : Promise.resolve();
 
   // ── CKEditor 5 v43 ─────────────────────────────────────────────────
   const editorEl = document.getElementById('editor');
   if (editorEl) {
-    const {
-      ClassicEditor,
-      Autoformat,
-      Bold, Italic, Underline, Strikethrough, Code,
-      BlockQuote, CodeBlock,
-      Essentials,
-      FileRepository,
-      Heading,
-      HorizontalLine,
-      Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload,
-      ImageResize,
-      Indent, IndentBlock,
-      Link,
-      List, TodoList,
-      MediaEmbed,
-      Paragraph,
-      PasteFromOffice,
-      Table, TableToolbar,
-    } = CKEDITOR;
-
-    ckEditor = await ClassicEditor.create(editorEl, {
-      plugins: [
+    (async () => {
+      try {
+      const {
+        ClassicEditor,
         Autoformat,
         Bold, Italic, Underline, Strikethrough, Code,
         BlockQuote, CodeBlock,
-        Essentials, FileRepository,
-        Heading, HorizontalLine,
-        Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload, ImageResize,
+        Essentials,
+        FileRepository,
+        Heading,
+        HorizontalLine,
+        Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload,
+        ImageResize,
         Indent, IndentBlock,
         Link,
         List, TodoList,
-        MediaEmbed, Paragraph, PasteFromOffice,
+        MediaEmbed,
+        Paragraph,
+        PasteFromOffice,
         Table, TableToolbar,
-      ],
-      extraPlugins: [MyCustomUploadAdapterPlugin],
-      toolbar: {
-        items: [
-          'heading', '|',
-          'bold', 'italic', 'underline', 'strikethrough', '|',
-          'link', 'blockQuote', 'code', 'codeBlock', '|',
-          'bulletedList', 'numberedList', 'todoList', '|',
-          'insertTable', '|',
-          'imageUpload', 'mediaEmbed', '|',
-          'horizontalLine', '|',
-          'outdent', 'indent', '|',
-          'undo', 'redo',
+      } = CKEDITOR;
+
+      ckEditor = await ClassicEditor.create(editorEl, {
+        plugins: [
+          Autoformat,
+          Bold, Italic, Underline, Strikethrough, Code,
+          BlockQuote, CodeBlock,
+          Essentials, FileRepository,
+          Heading, HorizontalLine,
+          Image, ImageCaption, ImageStyle, ImageToolbar, ImageUpload, ImageResize,
+          Indent, IndentBlock,
+          Link,
+          List, TodoList,
+          MediaEmbed, Paragraph, PasteFromOffice,
+          Table, TableToolbar,
         ],
-        shouldNotGroupWhenFull: true,
-      },
-      image: {
-        resizeUnit: '%',
-        resizeOptions: [
-          { name: 'resizeImage:original', value: null, label: 'Original' },
-          { name: 'resizeImage:25', value: '25', label: '25%' },
-          { name: 'resizeImage:50', value: '50', label: '50%' },
-          { name: 'resizeImage:75', value: '75', label: '75%' },
-          { name: 'resizeImage:100', value: '100', label: '100%' },
-        ],
-        toolbar: [
-          'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
-          'toggleImageCaption', 'imageTextAlternative', '|',
-          'resizeImage:25', 'resizeImage:50', 'resizeImage:75', 'resizeImage:original',
-        ],
-      },
-      placeholder: 'Write your post content here...',
-      language: 'en',
-    });
+        extraPlugins: [MyCustomUploadAdapterPlugin],
+        toolbar: {
+          items: [
+            'heading', '|',
+            'bold', 'italic', 'underline', 'strikethrough', '|',
+            'link', 'blockQuote', 'code', 'codeBlock', '|',
+            'bulletedList', 'numberedList', 'todoList', '|',
+            'insertTable', '|',
+            'imageUpload', 'mediaEmbed', '|',
+            'horizontalLine', '|',
+            'outdent', 'indent', '|',
+            'undo', 'redo',
+          ],
+          shouldNotGroupWhenFull: true,
+        },
+        image: {
+          resizeUnit: '%',
+          resizeOptions: [
+            { name: 'resizeImage:original', value: null, label: 'Original' },
+            { name: 'resizeImage:25', value: '25', label: '25%' },
+            { name: 'resizeImage:50', value: '50', label: '50%' },
+            { name: 'resizeImage:75', value: '75', label: '75%' },
+            { name: 'resizeImage:100', value: '100', label: '100%' },
+          ],
+          toolbar: [
+            'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
+            'toggleImageCaption', 'imageTextAlternative', '|',
+            'resizeImage:25', 'resizeImage:50', 'resizeImage:75', 'resizeImage:original',
+          ],
+        },
+        placeholder: 'Write your post content here...',
+        language: 'en',
+      });
+
+      if (pendingEditorData) {
+        ckEditor.setData(pendingEditorData);
+      }
+      } catch (_) {
+        UI.toast('CKEditor failed to initialize. Post data will still load.', 'warning');
+      }
+    })();
   }
 
   // ── Tom Select (Tags) ───────────────────────────────────────────────
   const tagsEl = document.getElementById('postTags');
   if (tagsEl) {
-    window.tomSelectTags = new TomSelect('#postTags', {
-      plugins: ['remove_button', 'caret_position'],
-      create: true,
-      placeholder: 'Select or type tags...',
-      maxOptions: 200,
-      delimiter: ',',
-      dropdownParent: 'body',
-    });
+    try {
+      window.tomSelectTags = new TomSelect('#postTags', {
+        plugins: ['remove_button', 'caret_position'],
+        create: true,
+        placeholder: 'Select or type tags...',
+        maxOptions: 200,
+        delimiter: ',',
+        dropdownParent: 'body',
+      });
+    } catch (_) {
+      window.tomSelectTags = null;
+    }
   }
 
   // ── BS5 DateTime Picker (Publish Date) ──────────────────────────────
   const publishDateInput = document.getElementById('publishDate');
   const publishDateToggle = document.getElementById('publishDateToggle');
-  if (publishDateInput && publishDateToggle) {
-    setDatetimeLocale('en-us');
-    createDatetimeTemplate();
-    publishDatePicker = createDatetimePicker(publishDateInput, publishDateToggle, null, {
-      format: 'YYYY-MM-DD HH:mm',
-      showTime: true,
-      use24Hour: true,
-      startDay: 1,
-    });
-    publishDateInput.addEventListener('click', () => publishDatePicker.open());
+  if (publishDateInput) {
+    try {
+      setDatetimeLocale('en-us');
+      createDatetimeTemplate();
+      publishDatePicker = createDatetimePicker(publishDateInput, null, null, {
+        format: 'YYYY-MM-DD HH:mm',
+        showTime: true,
+        use24Hour: true,
+        startDay: 1,
+      });
+      publishDateInput.addEventListener('click', () => publishDatePicker.open());
+      publishDateToggle?.remove();
+    } catch (_) {
+      publishDatePicker = null;
+    }
   }
 
   // ── Auto slug từ title ──────────────────────────────────────────────
@@ -243,118 +406,83 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // ── Load Categories ─────────────────────────────────────────────────
-  try {
-    const res = await CategoryService.getAll();
-    const cats = Array.isArray(res) ? res : (res.content ?? []);
-    const sel = document.getElementById('postCategory');
-    if (sel) {
-      sel.innerHTML = '<option value="">-- Choose Category --</option>' +
-        cats.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+  const categoriesPromise = (async () => {
+    try {
+      const res = await CategoryService.getAll();
+      const cats = Array.isArray(res) ? res : (res.content ?? []);
+      const sel = document.getElementById('postCategory');
+      if (sel) {
+        sel.innerHTML = '<option value="">-- Choose Category --</option>' +
+          cats.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+        applyPendingCategorySelection();
+      }
+    } catch (_) {
+      UI.toast('Could not load categories.', 'warning');
     }
-  } catch (_) {
-    UI.toast('Could not load categories.', 'warning');
-  }
+  })();
 
   // ── Load Tags into Tom Select ────────────────────────────────────────
-  try {
-    const res = await TagService.getAll();
-    const tags = Array.isArray(res) ? res : (res.content ?? []);
-    const ts = window.tomSelectTags;
-    if (ts) {
-      tags.forEach(t => {
-        const text = t.title || t.name || t;
-        ts.addOption({ value: t.id, text: text });
-      });
-      ts.refreshOptions(false);
-    }
-  } catch (_) { }
+  const tagsPromise = (async () => {
+    try {
+      const res = await TagService.getAll();
+      const tags = Array.isArray(res) ? res : (res.content ?? []);
+      const ts = window.tomSelectTags;
+      if (ts) {
+        tags.forEach(t => {
+          const text = t.title || t.name || t;
+          ts.addOption({ value: String(t.id), text: text });
+        });
+        ts.refreshOptions(false);
+      } else {
+        const tagSelect = document.getElementById('postTags');
+        if (tagSelect) {
+          tagSelect.innerHTML = tags.map(t => `<option value="${t.id}">${t.title || t.name || t}</option>`).join('');
+        }
+      }
+      setTagSelections(pendingTags);
+    } catch (_) { }
+  })();
 
   // ── Load Authors & Set Default ──────────────────────────────────────
-  try {
-    const users = await Http.get('/api/users/all') || [];
-    const list = Array.isArray(users) ? users : (users.content ?? []);
-    const selAut = document.getElementById('postAuthor');
+  const authorsPromise = (async () => {
+    try {
+      const [users, me] = await Promise.all([
+        Http.get('/api/users/all'),
+        Auth.me().catch(() => null),
+      ]);
+      const list = Array.isArray(users) ? users : (users?.content ?? []);
+      const selAut = document.getElementById('postAuthor');
 
-    if (selAut) {
-      selAut.innerHTML = list.map(u =>
-        `<option value="${u.id}">${u.username || u.name || ('User ' + u.id)}</option>`
-      ).join('');
+      if (selAut) {
+        selAut.innerHTML = list.map(u =>
+          `<option value="${u.id}">${u.username || u.name || ('User ' + u.id)}</option>`
+        ).join('');
 
-      const me = await Auth.me();
-      if (me && me.id) selAut.value = me.id;
+        if (pendingAuthorId) {
+          applyPendingAuthorSelection();
+        } else if (me && me.id) {
+          selAut.value = String(me.id);
+        }
+      }
+    } catch (_) {
+      const selAut = document.getElementById('postAuthor');
+      if (selAut) selAut.innerHTML = '<option value="">-- Could not load --</option>';
     }
-  } catch (_) {
-    const selAut = document.getElementById('postAuthor');
-    if (selAut) selAut.innerHTML = '<option value="">-- Could not load --</option>';
-  }
+  })();
 
   // ── Edit mode: load existing post ───────────────────────────────────
-  if (editPostId) {
-    const pageTitle = document.getElementById('pageTitle');
-    const breadcrumbAction = document.getElementById('breadcrumbAction');
-    const btnPublish = document.getElementById('btnPublish');
-    const publishDate = document.getElementById('publishDate');
+  await Promise.allSettled([editPostPromise, categoriesPromise, tagsPromise, authorsPromise]);
 
-    if (pageTitle) pageTitle.textContent = 'Edit Post';
-    if (breadcrumbAction) breadcrumbAction.textContent = 'Edit';
-    if (btnPublish) btnPublish.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Post';
-    if (publishDate) publishDate.disabled = true;
-
+  // ── Áp dụng defaultPostStatus từ Settings (chỉ khi tạo mới) ────────
+  if (!editPostId) {
     try {
-      const post = await PostService.getById(editPostId);
-      document.getElementById('postTitle').value = post.title || '';
-      document.getElementById('postSlug').value = post.slug || '';
-      document.getElementById('postExcerpt').value = post.summary || '';
-      const statusMap = { 0: 'DRAFT', 1: 'PUBLISHED', 2: 'ARCHIVED' };
-      document.getElementById('postStatus').value = statusMap[post.status] ?? 'DRAFT';
-
-      if (ckEditor) ckEditor.setData(post.content || '');
-
-      if (post.categories && post.categories.length > 0) {
-        document.getElementById('postCategory').value = post.categories[0].id;
+      const contentSettings = await SettingService.getByGroup('content');
+      const defaultStatus = (contentSettings?.defaultPostStatus || 'draft').toUpperCase();
+      const statusEl = document.getElementById('postStatus');
+      if (statusEl && ['DRAFT', 'PUBLISHED', 'ARCHIVED'].includes(defaultStatus)) {
+        statusEl.value = defaultStatus;
       }
-
-      if (post.tags && post.tags.length && window.tomSelectTags) {
-        const ts = window.tomSelectTags;
-        post.tags.forEach(t => {
-          const val = t.id;
-          const text = t.title || t.name;
-          if (!ts.options[val]) ts.addOption({ value: val, text });
-          ts.addItem(val, true);
-        });
-      }
-
-      if (post.imageUrl) {
-        window.featuredImageUrl = post.imageUrl;
-        const preview = document.getElementById('imgPreview');
-        if (preview) {
-          preview.src = post.imageUrl;
-          preview.classList.remove('d-none');
-        }
-        const dropZone = document.getElementById('imgDropZone');
-        if (dropZone) dropZone.classList.add('d-none');
-      }
-
-      document.getElementById('metaTitle').value = post.metaTitle || '';
-      document.getElementById('metaDescription').value = post.metaDescription || '';
-      document.getElementById('metaKeywords').value = post.metaKeywords || '';
-      const memberOnlyChk = document.getElementById('memberOnly');
-      if (memberOnlyChk) memberOnlyChk.checked = post.memberOnly || false;
-      if (post.metaDescription) {
-        document.getElementById('metaDescCount').textContent = `(${post.metaDescription.length}/160)`;
-      }
-
-      if (post.publishedAt) {
-        const container = document.getElementById('publishDateContainer');
-        if (container) container.classList.remove('d-none');
-        if (publishDatePicker) {
-          // Convert ISO string to YYYY-MM-DD HH:mm for the picker
-          const d = new Date(post.publishedAt);
-          publishDatePicker.setDate(d);
-        }
-      }
-
-    } catch (err) { UI.toast('Failed to load post: ' + err.message, 'danger'); }
+    } catch (_) { }
   }
 
   // ── Form interactions ───────────────────────────────────────────────

@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -42,14 +44,16 @@ public class AuditLogController {
             @RequestParam(required = false) String action,
             @RequestParam(required = false) String resource,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
+        LocalDateTime normalizedDateFrom = normalizeDateFrom(dateFrom);
+        LocalDateTime normalizedDateTo = normalizeDateTo(dateTo);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<AuditLog> result = auditLogRepository.findAll(
-                AuditLogSpec.filter(username, action, resource, status, dateFrom, dateTo),
+                AuditLogSpec.filter(username, action, resource, status, normalizedDateFrom, normalizedDateTo),
                 pageable
         );
         return ResponseEntity.ok(ApiResponse.ok(result));
@@ -65,17 +69,19 @@ public class AuditLogController {
             @RequestParam(required = false) String action,
             @RequestParam(required = false) String resource,
             @RequestParam(required = false) String status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateFrom,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime dateTo,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateFrom,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dateTo,
             HttpServletResponse response
     ) throws IOException {
+        LocalDateTime normalizedDateFrom = normalizeDateFrom(dateFrom);
+        LocalDateTime normalizedDateTo = normalizeDateTo(dateTo);
         response.setContentType("text/csv; charset=UTF-8");
         response.setHeader("Content-Disposition", "attachment; filename=\"audit-logs.csv\"");
         // BOM for Excel UTF-8 recognition
         response.getOutputStream().write(new byte[]{(byte) 0xEF, (byte) 0xBB, (byte) 0xBF});
 
         List<AuditLog> logs = auditLogRepository.findAll(
-                AuditLogSpec.filter(username, action, resource, status, dateFrom, dateTo),
+                AuditLogSpec.filter(username, action, resource, status, normalizedDateFrom, normalizedDateTo),
                 Sort.by(Sort.Direction.DESC, "createdAt")
         );
 
@@ -110,5 +116,13 @@ public class AuditLogController {
             return "\"" + val.replace("\"", "\"\"") + "\"";
         }
         return val;
+    }
+
+    private LocalDateTime normalizeDateFrom(LocalDate dateFrom) {
+        return dateFrom != null ? dateFrom.atStartOfDay() : null;
+    }
+
+    private LocalDateTime normalizeDateTo(LocalDate dateTo) {
+        return dateTo != null ? dateTo.atTime(LocalTime.of(23, 59, 59)) : null;
     }
 }

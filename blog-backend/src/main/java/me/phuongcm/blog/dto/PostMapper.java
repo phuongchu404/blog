@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring", uses = {TagMapper.class, CategoryMapper.class})
+@Mapper(componentModel = "spring", uses = { TagMapper.class, CategoryMapper.class })
 public interface PostMapper {
 
     @Mapping(target = "authorId", source = "author.id")
@@ -25,9 +25,9 @@ public interface PostMapper {
     @Mapping(target = "viewCount", source = "viewCount")
     @Mapping(target = "tagIds", ignore = true)
     @Mapping(target = "categoryIds", ignore = true)
-    @Mapping(target = "metaTitle", ignore = true)
-    @Mapping(target = "metaDescription", ignore = true)
-    @Mapping(target = "metaKeywords", ignore = true)
+    @Mapping(target = "metaTitle", source = "postMeta.metaTitle")
+    @Mapping(target = "metaDescription", source = "postMeta.metaDescription")
+    @Mapping(target = "metaKeywords", source = "postMeta.metaKeywords")
     @Mapping(target = "contentLocked", ignore = true)
     PostDTO toDTO(Post post);
 
@@ -35,7 +35,8 @@ public interface PostMapper {
 
     @Named("mapPostTags")
     default List<TagDTO> mapPostTags(List<PostTag> postTags) {
-        if (postTags == null || postTags.isEmpty()) return Collections.emptyList();
+        if (postTags == null || postTags.isEmpty())
+            return Collections.emptyList();
         return postTags.stream()
                 .map(pt -> {
                     TagDTO dto = new TagDTO();
@@ -50,7 +51,8 @@ public interface PostMapper {
 
     @Named("mapPostCategories")
     default List<CategoryDTO> mapPostCategories(List<PostCategory> postCategories) {
-        if (postCategories == null || postCategories.isEmpty()) return Collections.emptyList();
+        if (postCategories == null || postCategories.isEmpty())
+            return Collections.emptyList();
         return postCategories.stream()
                 .map(pc -> {
                     CategoryDTO dto = new CategoryDTO();
@@ -65,13 +67,15 @@ public interface PostMapper {
 
     @Named("mapCategoryName")
     default String mapCategoryName(List<PostCategory> postCategories) {
-        if (postCategories == null || postCategories.isEmpty()) return null;
+        if (postCategories == null || postCategories.isEmpty())
+            return null;
         return postCategories.get(0).getCategory().getTitle();
     }
 
     @Named("mapAuthorInfo")
     default PostDTO.AuthorInfo mapAuthorInfo(User user) {
-        if (user == null) return null;
+        if (user == null)
+            return null;
         PostDTO.AuthorInfo info = new PostDTO.AuthorInfo();
         info.setId(user.getId());
         info.setUsername(user.getUsername());

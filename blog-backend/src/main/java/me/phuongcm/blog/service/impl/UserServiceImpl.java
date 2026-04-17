@@ -120,7 +120,9 @@ public class UserServiceImpl implements UserService {
         for (User user : users) {
             user.setRoles(userRolesMap.getOrDefault(user.getId(), java.util.Collections.emptyList()));
         }
-        return userMapper.toDTOs(users);
+        return userMapper.toDTOs(users).stream()
+                .map(this::resolveImageUrl)
+                .collect(java.util.stream.Collectors.toList());
     }
 
     @Override

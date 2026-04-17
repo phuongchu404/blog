@@ -24,6 +24,7 @@ import me.phuongcm.blog.repository.UserRoleRepository;
 import me.phuongcm.blog.security.SecurityUtil;
 import me.phuongcm.blog.security.jwt.JwtUtil;
 import me.phuongcm.blog.service.AuthService;
+import me.phuongcm.blog.service.MinIOService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,7 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenService refreshTokenService;
     private final UserMapper userMapper;
     private final PermissionRepository permissionRepository;
+    private final MinIOService minIOService;
 
     public AuthServiceImpl(UserRepository userRepository,
             RoleRepository roleRepository,
@@ -51,7 +53,8 @@ public class AuthServiceImpl implements AuthService {
             JwtUtil jwtUtil,
             RefreshTokenService refreshTokenService,
             UserMapper userMapper,
-            PermissionRepository permissionRepository) {
+            PermissionRepository permissionRepository,
+            MinIOService minIOService) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
@@ -60,6 +63,7 @@ public class AuthServiceImpl implements AuthService {
         this.refreshTokenService = refreshTokenService;
         this.userMapper = userMapper;
         this.permissionRepository = permissionRepository;
+        this.minIOService = minIOService;
     }
 
     @Override
@@ -139,6 +143,11 @@ public class AuthServiceImpl implements AuthService {
         if (permissions != null) {
             dto.setPermissions(permissions.stream().map(me.phuongcm.blog.entity.Permission::getTag)
                     .collect(java.util.stream.Collectors.toList()));
+        }
+
+        // Resolve imageUrl: path tương đối → full MinIO URL
+        if (dto.getImageUrl() != null && !dto.getImageUrl().startsWith("http")) {
+            dto.setImageUrl(minIOService.getPublicFileUrl(dto.getImageUrl()));
         }
 
         return dto;

@@ -5,13 +5,13 @@
  * luôn kèm trang 1 và trang cuối nếu ngoài window.
  */
 
-let allTags       = [];     // full list (dùng cho filter client-side)
-let displayList   = [];     // list đang hiển thị (sau filter / search)
+let allTags = [];     // full list (dùng cho filter client-side)
+let displayList = [];     // list đang hiển thị (sau filter / search)
 let totalElements = 0;      // tổng số phần tử
-let totalPages    = 1;      // tổng số trang
-let currentPage   = 0;      // index trang hiện tại (0-based, theo chuẩn Spring)
-let editingTagId  = null;
-const PAGE_SIZE   = 10;
+let totalPages = 1;      // tổng số trang
+let currentPage = 0;      // index trang hiện tại (0-based, theo chuẩn Spring)
+let editingTagId = null;
+const PAGE_SIZE = 10;
 const WINDOW_SIZE = 3;      // số trang hiển thị liên tiếp trong window
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -33,8 +33,8 @@ function renderPagination() {
   </li>`;
 
   const windowStart = Math.max(0, currentPage - Math.floor(WINDOW_SIZE / 2));
-  const windowEnd   = Math.min(totalPages - 1, windowStart + WINDOW_SIZE - 1);
-  const adjStart    = Math.max(0, windowEnd - WINDOW_SIZE + 1);
+  const windowEnd = Math.min(totalPages - 1, windowStart + WINDOW_SIZE - 1);
+  const adjStart = Math.max(0, windowEnd - WINDOW_SIZE + 1);
 
   if (adjStart > 0) {
     html += `<li class="page-item"><a class="page-link" href="#" data-page="0">1</a></li>`;
@@ -76,7 +76,7 @@ function renderPagination() {
 }
 
 function renderTagPage() {
-  const tbody   = document.getElementById('tags-tbody');
+  const tbody = document.getElementById('tags-tbody');
   const totalEl = document.querySelector('.card-tools .badge');
   if (totalEl) totalEl.textContent = `${totalElements} total`;
 
@@ -119,12 +119,12 @@ async function loadTags() {
 
     if (isPageResponse(data)) {
       totalElements = data.totalElements;
-      totalPages    = Math.max(1, data.totalPages);
-      allTags       = data.content;
+      totalPages = Math.max(1, data.totalPages);
+      allTags = data.content;
     } else {
-      allTags       = Array.isArray(data) ? data : [];
+      allTags = Array.isArray(data) ? data : [];
       totalElements = allTags.length;
-      totalPages    = Math.max(1, Math.ceil(allTags.length / PAGE_SIZE));
+      totalPages = Math.max(1, Math.ceil(allTags.length / PAGE_SIZE));
     }
     displayList = allTags;
     currentPage = 0;
@@ -144,20 +144,24 @@ function openEditTag(id) {
   }
   editingTagId = id;
 
-  const nameInput    = document.getElementById('tagName');
-  const slugInput    = document.getElementById('tagSlug');
-  const submitBtn    = document.getElementById('submitBtn');
+  const nameInput = document.getElementById('tagName');
+  const slugInput = document.getElementById('tagSlug');
+  const submitBtn = document.getElementById('submitBtn');
   const cancelEditBtn = document.getElementById('cancelEditBtn');
+  const cardTitle = document.getElementById('formCardTitle');
 
-  if (nameInput)    nameInput.value  = tag.title;
-  if (slugInput)    slugInput.value  = tag.slug;
-  if (submitBtn)    submitBtn.textContent = 'Update Tag';
+  if (nameInput) nameInput.value = tag.title;
+  if (slugInput) slugInput.value = tag.slug;
+  const contentInput = document.getElementById('tagContent');
+  if (contentInput) contentInput.value = tag.content || '';
+  if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Tag';
   if (cancelEditBtn) cancelEditBtn.classList.remove('d-none');
+  if (cardTitle) cardTitle.innerHTML = '<i class="bi bi-pencil me-2"></i>Update Tag';
 
   // Populate image
   const imgUrlInput = document.getElementById('tagImageUrl');
-  const imgPreview  = document.getElementById('tagImgPreview');
-  const dropZone    = document.getElementById('tagImgDropZone');
+  const imgPreview = document.getElementById('tagImgPreview');
+  const dropZone = document.getElementById('tagImgDropZone');
   if (imgUrlInput) imgUrlInput.value = tag.imageUrl || '';
   if (tag.imageUrl && imgPreview) {
     imgPreview.src = tag.imageUrl;
@@ -215,8 +219,8 @@ async function deleteSelectedTags() {
 }
 
 // Gán các hàm vào window để gọi từ HTML
-window.openEditTag        = openEditTag;
-window.deleteTag          = deleteTag;
+window.openEditTag = openEditTag;
+window.deleteTag = deleteTag;
 window.deleteSelectedTags = deleteSelectedTags;
 
 // ── DOMContentLoaded ───────────────────────────────────────────────────────────
@@ -264,11 +268,15 @@ document.addEventListener('DOMContentLoaded', async function () {
       document.getElementById('addTagForm')?.reset();
       document.getElementById('tagImageUrl').value = '';
       const imgPreview = document.getElementById('tagImgPreview');
-      if (imgPreview) imgPreview.classList.add('d-none');
+      if (imgPreview) { imgPreview.classList.add('d-none'); imgPreview.src = ''; }
       document.getElementById('tagImgDropZone')?.classList.remove('d-none');
+      const tagImageFile = document.getElementById('tagImageFile');
+      if (tagImageFile) tagImageFile.value = '';
       this.classList.add('d-none');
       const submitBtn = document.getElementById('submitBtn');
-      if (submitBtn) submitBtn.textContent = 'Add Tag';
+      if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Add Tag';
+      const cardTitle = document.getElementById('formCardTitle');
+      if (cardTitle) cardTitle.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Add New Tag';
     });
   }
 
@@ -279,8 +287,9 @@ document.addEventListener('DOMContentLoaded', async function () {
       e.preventDefault();
       if (!editingTagId) return;
       const payload = {
-        title:    document.getElementById('editTagName').value.trim(),
-        slug:     document.getElementById('editTagSlug').value.trim() || UI.toSlug(document.getElementById('editTagName').value),
+        title: document.getElementById('editTagName').value.trim(),
+        slug: document.getElementById('editTagSlug').value.trim() || UI.toSlug(document.getElementById('editTagName').value),
+        content: document.getElementById('editTagContent').value.trim() || null,
         imageUrl: document.getElementById('editTagImageUrl').value.trim() || null,
       };
       try {
@@ -349,8 +358,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     addTagForm.addEventListener('submit', async function (e) {
       e.preventDefault();
       const payload = {
-        title:    document.getElementById('tagName').value.trim(),
-        slug:     document.getElementById('tagSlug').value.trim() || UI.toSlug(document.getElementById('tagName').value),
+        title: document.getElementById('tagName').value.trim(),
+        slug: document.getElementById('tagSlug').value.trim() || UI.toSlug(document.getElementById('tagName').value),
+        content: document.getElementById('tagContent').value.trim() || null,
         imageUrl: document.getElementById('tagImageUrl').value.trim() || null,
       };
       try {
@@ -358,15 +368,24 @@ document.addEventListener('DOMContentLoaded', async function () {
           await TagService.update(editingTagId, payload);
           UI.toast('Tag updated.');
           editingTagId = null;
-          const submitBtn = document.getElementById('submitBtn');
-          if (submitBtn) submitBtn.textContent = 'Add Tag';
-          const cancelBtn = document.getElementById('cancelEditBtn');
-          if (cancelBtn) cancelBtn.classList.add('d-none');
         } else {
           await TagService.create(payload);
           UI.toast('Tag created.');
         }
+        // Reset form completely
         this.reset();
+        document.getElementById('tagImageUrl').value = '';
+        const imgPreview = document.getElementById('tagImgPreview');
+        if (imgPreview) { imgPreview.classList.add('d-none'); imgPreview.src = ''; }
+        document.getElementById('tagImgDropZone')?.classList.remove('d-none');
+        const tagImageFile = document.getElementById('tagImageFile');
+        if (tagImageFile) tagImageFile.value = '';
+        const submitBtn = document.getElementById('submitBtn');
+        if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Add Tag';
+        const cancelBtn = document.getElementById('cancelEditBtn');
+        if (cancelBtn) cancelBtn.classList.add('d-none');
+        const cardTitle = document.getElementById('formCardTitle');
+        if (cardTitle) cardTitle.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Add New Tag';
         currentPage = 0;
         await loadTags();
       } catch (err) { UI.toast(err.message, 'danger'); }
@@ -374,8 +393,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   }
 
   // Search với Debounce (300ms)
-  const searchInput  = document.getElementById('tag-search');
-  const refreshBtn   = document.getElementById('tag-refresh-btn');
+  const searchInput = document.getElementById('tag-search');
+  const refreshBtn = document.getElementById('tag-refresh-btn');
 
   async function performSearch(keyword) {
     if (!keyword) {
@@ -385,11 +404,11 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
     try {
       const data = await TagService.search(keyword);
-      const list  = Array.isArray(data) ? data : (data?.content || []);
-      displayList   = list;
+      const list = Array.isArray(data) ? data : (data?.content || []);
+      displayList = list;
       totalElements = list.length;
-      totalPages    = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-      currentPage   = 0;
+      totalPages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
+      currentPage = 0;
       renderTagPage();
       document.getElementById('tags-pagination').innerHTML = ''; // tắt phân trang khi search
     } catch {

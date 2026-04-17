@@ -8,6 +8,7 @@ import me.phuongcm.blog.repository.PostRepository;
 import me.phuongcm.blog.repository.UserRepository;
 import me.phuongcm.blog.service.CommentService;
 import me.phuongcm.blog.service.KafkaProducerService;
+import me.phuongcm.blog.service.SiteSettingService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -26,11 +27,16 @@ public class CommentServiceImpl implements CommentService {
 
     private final KafkaProducerService kafkaProducerService;
 
-    public CommentServiceImpl(PostCommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository, KafkaProducerService kafkaProducerService) {
+    private final SiteSettingService siteSettingService;
+
+    public CommentServiceImpl(PostCommentRepository commentRepository, PostRepository postRepository,
+            UserRepository userRepository, KafkaProducerService kafkaProducerService,
+            SiteSettingService siteSettingService) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.kafkaProducerService = kafkaProducerService;
+        this.siteSettingService = siteSettingService;
     }
 
     @Override
@@ -56,6 +62,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public PostComment createComment(Long postId, Long userId, String title, String content, Long parentId) {
+        // Kiểm tra settings trước khi tạo comment
+        if (!"true".equals(siteSettingService.getValue("enableComments", "true"))) {
+            throw new RuntimeException("Comments are disabled.");
+        }
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
 
@@ -67,13 +78,25 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user);
         comment.setTitle(title);
         comment.setContent(content);
-        // Auto-approve nếu comment đến từ user đã đăng nhập (có userId)
-        boolean autoApprove = userId != null;
+
+        // Auto-approve dựa theo setting requireApproval
+        boolean requireApproval = "true".equals(siteSettingService.getValue("requireApproval", "true"));
+        boolean autoApprove = !requireApproval;
         comment.setPublished(autoApprove ? true : null);
         comment.setPublishedAt(autoApprove ? LocalDateTime.now() : null);
         comment.setCreatedAt(LocalDateTime.now());
 
         if (parentId != null) {
+            // Kiểm tra allowNested
+            if (!"true".equals(siteSettingService.getValue("allowNested", "true"))) {
+                throw new RuntimeException("Nested replies are disabled.");
+            }
+            // Kiểm tra maxNestDepth
+            int maxDepth = Integer.parseInt(siteSettingService.getValue("maxNestDepth", "3"));
+            if (getCommentDepth(parentId) >= maxDepth) {
+                throw new RuntimeException("Maximum comment nesting depth (" + maxDepth + ") reached.");
+            }
+
             PostComment parentComment = commentRepository.findById(parentId)
                     .orElseThrow(() -> new RuntimeException("Parent comment not found with id: " + parentId));
             comment.setParent(parentComment);
@@ -155,5 +178,18 @@ public class CommentServiceImpl implements CommentService {
         comment.setPublished(false);
 
         return commentRepository.save(comment);
+    }
+
+    /** Tính độ sâu của comment trong cây reply (root = 1). */
+    private int getCommentDepth(Long commentId) {
+        int depth = 0;
+        Long current = commentId;
+        while (current != null) {
+            depth++;
+            current = commentRepository.findById(current)
+                    .map(c -> c.getParent() != null ? c.getParent().getId() : null)
+                    .orElse(null);
+        }
+        return depth;
     }
 }

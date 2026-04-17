@@ -92,10 +92,17 @@ const UI = {
       });
 
       // Cập nhật avatar nếu user có ảnh đại diện
+      const defaultAvatar = 'assets/images/user2-160x160.jpg';
       if (user.imageUrl) {
-        document.querySelectorAll('.user-image, .user-header img').forEach(img => {
+        document.querySelectorAll('.user-image, .user-header img, #profilePhotoPreview').forEach(img => {
           img.src = user.imageUrl;
-          img.onerror = function () { this.onerror = null; };
+          img.onerror = function () {
+            this.onerror = null;
+            // Tính đường dẫn tương đối dựa trên độ sâu của trang hiện tại
+            const depth = window.location.pathname.split('/').filter(Boolean).length;
+            const prefix = depth > 1 ? '../'.repeat(depth - 1) : '';
+            this.src = prefix + defaultAvatar;
+          };
         });
       }
 
@@ -238,16 +245,34 @@ const UI = {
         relativePrefix = src.replace('js/ui.js', '');
       }
 
-      // Find a fallback page (e.g. Dashboard)
-      if (permissions.includes('menu:dashboard')) {
+      const fallbackPath = this.getFirstAccessiblePage(permissions, relativePrefix);
+      if (fallbackPath) {
         document.body.style.display = 'none';
-        window.location.href = relativePrefix + 'index.html';
+        window.location.href = fallbackPath;
       } else {
         // Fallback to unauthorized page if they lack admin access
         document.body.style.display = 'none';
         window.location.href = relativePrefix + 'unauthorized.html';
       }
     }
+  },
+
+  getFirstAccessiblePage(permissions = [], relativePrefix = '') {
+    const landingPages = [
+      { permission: 'menu:dashboard', path: 'index.html' },
+      { permission: 'menu:posts', path: 'posts/index.html' },
+      { permission: 'menu:categories', path: 'categories/index.html' },
+      { permission: 'menu:tags', path: 'tags/index.html' },
+      { permission: 'menu:comment', path: 'comments/index.html' },
+      { permission: 'menu:users', path: 'users/index.html' },
+      { permission: 'menu:roles', path: 'roles/index.html' },
+      { permission: 'menu:permissions', path: 'permissions/index.html' },
+      { permission: 'menu:audit-logs', path: 'audit-logs/index.html' },
+      { permission: 'menu:settings', path: 'settings.html' },
+    ];
+
+    const matchedPage = landingPages.find(item => permissions.includes(item.permission));
+    return matchedPage ? relativePrefix + matchedPage.path : null;
   },
 
   /**
@@ -354,7 +379,15 @@ const UI = {
   try {
     const cachedUser = localStorage.getItem('user');
     if (cachedUser) {
-      UI.applyAccessControl(JSON.parse(cachedUser));
+      const user = JSON.parse(cachedUser);
+      UI.applyAccessControl(user);
+
+      // Áp dụng avatar từ cache ngay lập tức để tránh flash ảnh mặc định
+      if (user.imageUrl) {
+        document.querySelectorAll('.user-image, .user-header img, #profilePhotoPreview').forEach(img => {
+          img.src = user.imageUrl;
+        });
+      }
     }
   } catch (e) { }
 })();

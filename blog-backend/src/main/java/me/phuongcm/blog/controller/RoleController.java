@@ -3,6 +3,7 @@ package me.phuongcm.blog.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import me.phuongcm.blog.annotation.Auditable;
+import me.phuongcm.blog.dto.AssignPermissionsRequestDTO;
 import me.phuongcm.blog.dto.ApiResponse;
 import me.phuongcm.blog.dto.RoleDTO;
 import me.phuongcm.blog.dto.RoleResponseDTO;
@@ -58,8 +59,8 @@ public class RoleController {
 
     @PostMapping("/{id}/permissions")
     @PreAuthorize("hasAuthority('role:assign')")
-    public ResponseEntity<ApiResponse<Void>> assignPermissions(@PathVariable Long id, @RequestBody List<Long> permissionIds) {
-        roleService.assignPermissionsToRole(id, permissionIds);
+    public ResponseEntity<ApiResponse<Void>> assignPermissions(@PathVariable Long id, @RequestBody AssignPermissionsRequestDTO request) {
+        roleService.assignPermissionsToRole(id, request != null ? request.getPermissionIds() : null);
         return ResponseEntity.ok(ApiResponse.ok("Permissions assigned successfully", null));
     }
 }

@@ -115,6 +115,9 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/comments/post/*/published").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/comments/*/replies").permitAll()
 
+                        // Settings public — site info cho blog-public (không cần đăng nhập)
+                        .requestMatchers(HttpMethod.GET, "/api/settings/public").permitAll()
+
                         // Newsletter — subscribe/confirm/unsubscribe không cần đăng nhập
                         .requestMatchers(HttpMethod.POST, "/api/newsletter/subscribe").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/newsletter/confirm").permitAll()

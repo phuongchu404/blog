@@ -164,7 +164,16 @@ function renderPermissionCheckboxes(assignedIds = new Set()) {
   if (menuCount) menuCount.textContent = menuPerms.length;
   if (apiCount)  apiCount.textContent  = apiPerms.length;
 
-  function buildCheckboxSection(list) {
+  function buildPermissionToggleButton(attributes) {
+    return `
+      <button type="button" class="perm-toggle-switch" ${attributes} aria-pressed="false">
+        <span class="perm-toggle-label perm-toggle-label-off">OFF</span>
+        <span class="perm-toggle-label perm-toggle-label-on">ON</span>
+        <span class="perm-toggle-thumb"></span>
+      </button>`;
+  }
+
+  function buildCheckboxSection(list, scopeKey) {
     if (!list.length) return '<p class="text-muted">No permissions in this category.</p>';
     const groups = {};
     list.forEach(p => {
@@ -174,15 +183,19 @@ function renderPermissionCheckboxes(assignedIds = new Set()) {
     });
     return Object.entries(groups).map(([group, perms]) => {
       const isMenuGroup = (perms[0]?.type || '').toUpperCase() === 'MENU';
+      const groupKey = `${(perms[0]?.type || '').toUpperCase()}:${group}`;
       return `
-        <h6 class="text-uppercase text-muted fw-bold mb-2 mt-3"><i class="bi ${isMenuGroup ? 'bi-layout-sidebar' : 'bi-code-slash'} me-1"></i>${group}</h6>
+        <div class="d-flex align-items-center justify-content-between gap-2 mb-2 mt-3">
+          <h6 class="text-uppercase text-muted fw-bold mb-0"><i class="bi ${isMenuGroup ? 'bi-layout-sidebar' : 'bi-code-slash'} me-1"></i>${group}</h6>
+          ${buildPermissionToggleButton(`data-toggle-group="${groupKey}"`)}
+        </div>
         <div class="row mb-2">
           ${perms.map(p => {
             const wl = p.isWhiteList === 1 || p.isWhiteList === true;
             return `<div class="col-md-4 mb-1">
               <div class="form-check">
-                <input class="form-check-input perm-check" type="checkbox" id="pm_${p.id}" value="${p.id}" ${assignedIds.has(p.id) ? 'checked' : ''} />
-                <label class="form-check-label" for="pm_${p.id}">
+                <input class="form-check-input perm-check" type="checkbox" id="pm_${scopeKey}_${p.id}" value="${p.id}" data-group-key="${groupKey}" ${assignedIds.has(p.id) ? 'checked' : ''} />
+                <label class="form-check-label" for="pm_${scopeKey}_${p.id}">
                   <code>${p.tag}</code>
                   ${wl ? '<span class="badge text-bg-success ms-1" style="font-size:0.6rem">Public</span>' : ''}
                   ${p.method ? `<span class="badge ms-1" style="font-size:0.6rem;background:#6c757d;color:#fff">${p.method}</span>` : ''}
@@ -199,9 +212,35 @@ function renderPermissionCheckboxes(assignedIds = new Set()) {
   const menuContent = document.getElementById('rp-menu-content');
   const apiContent  = document.getElementById('rp-api-content');
 
-  if (allContent)  allContent.innerHTML  = buildCheckboxSection(allPermissions);
-  if (menuContent) menuContent.innerHTML = buildCheckboxSection(menuPerms);
-  if (apiContent)  apiContent.innerHTML  = buildCheckboxSection(apiPerms);
+  if (allContent)  allContent.innerHTML  = buildCheckboxSection(allPermissions, 'all');
+  if (menuContent) menuContent.innerHTML = buildCheckboxSection(menuPerms, 'menu');
+  if (apiContent)  apiContent.innerHTML  = buildCheckboxSection(apiPerms, 'api');
+  updatePermissionToggleStates();
+}
+
+function setPermissionToggleState(button, isEnabled) {
+  if (!button) return;
+  button.classList.toggle('is-on', isEnabled);
+  button.setAttribute('aria-pressed', isEnabled ? 'true' : 'false');
+}
+
+function updatePermissionToggleStates() {
+  const allCheckboxes = [...document.querySelectorAll('.perm-check')];
+  const allEnabled = allCheckboxes.length > 0 && allCheckboxes.every(cb => cb.checked);
+  setPermissionToggleState(document.getElementById('btnToggleAllPermissions'), allEnabled);
+
+  document.querySelectorAll('[data-toggle-group]').forEach(button => {
+    const groupKey = button.dataset.toggleGroup;
+    const groupCheckboxes = [...document.querySelectorAll(`.perm-check[data-group-key="${groupKey}"]`)];
+    const isEnabled = groupCheckboxes.length > 0 && groupCheckboxes.every(cb => cb.checked);
+    setPermissionToggleState(button, isEnabled);
+  });
+}
+
+function syncPermissionCheckboxes(permissionId, checked) {
+  document.querySelectorAll(`.perm-check[value="${permissionId}"]`).forEach(cb => {
+    cb.checked = checked;
+  });
 }
 
 async function deleteRole(id) {
@@ -278,12 +317,27 @@ document.addEventListener('DOMContentLoaded', async function () {
     await loadRoles();
   });
 
-  // Select All / Clear All (for manage permissions modal)
-  document.getElementById('btnSelectAll')?.addEventListener('click', () => {
-    document.querySelectorAll('.perm-check').forEach(cb => (cb.checked = true));
+  // Permission toggle buttons
+  document.getElementById('btnToggleAllPermissions')?.addEventListener('click', (e) => {
+    const shouldEnable = !e.currentTarget.classList.contains('is-on');
+    document.querySelectorAll('.perm-check').forEach(cb => (cb.checked = shouldEnable));
+    updatePermissionToggleStates();
   });
-  document.getElementById('btnSelectNone')?.addEventListener('click', () => {
-    document.querySelectorAll('.perm-check').forEach(cb => (cb.checked = false));
+  document.addEventListener('click', (e) => {
+    const groupButton = e.target.closest('[data-toggle-group]');
+    if (!groupButton) return;
+
+    const shouldEnable = !groupButton.classList.contains('is-on');
+    const groupKey = groupButton.dataset.toggleGroup;
+    document.querySelectorAll(`.perm-check[data-group-key="${groupKey}"]`).forEach(cb => {
+      cb.checked = shouldEnable;
+    });
+    updatePermissionToggleStates();
+  });
+  document.addEventListener('change', (e) => {
+    if (!e.target.classList.contains('perm-check')) return;
+    syncPermissionCheckboxes(e.target.value, e.target.checked);
+    updatePermissionToggleStates();
   });
 
   // Save permissions

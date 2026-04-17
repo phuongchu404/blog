@@ -27,6 +27,73 @@
     />
     <link rel="stylesheet" href="../assets/css/adminlte.min.css" />
     <link rel="stylesheet" href="../css/custom.css" />
+    <style>
+      .perm-toggle-switch {
+        position: relative;
+        width: 68px;
+        height: 30px;
+        border: 0;
+        border-radius: 999px;
+        background: #cbd5e1;
+        color: #ffffff;
+        display: inline-flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+        transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.08);
+      }
+
+      .perm-toggle-switch:hover {
+        background: #94a3b8;
+      }
+
+      .perm-toggle-switch.is-on {
+        background: #22c55e;
+      }
+
+      .perm-toggle-switch.is-on:hover {
+        background: #16a34a;
+      }
+
+      .perm-toggle-label {
+        position: relative;
+        z-index: 1;
+        font-size: 0.62rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        line-height: 1;
+        transition: opacity 0.2s ease;
+      }
+
+      .perm-toggle-label-on {
+        opacity: 0;
+      }
+
+      .perm-toggle-switch.is-on .perm-toggle-label-on {
+        opacity: 1;
+      }
+
+      .perm-toggle-switch.is-on .perm-toggle-label-off {
+        opacity: 0;
+      }
+
+      .perm-toggle-thumb {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+        transition: transform 0.2s ease;
+      }
+
+      .perm-toggle-switch.is-on .perm-toggle-thumb {
+        transform: translateX(38px);
+      }
+    </style>
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
@@ -586,17 +653,13 @@ Can moderate comments and manage content</textarea
             <div>
               <button
                 type="button"
-                class="btn btn-outline-secondary btn-sm"
-                id="btnSelectAll"
+                class="perm-toggle-switch"
+                id="btnToggleAllPermissions"
+                aria-pressed="false"
               >
-                <i class="bi bi-check2-all me-1"></i>Select All
-              </button>
-              <button
-                type="button"
-                class="btn btn-outline-secondary btn-sm ms-1"
-                id="btnSelectNone"
-              >
-                <i class="bi bi-x-circle me-1"></i>Clear All
+                <span class="perm-toggle-label perm-toggle-label-off">OFF</span>
+                <span class="perm-toggle-label perm-toggle-label-on">ON</span>
+                <span class="perm-toggle-thumb"></span>
               </button>
             </div>
             <div>

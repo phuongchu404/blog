@@ -8,7 +8,6 @@ import me.phuongcm.blog.service.PostMetaService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,48 +22,36 @@ public class PostMetaServiceImpl implements PostMetaService {
     }
 
     @Override
-    public List<PostMeta> getMetaByPost(Long postId) {
+    public Optional<PostMeta> getMetaByPost(Long postId) {
         return postMetaRepository.findByPostId(postId);
     }
 
     @Override
-    public Optional<PostMeta> getMetaByPostAndKey(Long postId, String key) {
-        return postMetaRepository.findByPostIdAndKey(postId, key);
-    }
-
-    @Override
     @Transactional
-    public PostMeta CreateOrUpdateMeta(Long postId, String key, String content) {
+    public PostMeta createOrUpdateMeta(Long postId, String metaTitle, String metaDescription, String metaKeywords) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
 
-        Optional<PostMeta> existingMeta = postMetaRepository.findByPostIdAndKey(postId, key);
+        Optional<PostMeta> existingMeta = postMetaRepository.findByPostId(postId);
 
         PostMeta postMeta;
         if (existingMeta.isPresent()) {
             postMeta = existingMeta.get();
-            postMeta.setContent(content);
         } else {
             postMeta = new PostMeta();
             postMeta.setPost(post);
-            postMeta.setKey(key);
-            postMeta.setContent(content);
         }
+        postMeta.setMetaTitle(metaTitle);
+        postMeta.setMetaDescription(metaDescription);
+        postMeta.setMetaKeywords(metaKeywords);
         return postMetaRepository.save(postMeta);
     }
 
     @Override
     @Transactional
-    public void deleteMeta(Long postId, String key) {
-        PostMeta postMeta = postMetaRepository.findByPostIdAndKey(postId, key)
-                .orElseThrow(() -> new RuntimeException("PostMeta not found for postId: " + postId + " and key: " + key));
+    public void deleteMeta(Long postId) {
+        PostMeta postMeta = postMetaRepository.findByPostId(postId)
+                .orElseThrow(() -> new RuntimeException("PostMeta not found for postId: " + postId));
         postMetaRepository.delete(postMeta);
-    }
-
-    @Override
-    @Transactional
-    public void deleteAllMetaForPost(Long postId) {
-        List<PostMeta> metaList = postMetaRepository.findByPostId(postId);
-        postMetaRepository.deleteAll(metaList);
     }
 }

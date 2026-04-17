@@ -6,7 +6,7 @@
 let totalElements = 0;
 let totalPages    = 1;
 let currentPage   = 0;   // 0-based
-const PAGE_SIZE   = 10;
+let PAGE_SIZE     = 10;  // được ghi đè từ Settings (content.postsPerPage)
 const WINDOW_SIZE = 3;
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
@@ -175,6 +175,13 @@ document.addEventListener('DOMContentLoaded', async function () {
     currentPage    = 0;
     await loadPosts();
   });
+
+  // Load postsPerPage từ Settings trước khi render
+  try {
+    const contentSettings = await SettingService.getByGroup('content');
+    const perPage = parseInt(contentSettings?.postsPerPage);
+    if (!isNaN(perPage) && perPage > 0) PAGE_SIZE = perPage;
+  } catch (_) { }
 
   await loadPosts();
   await UI.renderCurrentUser();

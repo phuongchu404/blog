@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="../assets/css/bootstrap-icons.min.css" crossorigin="anonymous" />
   <link rel="stylesheet" href="../assets/css/adminlte.min.css" />
   <link rel="stylesheet" href="../css/custom.css" />
+  <link rel="stylesheet" href="../css/bs5-datetime.min.css" />
 </head>
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -363,7 +364,16 @@
           <div class="mb-3">
             <label for="membershipExpiredAt" class="form-label">Ngày hết hạn
               <small class="text-muted">(để trống = không hết hạn)</small></label>
-            <input type="datetime-local" class="form-control" id="membershipExpiredAt" />
+            <div class="input-group">
+              <span class="input-group-text text-muted"><i class="bi bi-calendar3"></i></span>
+              <input type="text" class="form-control" id="membershipExpiredAt" autocomplete="off"
+                placeholder="Select expiration date..." />
+              <button class="btn btn-outline-secondary d-none" id="membershipExpiredAtToggle" type="button"
+                aria-label="Pick expiration date" aria-hidden="true" hidden style="display: none !important"
+                tabindex="-1">
+                <i class="bi bi-chevron-down"></i>
+              </button>
+            </div>
           </div>
         </div>
         <div class="modal-footer">
@@ -382,6 +392,7 @@
   <script src="../js/template/popper.min.js" crossorigin="anonymous"></script>
   <script src="../js/template/bootstrap.min.js" crossorigin="anonymous"></script>
   <script src="../js/template/adminlte.min.js"></script>
+  <script src="../js/template/bs5-datetime.min.js"></script>
   <script src="../js/http.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/ui.js"></script>
@@ -391,7 +402,7 @@
     Auth.guard();
     AdminNotif.init();
   </script>
-  <script src="../js/pages/users-fixed.js"></script>
+  <script src="../js/pages/users.js"></script>
 </body>
 
 </html>

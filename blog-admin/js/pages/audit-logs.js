@@ -55,8 +55,8 @@ function getFilters() {
   if (action) params.set('action', action);
   if (resource) params.set('resource', resource);
   if (status) params.set('status', status);
-  if (dateFromVal) params.set('dateFrom', dateFromVal.replace(' ', 'T') + ':00');
-  if (dateToVal) params.set('dateTo', dateToVal.replace(' ', 'T') + ':00');
+  if (dateFromVal) params.set('dateFrom', dateFromVal);
+  if (dateToVal) params.set('dateTo', dateToVal);
 
   return params;
 }
@@ -182,27 +182,28 @@ document.addEventListener('DOMContentLoaded', async function () {
   const toInput = document.getElementById('filter-date-to');
   const toToggle = document.getElementById('filter-date-to-toggle');
 
-  if (fromInput && fromToggle) {
+  if (fromInput) {
     setDatetimeLocale('en-us');
     createDatetimeTemplate();
-    pickerFrom = createDatetimePicker(fromInput, fromToggle, null, {
-      format: 'YYYY-MM-DD HH:mm',
-      showTime: true,
-      use24Hour: true,
+    pickerFrom = createDatetimePicker(fromInput, null, null, {
+      format: 'YYYY-MM-DD',
+      showTime: false,
       startDay: 1,
     });
     fromInput.addEventListener('click', () => pickerFrom.open());
   }
 
-  if (toInput && toToggle) {
-    pickerTo = createDatetimePicker(toInput, toToggle, null, {
-      format: 'YYYY-MM-DD HH:mm',
-      showTime: true,
-      use24Hour: true,
+  if (toInput) {
+    pickerTo = createDatetimePicker(toInput, null, null, {
+      format: 'YYYY-MM-DD',
+      showTime: false,
       startDay: 1,
     });
     toInput.addEventListener('click', () => pickerTo.open());
   }
+
+  fromToggle?.remove();
+  toToggle?.remove();
 
   document.getElementById('btn-search')?.addEventListener('click', () => {
     currentPage = 0;

@@ -15,6 +15,7 @@ import me.phuongcm.blog.common.utils.SlugUtils;
 import me.phuongcm.blog.service.MinIOService;
 import me.phuongcm.blog.service.PostMetaService;
 import me.phuongcm.blog.service.PostService;
+import me.phuongcm.blog.service.SiteSettingService;
 import me.phuongcm.blog.service.TagService;
 import me.phuongcm.blog.service.UploadTrackerService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -57,7 +58,13 @@ public class PostServiceImpl implements PostService {
 
     private final MinIOService minIOService;
 
-    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService, CategoryService categoryService, RedisTemplate<String, Object> redisTemplate, KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository, UploadTrackerService uploadTrackerService, PostMapper postMapper, PostMetaService postMetaService, MinIOService minIOService) {
+    private final SiteSettingService siteSettingService;
+
+    public PostServiceImpl(PostRepository postRepository, UserRepository userRepository, TagService tagService,
+            CategoryService categoryService, RedisTemplate<String, Object> redisTemplate,
+            KafkaProducerService kafkaProducerService, PostSearchRepository postSearchRepository,
+            UploadTrackerService uploadTrackerService, PostMapper postMapper, PostMetaService postMetaService,
+            MinIOService minIOService, SiteSettingService siteSettingService) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.tagService = tagService;
@@ -69,6 +76,7 @@ public class PostServiceImpl implements PostService {
         this.postMapper = postMapper;
         this.postMetaService = postMetaService;
         this.minIOService = minIOService;
+        this.siteSettingService = siteSettingService;
     }
 
     @Override
@@ -88,14 +96,14 @@ public class PostServiceImpl implements PostService {
         if (post.isPresent()) {
             incrementViewCountInRedis(id);
         }
-        return post.map(p -> applyMembershipGate(enrichWithMeta(postMapper.toDTO(p))));
+        return post.map(p -> applyMembershipGate(resolveImageUrl(postMapper.toDTO(p))));
     }
 
     @Override
     public Optional<PostDTO> getPostBySlug(String slug) {
         Optional<Post> post = postRepository.findBySlug(slug);
         post.ifPresent(p -> incrementViewCountInRedis(p.getId()));
-        return post.map(p -> applyMembershipGate(enrichWithMeta(postMapper.toDTO(p))));
+        return post.map(p -> applyMembershipGate(resolveImageUrl(postMapper.toDTO(p))));
     }
 
     /**
@@ -103,8 +111,10 @@ public class PostServiceImpl implements PostService {
      * cắt ngắn nội dung và đặt contentLocked = true.
      */
     private PostDTO applyMembershipGate(PostDTO dto) {
-        if (!dto.isMemberOnly()) return dto;
-        if (hasActiveMembership()) return dto;
+        if (!dto.isMemberOnly())
+            return dto;
+        if (hasActiveMembership())
+            return dto;
 
         // Cắt nội dung thành teaser ~500 ký tự
         String raw = dto.getContent() != null ? dto.getContent() : "";
@@ -116,7 +126,8 @@ public class PostServiceImpl implements PostService {
 
     /**
      * Kiểm tra user hiện tại có quyền xem full content không.
-     * - ROLE_ADMIN / ROLE_EDITOR luôn bypass gate (tránh mất nội dung khi admin edit).
+     * - ROLE_ADMIN / ROLE_EDITOR luôn bypass gate (tránh mất nội dung khi admin
+     * edit).
      * - Còn lại: cần membershipStatus = 1 và chưa hết hạn.
      */
     private boolean hasActiveMembership() {
@@ -127,13 +138,15 @@ public class PostServiceImpl implements PostService {
         // Admin và Editor luôn có quyền xem full content
         boolean isPrivileged = auth.getAuthorities().stream()
                 .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN")
-                            || a.getAuthority().equals("ROLE_EDITOR"));
-        if (isPrivileged) return true;
+                        || a.getAuthority().equals("ROLE_EDITOR"));
+        if (isPrivileged)
+            return true;
 
         String username = auth.getName();
         return userRepository.findByUsername(username)
                 .map(u -> u.getMembershipStatus() != null && u.getMembershipStatus() == 1
-                        && (u.getMembershipExpiredAt() == null || u.getMembershipExpiredAt().isAfter(LocalDateTime.now())))
+                        && (u.getMembershipExpiredAt() == null
+                                || u.getMembershipExpiredAt().isAfter(LocalDateTime.now())))
                 .orElse(false);
     }
 
@@ -179,7 +192,8 @@ public class PostServiceImpl implements PostService {
         post.setContent(postDTO.getContent());
         post.setSlug(generateSlug(postDTO.getTitle()));
         post.setSummary(postDTO.getSummary());
-        post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : 0);
+        int defaultStatus = "published".equals(siteSettingService.getValue("defaultPostStatus", "draft")) ? 1 : 0;
+        post.setStatus(postDTO.getStatus() != null ? postDTO.getStatus() : defaultStatus);
         post.setImageUrl(postDTO.getImageUrl());
         post.setMemberOnly(postDTO.isMemberOnly());
         post.setCreatedAt(LocalDateTime.now());
@@ -191,14 +205,16 @@ public class PostServiceImpl implements PostService {
 
         Post savedPost = postRepository.save(post);
 
-        if(postDTO.getTagIds() != null && !postDTO.getTagIds().isEmpty()) {
+        // Save meta fields to post_meta table
+        postMetaService.createOrUpdateMeta(savedPost.getId(),
+                postDTO.getMetaTitle(), postDTO.getMetaDescription(), postDTO.getMetaKeywords());
+
+        if (postDTO.getTagIds() != null && !postDTO.getTagIds().isEmpty()) {
             tagService.addTagsToPost(savedPost, postDTO.getTagIds());
         }
-        if(postDTO.getCategoryIds() != null && !postDTO.getCategoryIds().isEmpty()) {
+        if (postDTO.getCategoryIds() != null && !postDTO.getCategoryIds().isEmpty()) {
             categoryService.addCategoriesToPost(savedPost, postDTO.getCategoryIds());
         }
-
-        saveMetaFields(savedPost.getId(), postDTO);
 
         // Send Kafka Event only after DB transaction commits successfully
         PostEvent event = new PostEvent(
@@ -209,8 +225,7 @@ public class PostServiceImpl implements PostService {
                 savedPost.getSummary(),
                 savedPost.getContent(),
                 savedPost.getAuthor().getUsername(),
-                savedPost.getStatus()
-        );
+                savedPost.getStatus());
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
@@ -221,7 +236,7 @@ public class PostServiceImpl implements PostService {
         // Mark any uploaded files in content as explicitly USED
         uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
 
-        return enrichWithMeta(postMapper.toDTO(savedPost));
+        return resolveImageUrl(postMapper.toDTO(savedPost));
     }
 
     @Override
@@ -248,6 +263,10 @@ public class PostServiceImpl implements PostService {
 
         Post savedPost = postRepository.save(post);
 
+        // Save meta fields to post_meta table
+        postMetaService.createOrUpdateMeta(savedPost.getId(),
+                postDTO.getMetaTitle(), postDTO.getMetaDescription(), postDTO.getMetaKeywords());
+
         // Sync Tags (Clear and re-add)
         if (postDTO.getTagIds() != null) {
             tagService.clearTagsFromPost(savedPost);
@@ -263,8 +282,6 @@ public class PostServiceImpl implements PostService {
             }
         }
 
-        saveMetaFields(savedPost.getId(), postDTO);
-
         // Send Kafka Event only after DB transaction commits successfully
         PostEvent event = new PostEvent(
                 savedPost.getId(),
@@ -274,8 +291,7 @@ public class PostServiceImpl implements PostService {
                 savedPost.getSummary(),
                 savedPost.getContent(),
                 savedPost.getAuthor().getUsername(),
-                savedPost.getStatus()
-        );
+                savedPost.getStatus());
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
@@ -286,7 +302,7 @@ public class PostServiceImpl implements PostService {
         // Mark any uploaded files in content as explicitly USED
         uploadTrackerService.markAsUsedFromHtmlContent(savedPost.getContent());
 
-        return enrichWithMeta(postMapper.toDTO(savedPost));
+        return resolveImageUrl(postMapper.toDTO(savedPost));
     }
 
     @Override
@@ -315,8 +331,8 @@ public class PostServiceImpl implements PostService {
 
         List<Long> postIds = documents.stream().map(PostDocument::getPostId).collect(Collectors.toList());
         List<Post> posts = postRepository.findAllById(postIds).stream()
-                   .filter(p -> p.getStatus() == 1) // Ensure they are published since we might fetch mixed
-                   .collect(Collectors.toList());
+                .filter(p -> p.getStatus() == 1) // Ensure they are published since we might fetch mixed
+                .collect(Collectors.toList());
         return postMapper.toDTOs(posts);
     }
 
@@ -381,30 +397,13 @@ public class PostServiceImpl implements PostService {
         return postMapper.toDTO(savedPost);
     }
 
-    /** Lưu metaTitle, metaDescription, metaKeywords vào bảng post_meta. */
-    private void saveMetaFields(Long postId, PostDTO dto) {
-        if (dto.getMetaTitle() != null)
-            postMetaService.CreateOrUpdateMeta(postId, "metaTitle", dto.getMetaTitle());
-        if (dto.getMetaDescription() != null)
-            postMetaService.CreateOrUpdateMeta(postId, "metaDescription", dto.getMetaDescription());
-        if (dto.getMetaKeywords() != null)
-            postMetaService.CreateOrUpdateMeta(postId, "metaKeywords", dto.getMetaKeywords());
-    }
-
-    /** Đọc metaTitle, metaDescription, metaKeywords từ post_meta và gắn vào DTO.
-     *  Đồng thời resolve imageUrl: nếu là path tương đối thì tạo full URL. */
-    private PostDTO enrichWithMeta(PostDTO dto) {
+    /**
+     * Resolve imageUrl: nếu là path tương đối thì tạo full URL.
+     */
+    private PostDTO resolveImageUrl(PostDTO dto) {
         if (dto.getImageUrl() != null && !dto.getImageUrl().startsWith("http")) {
             dto.setImageUrl(minIOService.getPublicFileUrl(dto.getImageUrl()));
         }
-        if (dto.getId() == null) return dto;
-        postMetaService.getMetaByPost(dto.getId()).forEach(m -> {
-            switch (m.getKey()) {
-                case "metaTitle"       -> dto.setMetaTitle(m.getContent());
-                case "metaDescription" -> dto.setMetaDescription(m.getContent());
-                case "metaKeywords"    -> dto.setMetaKeywords(m.getContent());
-            }
-        });
         return dto;
     }
 

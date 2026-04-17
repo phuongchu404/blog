@@ -39,7 +39,9 @@
     <style>
       /* CKEditor chiều cao tối thiểu */
       .ck-editor__editable_inline {
-        min-height: 400px !important;
+        height: 800px !important;
+        max-height: 800px !important;
+        overflow-y: auto !important;
         font-size: 1rem;
       }
 
@@ -85,6 +87,13 @@
 
       .ck-widget__resizer__handle:hover {
         background: #1976d2 !important;
+      }
+
+      @media (max-width: 768px) {
+        .ck-editor__editable_inline {
+          height: 360px !important;
+          max-height: 360px !important;
+        }
       }
     </style>
   </head>
@@ -507,10 +516,13 @@
                             placeholder="Select date and time"
                           />
                           <button
-                            class="btn btn-outline-secondary"
+                            class="btn btn-outline-secondary d-none"
                             id="publishDateToggle"
                             type="button"
                             aria-label="Toggle datetime picker"
+                            aria-hidden="true"
+                            hidden
+                            style="display: none !important"
                           >
                             <i class="bi bi-calendar3"></i>
                           </button>
@@ -697,6 +709,7 @@
     <script src="../js/auth.js"></script>
     <script src="../js/ui.js"></script>
     <script src="../js/services/post.service.js"></script>
+    <script src="../js/services/setting.service.js"></script>
     <script src="../js/services/category.service.js"></script>
     <script src="../js/services/tag.service.js"></script>
     <script src="../js/services/notification.service.js"></script>

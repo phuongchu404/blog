@@ -101,7 +101,7 @@ public class LoggingAspect {
             return result;
         } catch (Exception ex) {
             long elapsed = System.currentTimeMillis() - start;
-            log.warn("[Service] {} — {}ms FAILED: {}", methodName, elapsed, ex.getMessage());
+            log.error("[Service] {} — {}ms FAILED: {}", methodName, elapsed, ex.getMessage());
             throw ex;
         }
     }

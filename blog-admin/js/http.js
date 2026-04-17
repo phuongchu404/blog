@@ -56,18 +56,31 @@ const Http = {
       }
       return;
     }
+
     if (!res.ok) {
       let msg = `HTTP ${res.status}`;
-      try { const body = await res.json(); msg = body.message || body.error || msg; } catch (_) { }
+      try {
+        const body = await res.json();
+        msg = body.message || body.error || msg;
+      } catch (_) { }
       throw new Error(msg);
     }
+
     if (res.status === 204) return null;
-    const json = await res.json();
-    // Unwrap ApiResponse wrapper: { success, message, data } → trả về data
-    if (json && typeof json === 'object' && 'success' in json && 'data' in json) {
-      return json.data;
+
+    const text = await res.text();
+    if (!text) return null;
+
+    try {
+      const json = JSON.parse(text);
+      // Unwrap ApiResponse wrapper: { success, message, data } → trả về data
+      if (json && typeof json === 'object' && 'success' in json && 'data' in json) {
+        return json.data;
+      }
+      return json;
+    } catch (err) {
+      return text; // Return as text if not JSON
     }
-    return json;
   },
 
   async get(path) {

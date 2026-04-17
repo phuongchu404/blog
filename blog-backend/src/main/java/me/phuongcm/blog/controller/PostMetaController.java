@@ -1,6 +1,5 @@
 package me.phuongcm.blog.controller;
 
-import jakarta.validation.Valid;
 import me.phuongcm.blog.dto.ApiResponse;
 import me.phuongcm.blog.entity.PostMeta;
 import me.phuongcm.blog.service.PostMetaService;
@@ -9,13 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/posts/{postId}/meta")
-@PreAuthorize("hasAuthority('post:meta:manage')")  // Áp dụng mặc định cho TẤT CẢ endpoints
+@PreAuthorize("hasAuthority('post:meta:manage')")
 public class PostMetaController {
 
     private final PostMetaService postMetaService;
@@ -24,44 +21,28 @@ public class PostMetaController {
         this.postMetaService = postMetaService;
     }
 
-    /** GET /api/posts/{postId}/meta — Tất cả metadata của bài viết. */
+    /** GET /api/posts/{postId}/meta — Get metadata of a post. */
     @GetMapping
-    public ResponseEntity<ApiResponse<List<PostMeta>>> getMetaByPost(@PathVariable Long postId) {
-        List<PostMeta> metaList = postMetaService.getMetaByPost(postId);
-        return ResponseEntity.ok(ApiResponse.ok(metaList));
-    }
-
-    /** GET /api/posts/{postId}/meta/{key} — Metadata theo key. */
-    @GetMapping("/{key}")
-    public ResponseEntity<ApiResponse<PostMeta>> getMetaByPostAndKey(
-            @PathVariable Long postId, @PathVariable String key) {
-        Optional<PostMeta> meta = postMetaService.getMetaByPostAndKey(postId, key);
+    public ResponseEntity<ApiResponse<PostMeta>> getMetaByPost(@PathVariable Long postId) {
+        Optional<PostMeta> meta = postMetaService.getMetaByPost(postId);
         return meta.map(m -> ResponseEntity.ok(ApiResponse.ok(m)))
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND)
-                        .body(ApiResponse.error("Meta not found for key: " + key)));
+                        .body(ApiResponse.error("Meta not found for post: " + postId)));
     }
 
-    /** PUT /api/posts/{postId}/meta/{key} — Upsert metadata. Body: {"content": "value"} */
-    @PutMapping("/{key}")
+    /** PUT /api/posts/{postId}/meta — Create or update metadata. */
+    @PutMapping
     public ResponseEntity<ApiResponse<PostMeta>> createOrUpdateMeta(
-            @PathVariable Long postId, @PathVariable String key,
-            @RequestBody Map<String, String> body) {
-        PostMeta meta = postMetaService.CreateOrUpdateMeta(postId, key, body.get("content"));
+            @PathVariable Long postId, @RequestBody PostMeta body) {
+        PostMeta meta = postMetaService.createOrUpdateMeta(postId,
+                body.getMetaTitle(), body.getMetaDescription(), body.getMetaKeywords());
         return ResponseEntity.ok(ApiResponse.ok("Meta updated", meta));
     }
 
-    /** DELETE /api/posts/{postId}/meta/{key} — Xóa metadata theo key. */
-    @DeleteMapping("/{key}")
-    public ResponseEntity<ApiResponse<Void>> deleteMeta(
-            @PathVariable Long postId, @PathVariable String key) {
-        postMetaService.deleteMeta(postId, key);
-        return ResponseEntity.ok(ApiResponse.ok("Meta deleted", null));
-    }
-
-    /** DELETE /api/posts/{postId}/meta — Xóa toàn bộ metadata. */
+    /** DELETE /api/posts/{postId}/meta — Delete metadata. */
     @DeleteMapping
-    public ResponseEntity<ApiResponse<Void>> deleteAllMeta(@PathVariable Long postId) {
-        postMetaService.deleteAllMetaForPost(postId);
-        return ResponseEntity.ok(ApiResponse.ok("All meta deleted", null));
+    public ResponseEntity<ApiResponse<Void>> deleteMeta(@PathVariable Long postId) {
+        postMetaService.deleteMeta(postId);
+        return ResponseEntity.ok(ApiResponse.ok("Meta deleted", null));
     }
 }

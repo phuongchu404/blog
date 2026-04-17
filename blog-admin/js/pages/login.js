@@ -9,11 +9,7 @@ if (Auth.isLoggedIn()) {
     if (cachedUser) {
       const user = JSON.parse(cachedUser);
       const permissions = user.permissions || [];
-      if (!permissions.includes('menu:dashboard')) {
-        window.location.href = 'unauthorized.html';
-      } else {
-        window.location.href = 'index.html';
-      }
+      window.location.href = UI.getFirstAccessiblePage(permissions) || 'unauthorized.html';
     } else {
       window.location.href = 'index.html';
     }
@@ -46,11 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.setItem('user', JSON.stringify(user));
 
         const permissions = user.permissions || [];
-        if (!permissions.includes('menu:dashboard')) {
-          window.location.href = 'unauthorized.html';
-        } else {
-          window.location.href = 'index.html';
-        }
+        window.location.href = UI.getFirstAccessiblePage(permissions) || 'unauthorized.html';
       } catch (err) {
         if (alert) {
           alert.textContent = err.message || 'Invalid username or password.';
