@@ -38,10 +38,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     // Member since
     const memberSince = document.querySelector('.card-footer small');
     if (memberSince && currentUser.createdAt) {
-      memberSince.textContent = 'Member since ' + UI.formatDate(currentUser.createdAt);
+      memberSince.textContent = I18n.t('profile_dyn.member_since') + UI.formatDate(currentUser.createdAt);
     }
   } catch (err) {
-    UI.toast('Failed to load profile: ' + err.message, 'danger');
+    UI.toast(I18n.t('profile_dyn.load_failed') + err.message, 'danger');
   }
 
   // ── Save profile info ───────────────────────────────────────────────
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         currentUser = await Auth.me();
         localStorage.setItem('user', JSON.stringify(currentUser));
         await UI.renderCurrentUser();
-        UI.toast('Profile updated successfully.');
+        UI.toast(I18n.t('profile_dyn.updated'));
       } catch (err) { UI.toast(err.message, 'danger'); }
     });
   }
@@ -77,10 +77,10 @@ document.addEventListener('DOMContentLoaded', async function () {
       const confPw    = document.getElementById('confirmPassword').value;
       const currentPw = document.getElementById('currentPassword').value;
 
-      if (newPw !== confPw) { UI.toast('Passwords do not match.', 'warning'); return; }
+      if (newPw !== confPw) { UI.toast(I18n.t('profile_dyn.passwords_mismatch'), 'warning'); return; }
       try {
         await UserService.update(currentUser.id, { password: newPw, currentPassword: currentPw });
-        UI.toast('Password changed successfully.');
+        UI.toast(I18n.t('profile_dyn.password_changed'));
         this.reset();
       } catch (err) { UI.toast(err.message, 'danger'); }
     });
@@ -141,10 +141,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         const res = await Http.upload('/api/files/upload?folder=blog/avatars', formData);
         if (res && res.path) {
           window.profileImagePath = res.path;
-          UI.toast('Ảnh đã tải lên. Nhấn Save để lưu.', 'success');
+          UI.toast(I18n.t('profile_dyn.avatar_uploaded'), 'success');
         }
       } catch (err) {
-        UI.toast('Upload thất bại: ' + err.message, 'danger');
+        UI.toast(I18n.t('profile_dyn.upload_failed') + err.message, 'danger');
       }
     });
   }

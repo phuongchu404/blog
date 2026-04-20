@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <script>document.documentElement.dataset.theme = localStorage.getItem('blog-theme') || 'light';</script>
@@ -9,167 +10,199 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<header class="site-header">
-  <nav class="container nav-inner">
-    <a href="index.html" class="nav-logo">My<span>Blog</span></a>
-    <div class="nav-links" id="nav-links">
-      <a href="index.html">Trang chủ</a>
-      <div class="cat-mega-wrap">
-        <button class="cat-mega-btn" id="cat-mega-trigger">
-          Danh mục
-          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
-        </button>
-        <div class="cat-megamenu" id="cat-megamenu"></div>
+  <header class="site-header">
+    <nav class="container nav-inner">
+      <a href="index.html" class="nav-logo">My<span>Blog</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="index.html" data-i18n="nav.home">Trang chủ</a>
+        <div class="cat-mega-wrap">
+          <button class="cat-mega-btn" id="cat-mega-trigger" data-i18n="nav.categories">
+            Danh mục
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+            </svg>
+          </button>
+          <div class="cat-megamenu" id="cat-megamenu"></div>
+        </div>
       </div>
-    </div>
-    <form class="nav-search" onsubmit="handleNavSearch(event)">
-      <input type="search" id="nav-search-input" placeholder="Tìm kiếm bài viết..." autocomplete="off" />
-      <button type="submit" class="nav-search-submit">
-        <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+      <form class="nav-search" onsubmit="handleNavSearch(event)">
+        <input type="search" id="nav-search-input" placeholder="Tìm kiếm bài viết..."
+          data-i18n-placeholder="nav.search_placeholder" autocomplete="off" />
+        <button type="submit" class="nav-search-submit">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+          </svg>
+        </button>
+      </form>
+      <div id="nav-auth" class="nav-auth"></div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+        <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
         </svg>
       </button>
-    </form>
-    <div id="nav-auth" class="nav-auth"></div>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
-      <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-      </svg>
-    </button>
-  </nav>
-</header>
+    </nav>
+  </header>
 
-<main class="container layout-full" style="max-width:860px;margin:0 auto">
-  <!-- Profile header -->
-  <div id="profile-header">
-    <div class="loading-spinner"><div class="spinner"></div><span>Đang tải...</span></div>
-  </div>
+  <main class="container layout-full" style="max-width:860px;margin:0 auto">
+    <!-- Profile header -->
+    <div id="profile-header">
+      <div class="loading-spinner">
+        <div class="spinner"></div><span data-i18n="common.loading">Đang tải...</span>
+      </div>
+    </div>
 
-  <!-- Tabs -->
-  <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.5rem">
-    <button class="tab-btn active" onclick="switchTab('posts', this)" style="padding:.65rem 1.25rem;background:none;border:none;font-weight:600;font-size:.9rem;color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px;cursor:pointer">
-      Bài viết của tôi
-    </button>
-    <button class="tab-btn" onclick="switchTab('edit', this)" style="padding:.65rem 1.25rem;background:none;border:none;font-weight:600;font-size:.9rem;color:var(--text-muted);cursor:pointer">
-      Chỉnh sửa hồ sơ
-    </button>
-  </div>
+    <!-- Tabs -->
+    <div style="display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:1.5rem">
+      <button class="tab-btn active" onclick="switchTab('posts', this)"
+        style="padding:.65rem 1.25rem;background:none;border:none;font-weight:600;font-size:.9rem;color:var(--primary);border-bottom:2px solid var(--primary);margin-bottom:-2px;cursor:pointer"
+        data-i18n="profile.tab_posts">
+        Bài viết của tôi
+      </button>
+      <button class="tab-btn" onclick="switchTab('edit', this)"
+        style="padding:.65rem 1.25rem;background:none;border:none;font-weight:600;font-size:.9rem;color:var(--text-muted);cursor:pointer"
+        data-i18n="profile.tab_edit">
+        Chỉnh sửa hồ sơ
+      </button>
+    </div>
 
-  <!-- Tab: My posts -->
-  <div id="tab-posts">
-    <div id="my-posts-grid" class="post-grid"></div>
-  </div>
+    <!-- Tab: My posts -->
+    <div id="tab-posts">
+      <div id="my-posts-grid" class="post-grid"></div>
+    </div>
 
-  <!-- Tab: Edit profile -->
-  <div id="tab-edit" style="display:none">
-    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow-sm)">
-      <h2 style="font-size:1.15rem;margin-bottom:1.5rem">Thông tin cá nhân</h2>
-      <form id="profile-form" onsubmit="handleProfileUpdate(event)" novalidate>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
-          <div class="form-group">
-            <label class="form-label">Họ</label>
-            <input class="form-input" type="text" id="edit-firstName" placeholder="Nguyễn">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Tên</label>
-            <input class="form-input" type="text" id="edit-lastName" placeholder="Văn A">
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Tên đầy đủ</label>
-          <input class="form-input" type="text" id="edit-fullName" placeholder="Nguyễn Văn A">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Email</label>
-          <input class="form-input" type="email" id="edit-email" placeholder="email@example.com">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Số điện thoại</label>
-          <input class="form-input" type="tel" id="edit-mobile" placeholder="0912 345 678">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label">Giới thiệu bản thân</label>
-          <textarea class="form-input" id="edit-intro" rows="3" placeholder="Viết vài dòng giới thiệu về bạn..." style="resize:vertical"></textarea>
-        </div>
-
-        <!-- Avatar upload section — hiển thị khác nhau tùy local/OAuth2 -->
-        <div class="form-group" id="avatar-section">
-          <label class="form-label">Ảnh đại diện</label>
-
-          <!-- Local user: cho upload ảnh -->
-          <div id="avatar-local" style="display:none">
-            <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
-              <img id="avatar-preview" src="" alt="Avatar" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border);display:none">
-              <label for="avatar-file-input" class="btn btn-ghost btn-sm" style="cursor:pointer">
-                📷 Chọn ảnh upload
-              </label>
-              <input type="file" id="avatar-file-input" accept="image/*" style="display:none">
+    <!-- Tab: Edit profile -->
+    <div id="tab-edit" style="display:none">
+      <div
+        style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow-sm)">
+        <h2 style="font-size:1.15rem;margin-bottom:1.5rem" data-i18n="profile.personal_info">Thông tin cá nhân</h2>
+        <form id="profile-form" onsubmit="handleProfileUpdate(event)" novalidate>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div class="form-group">
+              <label class="form-label" data-i18n="profile.label_firstName">Họ</label>
+              <input class="form-input" type="text" id="edit-firstName" placeholder="Nguyễn">
             </div>
-            <small style="color:var(--text-muted);display:block;margin-top:.4rem">PNG, JPG, GIF tối đa 5MB</small>
-            <input type="hidden" id="edit-imageUrl">
-          </div>
-
-          <!-- OAuth2 user: chỉ hiển thị ảnh, không cho đổi -->
-          <div id="avatar-oauth" style="display:none">
-            <div style="display:flex;align-items:center;gap:.75rem">
-              <img id="oauth-avatar-img" src="" alt="Avatar" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">
-              <small style="color:var(--text-muted)">Ảnh được lấy tự động từ tài khoản <span id="oauth-provider-name"></span>.</small>
+            <div class="form-group">
+              <label class="form-label" data-i18n="profile.label_lastName">Tên</label>
+              <input class="form-input" type="text" id="edit-lastName" placeholder="Văn A">
             </div>
           </div>
-        </div>
 
-        <div id="profile-update-error" style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:.65rem 1rem;font-size:.875rem;color:#991b1b;margin-bottom:.75rem"></div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="profile.label_fullName">Tên đầy đủ</label>
+            <input class="form-input" type="text" id="edit-fullName" placeholder="Nguyễn Văn A">
+          </div>
 
-        <div style="display:flex;gap:.75rem;justify-content:flex-end">
-          <button type="button" class="btn btn-ghost" onclick="switchTab('posts', document.querySelector('.tab-btn'))">Hủy</button>
-          <button type="submit" class="btn btn-primary" id="profile-save-btn">Lưu thay đổi</button>
-        </div>
-      </form>
+          <div class="form-group">
+            <label class="form-label" data-i18n="profile.label_email">Email</label>
+            <input class="form-input" type="email" id="edit-email" placeholder="email@example.com">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="profile.label_phone">Số điện thoại</label>
+            <input class="form-input" type="tel" id="edit-mobile" placeholder="0912 345 678">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" data-i18n="profile.label_bio">Giới thiệu bản thân</label>
+            <textarea class="form-input" id="edit-intro" rows="3" data-i18n-placeholder="profile.placeholder_bio"
+              placeholder="Viết vài dòng giới thiệu về bạn..." style="resize:vertical"></textarea>
+          </div>
+
+          <!-- Avatar upload section -->
+          <div class="form-group" id="avatar-section">
+            <label class="form-label" data-i18n="profile.label_avatar">Ảnh đại diện</label>
+
+            <!-- Local user: cho upload ảnh -->
+            <div id="avatar-local" style="display:none">
+              <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap">
+                <img id="avatar-preview" src="" alt="Avatar"
+                  style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border);display:none">
+                <label for="avatar-file-input" class="btn btn-ghost btn-sm" style="cursor:pointer"
+                  data-i18n="profile.btn_choose_photo">
+                  📷 Chọn ảnh upload
+                </label>
+                <input type="file" id="avatar-file-input" accept="image/*" style="display:none">
+              </div>
+              <small style="color:var(--text-muted);display:block;margin-top:.4rem" data-i18n="profile.avatar_hint">PNG,
+                JPG, GIF tối đa 5MB</small>
+              <input type="hidden" id="edit-imageUrl">
+            </div>
+
+            <!-- OAuth2 user: chỉ hiển thị ảnh, không cho đổi -->
+            <div id="avatar-oauth" style="display:none">
+              <div style="display:flex;align-items:center;gap:.75rem">
+                <img id="oauth-avatar-img" src="" alt="Avatar"
+                  style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--border)">
+                <small style="color:var(--text-muted)"><span data-i18n="profile.oauth_avatar">Ảnh được lấy tự động từ
+                    tài khoản</span> <span id="oauth-provider-name"></span>.</small>
+              </div>
+            </div>
+          </div>
+
+          <div id="profile-update-error"
+            style="display:none;background:#fef2f2;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:.65rem 1rem;font-size:.875rem;color:#991b1b;margin-bottom:.75rem">
+          </div>
+
+          <div style="display:flex;gap:.75rem;justify-content:flex-end">
+            <button type="button" class="btn btn-ghost" onclick="switchTab('posts', document.querySelector('.tab-btn'))"
+              data-i18n="common.cancel">Hủy</button>
+            <button type="submit" class="btn btn-primary" id="profile-save-btn" data-i18n="profile.btn_save">Lưu thay
+              đổi</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Change password -->
+      <div id="doi-mat-khau"
+        style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow-sm);margin-top:1.5rem">
+        <h2 style="font-size:1.15rem;margin-bottom:1.5rem" data-i18n="profile.change_password">Đổi mật khẩu</h2>
+        <form id="password-form" onsubmit="handleChangePassword(event)" novalidate>
+          <div class="form-group">
+            <label class="form-label" data-i18n="profile.label_new_password">Mật khẩu mới</label>
+            <input class="form-input" type="password" id="new-password" placeholder="Tối thiểu 6 ký tự"
+              data-i18n-placeholder="auth.placeholder_password">
+          </div>
+          <div class="form-group">
+            <label class="form-label" data-i18n="profile.label_confirm_password">Xác nhận mật khẩu mới</label>
+            <input class="form-input" type="password" id="confirm-new-password"
+              data-i18n-placeholder="auth.placeholder_confirm" placeholder="Nhập lại mật khẩu mới">
+            <div class="form-error" id="confirm-password-error"></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end">
+            <button type="submit" class="btn btn-primary" id="password-save-btn"
+              data-i18n="profile.btn_change_password">Đổi mật khẩu</button>
+          </div>
+        </form>
+      </div>
     </div>
+  </main>
 
-    <!-- Change password -->
-    <div id="doi-mat-khau" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow-sm);margin-top:1.5rem">
-      <h2 style="font-size:1.15rem;margin-bottom:1.5rem">Đổi mật khẩu</h2>
-      <form id="password-form" onsubmit="handleChangePassword(event)" novalidate>
-        <div class="form-group">
-          <label class="form-label">Mật khẩu mới</label>
-          <input class="form-input" type="password" id="new-password" placeholder="Tối thiểu 6 ký tự">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Xác nhận mật khẩu mới</label>
-          <input class="form-input" type="password" id="confirm-new-password" placeholder="Nhập lại mật khẩu mới">
-          <div class="form-error" id="confirm-password-error"></div>
-        </div>
-        <div style="display:flex;justify-content:flex-end">
-          <button type="submit" class="btn btn-primary" id="password-save-btn">Đổi mật khẩu</button>
-        </div>
-      </form>
+  <footer class="site-footer" style="margin-top:3rem">
+    <div class="container">
+      <div class="footer-bottom">
+        <span data-i18n="footer.copyright">© 2024 MyBlog.</span>
+        <a href="index.html" style="color:#94a3b8" data-i18n="auth.btn_back_home">← Về trang chủ</a>
+      </div>
     </div>
-  </div>
-</main>
+  </footer>
 
-<footer class="site-footer" style="margin-top:3rem">
-  <div class="container">
-    <div class="footer-bottom">
-      <span>© 2024 MyBlog.</span>
-      <a href="index.html" style="color:#94a3b8">← Về trang chủ</a>
-    </div>
-  </div>
-</footer>
-
-<script src="js/http.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/post.service.js"></script>
-<script src="js/category.service.js"></script>
-<script src="js/tag.service.js"></script>
-<script src="js/notification.service.js"></script>
-<script src="js/auth-pages.js"></script>
+  <script src="js/locales/vi.js"></script>
+  <script src="js/locales/en.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/http.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/post.service.js"></script>
+  <script src="js/category.service.js"></script>
+  <script src="js/tag.service.js"></script>
+  <script src="js/notification.service.js"></script>
+  <script src="js/auth-pages.js"></script>
 </body>
+
 </html>

@@ -97,6 +97,7 @@ public class WebSecurityConfig {
                         // ----- Không cần đăng nhập -----
                         .requestMatchers("/auth/login", "/auth/register", "/auth/change-password").permitAll()
                         .requestMatchers("/oauth2/**", "/login/oauth2/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
 
                         // GET public content
                         .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ERROR).permitAll()

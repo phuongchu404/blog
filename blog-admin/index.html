@@ -18,178 +18,9 @@
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
   <div class="app-wrapper">
-    <!-- ======= Header ======= -->
-    <nav class="app-header navbar navbar-expand bg-body">
-      <div class="container-fluid">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-              <i class="bi bi-list"></i>
-            </a>
-          </li>
-          <li class="nav-item d-none d-md-block">
-            <a href="index.html" class="nav-link">Dashboard</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-              <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-              <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-            </a>
-          </li>
-          <!-- Notification Bell -->
-          <li class="nav-item dropdown">
-            <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
-              <i class="bi bi-bell-fill"></i>
-              <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display: none">0</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width: 300px; max-width: 340px">
-              <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                <span class="fw-semibold small">Thông báo</span>
-                <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">
-                  Đọc tất cả
-                </button>
-              </div>
-              <div id="admin-notif-list" style="max-height: 320px; overflow-y: auto">
-                <div class="dropdown-item text-center text-muted py-3">
-                  Đang tải...
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item dropdown user-menu">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-              <img src="assets/images/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
-              <span class="d-none d-md-inline">Admin</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-              <li class="user-header text-bg-primary">
-                <img src="assets/images/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
-                <p>Admin <small>Blog Administrator</small></p>
-              </li>
-              <li class="user-footer">
-                <a href="profile.html" class="btn btn-outline-secondary">Profile</a>
+    <div data-admin-header></div>
 
-                <a href="login.html" class="btn btn-outline-danger float-end">Sign out</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
-    <!-- ======= Sidebar ======= -->
-    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-      <div class="sidebar-brand">
-        <a href="index.html" class="brand-link">
-          <img src="assets/images/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
-          <span class="brand-text fw-light">Blog Admin</span>
-        </a>
-      </div>
-      <div class="sidebar-wrapper">
-        <nav class="mt-2">
-          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
-            aria-label="Main navigation" data-accordion="false">
-            <li class="nav-header">MAIN MENU</li>
-
-            <li class="nav-item">
-              <a href="index.html" class="nav-link active">
-                <i class="nav-icon bi bi-speedometer2"></i>
-                <p>Dashboard</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon bi bi-file-earmark-text"></i>
-                <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="posts/index.html" class="nav-link">
-                    <i class="nav-icon bi bi-circle"></i>
-                    <p>All Posts</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="posts/create.html" class="nav-link">
-                    <i class="nav-icon bi bi-circle"></i>
-                    <p>Create Post</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
-
-            <li class="nav-item">
-              <a href="categories/index.html" class="nav-link">
-                <i class="nav-icon bi bi-tags"></i>
-                <p>Categories</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="tags/index.html" class="nav-link">
-                <i class="nav-icon bi bi-hash"></i>
-                <p>Tags</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="comments/index.html" class="nav-link">
-                <i class="nav-icon bi bi-chat-dots"></i>
-                <p>Comments</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="users/index.html" class="nav-link">
-                <i class="nav-icon bi bi-people"></i>
-                <p>Users</p>
-              </a>
-            </li>
-
-            <li class="nav-header">ACCESS CONTROL</li>
-
-            <li class="nav-item">
-              <a href="roles/index.html" class="nav-link">
-                <i class="nav-icon bi bi-shield-check"></i>
-                <p>Roles</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="permissions/index.html" class="nav-link">
-                <i class="nav-icon bi bi-key"></i>
-                <p>Permissions</p>
-              </a>
-            </li>
-
-            <li class="nav-header">SETTINGS</li>
-
-            <li class="nav-item">
-              <a href="audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i>
-                <p>Audit Logs</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="settings.html" class="nav-link">
-                <i class="nav-icon bi bi-gear"></i>
-                <p>Settings</p>
-              </a>
-            </li>
-
-            <li class="nav-item">
-              <a href="login.html" class="nav-link">
-                <i class="nav-icon bi bi-box-arrow-right"></i>
-                <p>Logout</p>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </aside>
+    <div data-admin-sidebar></div>
 
     <!-- ======= Main Content ======= -->
     <main class="app-main">
@@ -197,12 +28,12 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-sm-6">
-              <h3 class="mb-0">Dashboard</h3>
+              <h3 class="mb-0" data-i18n="dashboard.title">Dashboard</h3>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-end">
-                <li class="breadcrumb-item"><a href="#">Home</a></li>
-                <li class="breadcrumb-item active">Dashboard</li>
+                <li class="breadcrumb-item"><a href="#" data-i18n="common.home">Home</a></li>
+                <li class="breadcrumb-item active" data-i18n="dashboard.title">Dashboard</li>
               </ol>
             </div>
           </div>
@@ -216,52 +47,52 @@
             <div class="col-lg-3 col-6">
               <div class="small-box text-bg-primary">
                 <div class="inner">
-                  <h3 id="stat-posts">—</h3>
-                  <p>Total Posts</p>
+                  <h3 id="stat-posts">â€”</h3>
+                  <p data-i18n="dashboard.total_posts">Total Posts</p>
                 </div>
                 <i class="small-box-icon bi bi-file-earmark-text"></i>
                 <a href="posts/index.html"
                   class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                  View Posts <i class="bi bi-link-45deg"></i>
+                  <span data-i18n="dashboard.view_posts">View Posts</span> <i class="bi bi-link-45deg"></i>
                 </a>
               </div>
             </div>
             <div class="col-lg-3 col-6">
               <div class="small-box text-bg-success">
                 <div class="inner">
-                  <h3 id="stat-categories">—</h3>
-                  <p>Categories</p>
+                  <h3 id="stat-categories">â€”</h3>
+                  <p data-i18n="dashboard.total_categories">Categories</p>
                 </div>
                 <i class="small-box-icon bi bi-tags"></i>
                 <a href="categories/index.html"
                   class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                  View Categories <i class="bi bi-link-45deg"></i>
+                  <span data-i18n="dashboard.view_categories">View Categories</span> <i class="bi bi-link-45deg"></i>
                 </a>
               </div>
             </div>
             <div class="col-lg-3 col-6">
               <div class="small-box text-bg-warning">
                 <div class="inner">
-                  <h3 id="stat-comments">—</h3>
-                  <p>Comments</p>
+                  <h3 id="stat-comments">â€”</h3>
+                  <p data-i18n="dashboard.total_comments">Comments</p>
                 </div>
                 <i class="small-box-icon bi bi-chat-dots"></i>
                 <a href="comments/index.html"
                   class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                  View Comments <i class="bi bi-link-45deg"></i>
+                  <span data-i18n="dashboard.view_comments">View Comments</span> <i class="bi bi-link-45deg"></i>
                 </a>
               </div>
             </div>
             <div class="col-lg-3 col-6">
               <div class="small-box text-bg-danger">
                 <div class="inner">
-                  <h3 id="stat-users">—</h3>
-                  <p>Users</p>
+                  <h3 id="stat-users">â€”</h3>
+                  <p data-i18n="dashboard.total_users">Users</p>
                 </div>
                 <i class="small-box-icon bi bi-people"></i>
                 <a href="users/index.html"
                   class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover">
-                  View Users <i class="bi bi-link-45deg"></i>
+                  <span data-i18n="dashboard.view_users">View Users</span> <i class="bi bi-link-45deg"></i>
                 </a>
               </div>
             </div>
@@ -274,10 +105,10 @@
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title">
-                    <i class="bi bi-file-earmark-text me-2"></i>Recent Posts
+                    <i class="bi bi-file-earmark-text me-2"></i><span data-i18n="dashboard.recent_posts">Recent Posts</span>
                   </h3>
                   <div class="card-tools ms-auto">
-                    <a href="posts/index.html" class="btn btn-sm btn-primary">View All</a>
+                    <a href="posts/index.html" class="btn btn-sm btn-primary" data-i18n="dashboard.view_all">View All</a>
                   </div>
                 </div>
                 <div class="card-body p-0">
@@ -285,10 +116,10 @@
                     <thead>
                       <tr>
                         <th>#</th>
-                        <th>Title</th>
-                        <th>Category</th>
-                        <th>Status</th>
-                        <th>Date</th>
+                        <th data-i18n="dashboard.col_title">Title</th>
+                        <th data-i18n="dashboard.col_category">Category</th>
+                        <th data-i18n="dashboard.col_status">Status</th>
+                        <th data-i18n="dashboard.col_date">Date</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -304,22 +135,21 @@
               <div class="card">
                 <div class="card-header">
                   <h3 class="card-title">
-                    <i class="bi bi-lightning-charge me-2"></i>Quick Actions
+                    <i class="bi bi-lightning-charge me-2"></i><span data-i18n="dashboard.quick_actions">Quick Actions</span>
                   </h3>
                 </div>
                 <div class="card-body d-grid gap-2">
                   <a href="posts/create.html" class="btn btn-primary">
-                    <i class="bi bi-plus-circle me-2"></i>Create New Post
+                    <i class="bi bi-plus-circle me-2"></i><span data-i18n="dashboard.btn_create_post">Create New Post</span>
                   </a>
                   <a href="categories/index.html" class="btn btn-success">
-                    <i class="bi bi-tag me-2"></i>Manage Categories
+                    <i class="bi bi-tag me-2"></i><span data-i18n="dashboard.btn_manage_categories">Manage Categories</span>
                   </a>
                   <a href="users/index.html" class="btn btn-info">
-                    <i class="bi bi-person-plus me-2"></i>Manage Users
+                    <i class="bi bi-person-plus me-2"></i><span data-i18n="dashboard.btn_manage_users">Manage Users</span>
                   </a>
                   <a href="comments/index.html" class="btn btn-warning">
-                    <i class="bi bi-chat-square-dots me-2"></i>Moderate
-                    Comments
+                    <i class="bi bi-chat-square-dots me-2"></i><span data-i18n="dashboard.btn_moderate_comments">Moderate Comments</span>
                   </a>
                 </div>
               </div>
@@ -327,13 +157,13 @@
               <div class="card mt-3">
                 <div class="card-header">
                   <h3 class="card-title">
-                    <i class="bi bi-chat-dots me-2"></i>Latest Comments
+                    <i class="bi bi-chat-dots me-2"></i><span data-i18n="dashboard.recent_comments">Latest Comments</span>
                   </h3>
                 </div>
                 <div class="card-body p-0">
                   <ul class="list-group list-group-flush" id="latest-comments-list">
                     <li class="list-group-item text-center text-muted">
-                      Đang tải...
+                      Äang táº£i...
                     </li>
                   </ul>
                 </div>
@@ -345,17 +175,16 @@
     </main>
 
     <!-- ======= Footer ======= -->
-    <footer class="app-footer">
-      <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-      <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
-      rights reserved.
-    </footer>
+    <div data-admin-footer></div>
   </div>
 
   <script src="js/template/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
   <script src="js/template/popper.min.js" crossorigin="anonymous"></script>
   <script src="js/template/bootstrap.min.js" crossorigin="anonymous"></script>
   <script src="js/template/adminlte.min.js"></script>
+  <script src="js/locales/vi.js"></script>
+  <script src="js/locales/en.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/http.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/ui.js"></script>

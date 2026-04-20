@@ -56,10 +56,23 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - http.cors.enabled=true
+      - http.cors.allow-origin=http://localhost:1358
+      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+      - http.cors.allow-credentials=true
     ports:
       - "9200:9200"
     volumes:
       - es_data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+
+  dejavu:
+    image: appbaseio/dejavu:latest
+    container_name: blog_dejavu
+    depends_on:
+      - elasticsearch
+    ports:
+      - "1358:1358"
     restart: unless-stopped
 
   minio:

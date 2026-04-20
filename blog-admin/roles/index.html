@@ -97,233 +97,20 @@
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <div class="app-wrapper">
-      <!-- ======= Header ======= -->
-      <nav class="app-header navbar navbar-expand bg-body">
-        <div class="container-fluid">
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a
-                class="nav-link"
-                data-lte-toggle="sidebar"
-                href="#"
-                role="button"
-                ><i class="bi bi-list"></i
-              ></a>
-            </li>
-            <li class="nav-item d-none d-md-block">
-              <a href="../index.html" class="nav-link">Dashboard</a>
-            </li>
-          </ul>
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i
-                  data-lte-icon="minimize"
-                  class="bi bi-fullscreen-exit"
-                  style="display: none"
-                ></i>
-              </a>
-            </li>
-            <!-- Notification Bell -->
-            <li class="nav-item dropdown">
-              <a
-                class="nav-link"
-                data-bs-toggle="dropdown"
-                href="#"
-                id="admin-notif-dropdown-toggle"
-              >
-                <i class="bi bi-bell-fill"></i>
-                <span
-                  class="badge bg-danger navbar-badge"
-                  id="admin-notif-badge"
-                  style="display: none"
-                  >0</span
-                >
-              </a>
-              <div
-                class="dropdown-menu dropdown-menu-lg dropdown-menu-end"
-                style="min-width: 300px; max-width: 340px"
-              >
-                <div
-                  class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom"
-                >
-                  <span class="fw-semibold small">Thông báo</span>
-                  <button
-                    class="btn btn-sm btn-link p-0 text-decoration-none"
-                    id="admin-notif-mark-all"
-                  >
-                    Đọc tất cả
-                  </button>
-                </div>
-                <div
-                  id="admin-notif-list"
-                  style="max-height: 320px; overflow-y: auto"
-                >
-                  <div class="dropdown-item text-center text-muted py-3">
-                    Đang tải...
-                  </div>
-                </div>
-              </div>
-            </li>
-            <li class="nav-item dropdown user-menu">
-              <a
-                href="#"
-                class="nav-link dropdown-toggle"
-                data-bs-toggle="dropdown"
-              >
-                <img
-                  src="../assets/images/user2-160x160.jpg"
-                  class="user-image rounded-circle shadow"
-                  alt="Admin"
-                />
-                <span class="d-none d-md-inline">Admin</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <li class="user-header text-bg-primary">
-                  <img
-                    src="../assets/images/user2-160x160.jpg"
-                    class="rounded-circle shadow"
-                    alt="Admin"
-                  />
-                  <p>Admin <small>Blog Administrator</small></p>
-                </li>
-                <li class="user-footer">
-                  <a href="../profile.html" class="btn btn-outline-secondary"
-                    >Profile</a
-                  >
-                  <a
-                    href="../login.html"
-                    class="btn btn-outline-danger float-end"
-                    >Sign out</a
-                  >
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <div data-admin-header></div>
 
-      <!-- ======= Sidebar ======= -->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <div class="sidebar-brand">
-          <a href="../index.html" class="brand-link">
-            <img
-              src="../assets/images/AdminLTELogo.png"
-              alt="Logo"
-              class="brand-image opacity-75 shadow"
-            />
-            <span class="brand-text fw-light">Blog Admin</span>
-          </a>
-        </div>
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="navigation"
-              data-accordion="false"
-            >
-              <li class="nav-header">MAIN MENU</li>
-              <li class="nav-item">
-                <a href="../index.html" class="nav-link"
-                  ><i class="nav-icon bi bi-speedometer2"></i>
-                  <p>Dashboard</p></a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-file-earmark-text"></i>
-                  <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="../posts/index.html" class="nav-link"
-                      ><i class="nav-icon bi bi-circle"></i>
-                      <p>All Posts</p></a
-                    >
-                  </li>
-                  <li class="nav-item">
-                    <a href="../posts/create.html" class="nav-link"
-                      ><i class="nav-icon bi bi-circle"></i>
-                      <p>Create Post</p></a
-                    >
-                  </li>
-                </ul>
-              </li>
-              <li class="nav-item">
-                <a href="../categories/index.html" class="nav-link"
-                  ><i class="nav-icon bi bi-tags"></i>
-                  <p>Categories</p></a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="../tags/index.html" class="nav-link"
-                  ><i class="nav-icon bi bi-hash"></i>
-                  <p>Tags</p></a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="../comments/index.html" class="nav-link"
-                  ><i class="nav-icon bi bi-chat-dots"></i>
-                  <p>Comments</p></a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="../users/index.html" class="nav-link"
-                  ><i class="nav-icon bi bi-people"></i>
-                  <p>Users</p></a
-                >
-              </li>
-              <li class="nav-header">ACCESS CONTROL</li>
-              <li class="nav-item">
-                <a href="index.html" class="nav-link active"
-                  ><i class="nav-icon bi bi-shield-check"></i>
-                  <p>Roles</p></a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="../permissions/index.html" class="nav-link"
-                  ><i class="nav-icon bi bi-key"></i>
-                  <p>Permissions</p></a
-                >
-              </li>
-              <li class="nav-header">SETTINGS</li>
-              <li class="nav-item">
-                <a href="../audit-logs/index.html" class="nav-link"
-                  ><i class="nav-icon bi bi-journal-text"></i>
-                  <p>Audit Logs</p></a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="../settings.html" class="nav-link"
-                  ><i class="nav-icon bi bi-gear"></i>
-                  <p>Settings</p></a
-                >
-              </li>
-              <li class="nav-item">
-                <a href="../login.html" class="nav-link"
-                  ><i class="nav-icon bi bi-box-arrow-right"></i>
-                  <p>Logout</p></a
-                >
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </aside>
+      <div data-admin-sidebar></div>
 
       <!-- ======= Main Content ======= -->
       <main class="app-main">
         <div class="app-content-header">
           <div class="container-fluid">
             <div class="row">
-              <div class="col-sm-6"><h3 class="mb-0">Roles</h3></div>
+              <div class="col-sm-6"><h3 class="mb-0" data-i18n="roles.title">Roles</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item">
-                    <a href="../index.html">Home</a>
-                  </li>
-                  <li class="breadcrumb-item active">Roles</li>
+                  <li class="breadcrumb-item"><a href="../index.html" data-i18n="common.home">Home</a></li>
+                  <li class="breadcrumb-item active" data-i18n="roles.title">Roles</li>
                 </ol>
               </div>
             </div>
@@ -340,6 +127,7 @@
                     type="text"
                     id="searchInput"
                     class="form-control"
+                    data-i18n-placeholder="roles.search"
                     placeholder="Search roles..."
                     autocomplete="off"
                   />
@@ -359,7 +147,7 @@
                   data-bs-toggle="modal"
                   data-bs-target="#addRoleModal"
                 >
-                  <i class="bi bi-plus-circle me-1"></i> Add Role
+                  <i class="bi bi-plus-circle me-1"></i> <span data-i18n="roles.btn_add">Add Role</span>
                 </button>
               </div>
             </div>
@@ -367,9 +155,7 @@
             <!-- Roles Table -->
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">
-                  <i class="bi bi-shield-check me-2"></i>All Roles
-                </h3>
+                <h3 class="card-title" data-i18n="roles.card_list"><i class="bi bi-shield-check me-2"></i>All Roles</h3>
                 <div class="card-tools ms-auto">
                   <span class="badge text-bg-primary" id="roles-count-badge"
                     >0 total</span
@@ -383,11 +169,11 @@
                   <thead>
                     <tr>
                       <th>#</th>
-                      <th>Role Name</th>
-                      <th>Description</th>
-                      <th>Permissions</th>
-                      <th>Users</th>
-                      <th>Actions</th>
+                      <th data-i18n="roles.col_name">Role Name</th>
+                      <th data-i18n="roles.col_description">Description</th>
+                      <th data-i18n="roles.col_permissions">Permissions</th>
+                      <th data-i18n="roles.col_users">Users</th>
+                      <th data-i18n="roles.col_actions">Actions</th>
                     </tr>
                   </thead>
                   <tbody id="roles-tbody">
@@ -411,11 +197,7 @@
         </div>
       </main>
 
-      <footer class="app-footer">
-        <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-        <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
-        rights reserved.
-      </footer>
+      <div data-admin-footer></div>
     </div>
 
     <!-- Add Role Modal -->
@@ -429,9 +211,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="addRoleModalLabel">
-              <i class="bi bi-plus-circle me-2"></i>Add New Role
-            </h5>
+            <h5 class="modal-title" id="addRoleModalLabel" data-i18n="roles.card_add"><i class="bi bi-plus-circle me-2"></i>Add New Role</h5>
             <button
               type="button"
               class="btn-close"
@@ -442,43 +222,22 @@
           <div class="modal-body">
             <form id="addRoleForm">
               <div class="mb-3">
-                <label for="roleName" class="form-label"
-                  >Role Name <span class="text-danger">*</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="roleName"
-                  placeholder="e.g. EDITOR"
-                  required
-                />
+                <label for="roleName" class="form-label" data-i18n="roles.label_name">Role Name <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="roleName" data-i18n-placeholder="roles.placeholder_name" placeholder="e.g. EDITOR" required />
                 <small class="text-muted"
                   >Use uppercase letters, e.g. EDITOR, REVIEWER</small
                 >
               </div>
               <div class="mb-3">
-                <label for="roleDescription" class="form-label"
-                  >Description</label
-                >
-                <textarea
-                  class="form-control"
-                  id="roleDescription"
-                  rows="3"
-                  placeholder="Describe this role's purpose..."
-                ></textarea>
+                <label for="roleDescription" class="form-label" data-i18n="roles.label_description">Description</label>
+                <textarea class="form-control" id="roleDescription" rows="3" data-i18n-placeholder="roles.placeholder_description" placeholder="Describe this role's purpose..."></textarea>
               </div>
             </form>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Cancel
-            </button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="roles.btn_cancel">Cancel</button>
             <button type="submit" form="addRoleForm" class="btn btn-primary">
-              <i class="bi bi-check-circle me-1"></i> Create Role
+              <i class="bi bi-check-circle me-1"></i> <span data-i18n="roles.btn_add">Create Role</span>
             </button>
           </div>
         </div>
@@ -496,9 +255,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="editRoleModalLabel">
-              <i class="bi bi-pencil me-2"></i>Edit Role
-            </h5>
+            <h5 class="modal-title" id="editRoleModalLabel"><i class="bi bi-pencil me-2"></i><span data-i18n="common.edit">Edit</span> Role</h5>
             <button
               type="button"
               class="btn-close"
@@ -509,9 +266,7 @@
           <div class="modal-body">
             <form id="editRoleForm">
               <div class="mb-3">
-                <label for="editRoleName" class="form-label"
-                  >Role Name <span class="text-danger">*</span></label
-                >
+                <label for="editRoleName" class="form-label" data-i18n="roles.label_name">Role Name <span class="text-danger">*</span></label>
                 <input
                   type="text"
                   class="form-control"
@@ -521,9 +276,7 @@
                 />
               </div>
               <div class="mb-3">
-                <label for="editRoleDescription" class="form-label"
-                  >Description</label
-                >
+                <label for="editRoleDescription" class="form-label" data-i18n="roles.label_description">Description</label>
                 <textarea
                   class="form-control"
                   id="editRoleDescription"
@@ -562,7 +315,7 @@ Can moderate comments and manage content</textarea
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title" id="managePermissionsModalLabel">
-              <i class="bi bi-key me-2"></i>Manage Permissions —
+              <i class="bi bi-key me-2"></i>Manage Permissions â€”
               <span class="badge text-bg-primary" id="managingRoleName"
                 >ROLE</span
               >
@@ -675,7 +428,7 @@ Can moderate comments and manage content</textarea
                 class="btn btn-primary"
                 id="btnSavePermissions"
               >
-                <i class="bi bi-check-circle me-1"></i> Save Permissions
+                <i class="bi bi-check-circle me-1"></i> <span data-i18n="roles_dyn.permissions_saved_btn">Save Permissions</span>
               </button>
             </div>
           </div>
@@ -693,7 +446,10 @@ Can moderate comments and manage content</textarea
       crossorigin="anonymous"
     ></script>
     <script src="../js/template/adminlte.min.js"></script>
-    <script src="../js/http.js"></script>
+    <script src="../js/locales/vi.js"></script>
+  <script src="../js/locales/en.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/http.js"></script>
     <script src="../js/auth.js"></script>
     <script src="../js/ui.js"></script>
     <script src="../js/services/role.service.js"></script>

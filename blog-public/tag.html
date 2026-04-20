@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <script>document.documentElement.dataset.theme = localStorage.getItem('blog-theme') || 'light';</script>
@@ -9,80 +10,92 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-<header class="site-header">
-  <nav class="container nav-inner">
-    <a href="index.html" class="nav-logo">My<span>Blog</span></a>
-    <div class="nav-links" id="nav-links">
-      <a href="index.html">Trang chủ</a>
-      <div class="cat-mega-wrap">
-        <button class="cat-mega-btn" id="cat-mega-trigger">
-          Danh mục
-          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16"><path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/></svg>
-        </button>
-        <div class="cat-megamenu" id="cat-megamenu"></div>
+  <header class="site-header">
+    <nav class="container nav-inner">
+      <a href="index.html" class="nav-logo">My<span>Blog</span></a>
+      <div class="nav-links" id="nav-links">
+        <a href="index.html" data-i18n="nav.home">Trang chủ</a>
+        <div class="cat-mega-wrap">
+          <button class="cat-mega-btn" id="cat-mega-trigger" data-i18n="nav.categories">
+            Danh mục
+            <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+              <path
+                d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
+            </svg>
+          </button>
+          <div class="cat-megamenu" id="cat-megamenu"></div>
+        </div>
       </div>
-    </div>
-    <form class="nav-search" onsubmit="handleNavSearch(event)">
-      <input type="search" id="nav-search-input" placeholder="Tìm kiếm bài viết..." autocomplete="off" />
-      <button type="submit" class="nav-search-submit">
-        <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
-          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+      <form class="nav-search" onsubmit="handleNavSearch(event)">
+        <input type="search" id="nav-search-input" placeholder="Tìm kiếm bài viết..."
+          data-i18n-placeholder="nav.search_placeholder" autocomplete="off" />
+        <button type="submit" class="nav-search-submit">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16">
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
+          </svg>
+        </button>
+      </form>
+      <div id="nav-auth" class="nav-auth"></div>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
+        <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
         </svg>
       </button>
-    </form>
-    <div id="nav-auth" class="nav-auth"></div>
-    <button class="nav-toggle" id="nav-toggle" aria-label="Menu">
-      <svg width="22" height="22" fill="currentColor" viewBox="0 0 16 16">
-        <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/>
-      </svg>
-    </button>
-  </nav>
-</header>
+    </nav>
+  </header>
 
-<div class="page-header" id="page-header">
-  <div class="container">
-    <p style="font-size:.85rem;opacity:.6;margin-bottom:.35rem">🏷️ Tag</p>
-    <h1 id="page-title">Đang tải...</h1>
-    <p id="page-desc"></p>
-    <img id="page-hero-img" src="" alt="" style="display:none;max-height:220px;object-fit:cover;border-radius:10px;margin-top:1rem;width:100%" />
-  </div>
-</div>
-
-<main class="container layout">
-  <div>
-    <div id="posts-grid" class="post-grid"></div>
-    <div id="pagination"></div>
-  </div>
-  <aside class="sidebar">
-    <div class="sidebar-widget">
-      <div class="sidebar-widget-title">Danh mục</div>
-      <div class="sidebar-widget-body" id="sidebar-categories"></div>
-    </div>
-    <div class="sidebar-widget">
-      <div class="sidebar-widget-title">Tất cả tags</div>
-      <div class="sidebar-widget-body" id="sidebar-tags"></div>
-    </div>
-  </aside>
-</main>
-
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-bottom">
-      <span>© 2024 MyBlog.</span>
-      <a href="blog.html" style="color:#94a3b8">← Tất cả bài viết</a>
+  <div class="page-header" id="page-header">
+    <div class="container">
+      <p style="font-size:.85rem;opacity:.6;margin-bottom:.35rem" data-i18n="tag.indicator">🏷️ Tag</p>
+      <h1 id="page-title" data-i18n="tag.loading">Đang tải...</h1>
+      <p id="page-desc"></p>
+      <img id="page-hero-img" src="" alt=""
+        style="display:none;max-height:220px;object-fit:cover;border-radius:10px;margin-top:1rem;width:100%" />
     </div>
   </div>
-</footer>
 
-<script src="js/http.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/post.service.js"></script>
-<script src="js/category.service.js"></script>
-<script src="js/tag.service.js"></script>
-<script src="js/notification.service.js"></script>
-<script src="js/tag.js"></script>
+  <main class="container layout">
+    <div>
+      <div id="posts-grid" class="post-grid"></div>
+      <div id="pagination"></div>
+    </div>
+    <aside class="sidebar">
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-title" data-i18n="search.sidebar_categories">Danh mục</div>
+        <div class="sidebar-widget-body" id="sidebar-categories"></div>
+      </div>
+      <div class="sidebar-widget">
+        <div class="sidebar-widget-title" data-i18n="tag.all_tags">Tất cả tags</div>
+        <div class="sidebar-widget-body" id="sidebar-tags"></div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <span data-i18n="footer.copyright">© 2024 MyBlog.</span>
+        <a href="blog.html" style="color:#94a3b8" data-i18n="search.back_to_posts">← Tất cả bài viết</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/locales/vi.js"></script>
+  <script src="js/locales/en.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/http.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/post.service.js"></script>
+  <script src="js/category.service.js"></script>
+  <script src="js/tag.service.js"></script>
+  <script src="js/notification.service.js"></script>
+  <script src="js/tag.js"></script>
 </body>
+
 </html>

@@ -21,16 +21,16 @@ function renderPage() {
   const start = currentPage * PAGE_SIZE;
   const page = allPosts.slice(start, start + PAGE_SIZE);
 
-  if (!page.length) { UI.emptyState(grid, 'Chưa có bài viết nào trong danh mục này'); document.getElementById('pagination').innerHTML = ''; return; }
+  if (!page.length) { UI.emptyState(grid, I18n.t('category.no_posts')); document.getElementById('pagination').innerHTML = ''; return; }
   grid.innerHTML = page.map(p => UI.postCard(p)).join('');
 
   const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
   const paginEl = document.getElementById('pagination');
   if (totalPages <= 1) { paginEl.innerHTML = ''; return; }
   let btns = `<div class="pagination">`;
-  btns += `<button onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>&#8592;</button>`;
-  for (let i = 0; i < totalPages; i++) btns += `<button class="${i===currentPage?'active':''}" onclick="goPage(${i})">${i+1}</button>`;
-  btns += `<button onclick="goPage(${currentPage+1})" ${currentPage===totalPages-1?'disabled':''}>&#8594;</button></div>`;
+  btns += `<button onclick="goPage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>&#8592;</button>`;
+  for (let i = 0; i < totalPages; i++) btns += `<button class="${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i + 1}</button>`;
+  btns += `<button onclick="goPage(${currentPage + 1})" ${currentPage === totalPages - 1 ? 'disabled' : ''}>&#8594;</button></div>`;
   paginEl.innerHTML = btns;
 }
 
@@ -43,10 +43,10 @@ async function init() {
 
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
-  if (!slug) { document.getElementById('page-title').textContent = 'Danh mục không hợp lệ'; return; }
+  if (!slug) { document.getElementById('page-title').textContent = I18n.t('category.invalid'); return; }
 
   const grid = document.getElementById('posts-grid');
-  UI.loading(grid, 'Đang tải...');
+  UI.loading(grid, I18n.t('category.loading'));
 
   try {
     const [cat, posts] = await Promise.all([
@@ -64,7 +64,7 @@ async function init() {
     allPosts = Array.isArray(posts) ? posts : (posts?.content || []);
     renderPage();
   } catch (err) {
-    UI.emptyState(grid, 'Không thể tải bài viết', err.message);
+    UI.emptyState(grid, I18n.t('category.cannot_load'), err.message);
   }
 }
 

@@ -23,13 +23,13 @@ function renderStatusCard(user) {
   if (status === 1) {
     // Active
     const expText = user.membershipExpiredAt
-      ? `Có hiệu lực đến <strong>${new Date(user.membershipExpiredAt).toLocaleDateString('vi-VN', { year:'numeric', month:'long', day:'numeric' })}</strong>`
-      : 'Không có ngày hết hạn';
+      ? I18n.t('membership.valid_until', { date: `<strong>${new Date(user.membershipExpiredAt).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' })}</strong>` })
+      : I18n.t('membership.no_expiry');
     card.innerHTML = `
       <div class="membership-status membership-status--active">
         <div class="ms-icon">✅</div>
         <div class="ms-body">
-          <div class="ms-title">Bạn đang là thành viên!</div>
+          <div class="ms-title">${I18n.t('membership.active_title')}</div>
           <div class="ms-desc">${expText}</div>
         </div>
       </div>`;
@@ -39,8 +39,8 @@ function renderStatusCard(user) {
       <div class="membership-status membership-status--pending">
         <div class="ms-icon">⏳</div>
         <div class="ms-body">
-          <div class="ms-title">Yêu cầu đang chờ duyệt</div>
-          <div class="ms-desc">Admin sẽ xét duyệt yêu cầu của bạn trong thời gian sớm nhất.</div>
+          <div class="ms-title">${I18n.t('membership.pending_title')}</div>
+          <div class="ms-desc">${I18n.t('membership.pending_desc')}</div>
         </div>
       </div>`;
   } else if (!user) {
@@ -49,9 +49,9 @@ function renderStatusCard(user) {
       <div class="membership-status membership-status--guest">
         <div class="ms-icon">🔒</div>
         <div class="ms-body">
-          <div class="ms-title">Bạn chưa đăng nhập</div>
-          <div class="ms-desc">Đăng nhập để xem trạng thái và gửi yêu cầu membership.</div>
-          <a href="login.html" class="btn btn-primary" style="margin-top:1rem;display:inline-block">Đăng nhập</a>
+          <div class="ms-title">${I18n.t('membership.guest_title')}</div>
+          <div class="ms-desc">${I18n.t('membership.guest_desc')}</div>
+          <a href="login.html" class="btn btn-primary" style="margin-top:1rem;display:inline-block">${I18n.t('nav.login')}</a>
         </div>
       </div>`;
   } else {
@@ -60,10 +60,10 @@ function renderStatusCard(user) {
       <div class="membership-status membership-status--none">
         <div class="ms-icon">🎫</div>
         <div class="ms-body">
-          <div class="ms-title">Bạn chưa có membership</div>
-          <div class="ms-desc">Gửi yêu cầu để admin xét duyệt. Hoàn toàn miễn phí — chỉ cần được phê duyệt.</div>
+          <div class="ms-title">${I18n.t('membership.none_title')}</div>
+          <div class="ms-desc">${I18n.t('membership.none_desc')}</div>
           <button class="btn btn-primary" id="btn-request-membership" style="margin-top:1rem" onclick="submitRequest()">
-            🚀 Gửi yêu cầu Membership
+            ${I18n.t('membership.btn_request')}
           </button>
         </div>
       </div>`;
@@ -73,17 +73,17 @@ function renderStatusCard(user) {
 /* ── Gửi yêu cầu membership ──────────────────────────────── */
 async function submitRequest() {
   const btn = document.getElementById('btn-request-membership');
-  if (btn) { btn.disabled = true; btn.textContent = 'Đang gửi...'; }
+  if (btn) { btn.disabled = true; btn.textContent = I18n.t('membership.sending'); }
   try {
     await Http.post('/api/membership/request', {});
-    UI.toast('Đã gửi yêu cầu membership! Admin sẽ xét duyệt sớm.', 'success');
+    UI.toast(I18n.t('membership.request_success'), 'success');
     // Cập nhật lại card
     const stored = Auth.getUser() || {};
     localStorage.setItem('user', JSON.stringify({ ...stored, membershipStatus: 2 }));
     renderStatusCard({ ...stored, membershipStatus: 2 });
   } catch (err) {
-    UI.toast(err.message || 'Không thể gửi yêu cầu.', 'error');
-    if (btn) { btn.disabled = false; btn.textContent = '🚀 Gửi yêu cầu Membership'; }
+    UI.toast(err.message || I18n.t('membership.request_failed'), 'error');
+    if (btn) { btn.disabled = false; btn.textContent = I18n.t('membership.btn_request'); }
   }
 }
 

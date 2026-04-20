@@ -60,17 +60,15 @@ function getFilteredUsers() {
 
 function membershipBadge(user) {
   if (user.membershipStatus === 1) {
-    const exp = user.membershipExpiredAt
-      ? ` <small class="text-muted">(đến ${UI.formatDateShort(user.membershipExpiredAt)})</small>`
-      : '';
-    return `<span class="badge text-bg-success"><i class="bi bi-patch-check-fill me-1"></i>Active</span>${exp}`;
+    const untilStr = user.membershipExpiredAt ? ` <small class="text-muted">${I18n.t('users_dyn.membership_until').replace('{date}', UI.formatDateShort(user.membershipExpiredAt))}</small>` : '';
+    return `<span class="badge text-bg-success"><i class="bi bi-patch-check-fill me-1"></i>${I18n.t('users_dyn.membership_active')}</span>${untilStr}`;
   }
 
   if (user.membershipStatus === 2) {
-    return '<span class="badge text-bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>Chờ duyệt</span>';
+    return `<span class="badge text-bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i>${I18n.t('users_dyn.membership_pending')}</span>`;
   }
 
-  return '<span class="badge text-bg-secondary">None</span>';
+  return `<span class="badge text-bg-secondary">${I18n.t('users_dyn.membership_none')}</span>`;
 }
 
 function renderPagination(totalPages) {
@@ -133,11 +131,11 @@ function renderUsersPage() {
 
   if (state.currentPage >= totalPages) state.currentPage = 0;
 
-  if (countEl) countEl.textContent = `${filteredUsers.length} total`;
+  if (countEl) countEl.textContent = `${filteredUsers.length} ${I18n.t('users_dyn.total')}`;
   if (!tbody) return;
 
   if (!filteredUsers.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">No users found.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted py-4">${I18n.t('users_dyn.no_users')}</td></tr>`;
     renderPagination(totalPages);
     return;
   }
@@ -157,13 +155,13 @@ function renderUsersPage() {
 
     let memberBtn = '';
     if (user.membershipStatus === 1) {
-      memberBtn = `<button class="btn btn-sm btn-outline-secondary" title="Thu hồi Membership" onclick="revokeMembership(${user.id})"><i class="bi bi-patch-minus"></i></button>`;
+      memberBtn = `<button class="btn btn-sm btn-outline-secondary" title="${I18n.t('users_dyn.revoke_title')}" onclick="revokeMembership(${user.id})"><i class="bi bi-patch-minus"></i></button>`;
     } else if (user.membershipStatus === 2) {
       memberBtn = `
-        <button class="btn btn-sm btn-success" title="Duyệt Membership" onclick="openGrantMembership(${user.id}, '${escapeHtml(displayName)}')"><i class="bi bi-check-lg"></i></button>
-        <button class="btn btn-sm btn-outline-danger" title="Từ chối" onclick="revokeMembership(${user.id})"><i class="bi bi-x-lg"></i></button>`;
+        <button class="btn btn-sm btn-success" title="${I18n.t('users_dyn.approve_title')}" onclick="openGrantMembership(${user.id}, '${escapeHtml(displayName)}')"><i class="bi bi-check-lg"></i></button>
+        <button class="btn btn-sm btn-outline-danger" title="${I18n.t('users_dyn.reject_title')}" onclick="revokeMembership(${user.id})"><i class="bi bi-x-lg"></i></button>`;
     } else {
-      memberBtn = `<button class="btn btn-sm btn-outline-warning" title="Cấp Membership" onclick="openGrantMembership(${user.id}, '${escapeHtml(displayName)}')"><i class="bi bi-patch-check"></i></button>`;
+      memberBtn = `<button class="btn btn-sm btn-outline-warning" title="${I18n.t('users_dyn.grant_title')}" onclick="openGrantMembership(${user.id}, '${escapeHtml(displayName)}')"><i class="bi bi-patch-check"></i></button>`;
     }
 
     return `
@@ -173,14 +171,14 @@ function renderUsersPage() {
         <td>${escapeHtml(user.email || '—')}</td>
         <td>${roles}</td>
         <td>${user.postCount ?? 0}</td>
-        <td><span class="badge ${user.enabled !== false ? 'text-bg-success' : 'text-bg-warning text-dark'}">${user.enabled !== false ? 'Active' : 'Inactive'}</span></td>
+        <td><span class="badge ${user.enabled !== false ? 'text-bg-success' : 'text-bg-warning text-dark'}">${user.enabled !== false ? I18n.t('users_dyn.status_active') : I18n.t('users_dyn.status_inactive')}</span></td>
         <td>${membershipBadge(user)}</td>
         <td>${UI.formatDate(user.createdAt)}</td>
         <td>
-          <button class="btn btn-sm btn-warning" title="Edit" onclick="editUser(${user.id})"><i class="bi bi-pencil"></i></button>
-          <button class="btn btn-sm btn-info text-white" title="Reset Password" onclick="resetPassword(${user.id})"><i class="bi bi-key"></i></button>
+          <button class="btn btn-sm btn-warning" title="${I18n.t('common.edit')}" onclick="editUser(${user.id})"><i class="bi bi-pencil"></i></button>
+          <button class="btn btn-sm btn-info text-white" title="${I18n.t('users_dyn.reset_title')}" onclick="resetPassword(${user.id})"><i class="bi bi-key"></i></button>
           ${memberBtn}
-          <button class="btn btn-sm btn-danger" title="Delete" onclick="deleteUser(${user.id})"><i class="bi bi-trash"></i></button>
+          <button class="btn btn-sm btn-danger" title="${I18n.t('common.delete')}" onclick="deleteUser(${user.id})"><i class="bi bi-trash"></i></button>
         </td>
       </tr>`;
   }).join('');
@@ -237,7 +235,7 @@ async function loadUsers() {
     updatePendingCount();
     applyFilters(false);
   } catch (err) {
-    UI.toast('Failed to load users: ' + err.message, 'danger');
+    UI.toast(I18n.t('users_dyn.load_failed') + err.message, 'danger');
   }
 }
 
@@ -249,9 +247,9 @@ function editUser(id) {
   if (!modalEl) return;
 
   modalEl.dataset.editId = id;
-  document.getElementById('addUserModalLabel').innerHTML = '<i class="bi bi-pencil me-2"></i>Edit User';
+  document.getElementById('addUserModalLabel').innerHTML = I18n.t('users_dyn.edit_title');
   const submitBtn = document.querySelector('button[form="addUserForm"]');
-  if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update User';
+  if (submitBtn) submitBtn.innerHTML = I18n.t('users_dyn.btn_update');
   document.getElementById('newUserUsername').value = user.username || '';
   document.getElementById('newUserFullName').value = user.fullName || user.name || '';
   document.getElementById('newUserEmail').value = user.email || '';
@@ -259,7 +257,7 @@ function editUser(id) {
   document.getElementById('newUserConfirmPassword').value = '';
   document.getElementById('newUserAvatarUrl').value = user.imageUrl || '';
   document.getElementById('previewAvatar').src = user.imageUrl || '../assets/images/user2-160x160.jpg';
-  document.getElementById('newUserPassword').placeholder = '(leave empty to keep current)';
+  document.getElementById('newUserPassword').placeholder = I18n.t('users_dyn.pw_keep');
   document.getElementById('newUserPassword').required = false;
 
   const roleSel = document.getElementById('newUserRole');
@@ -275,11 +273,11 @@ function editUser(id) {
 }
 
 async function deleteUser(id) {
-  if (!await UI.confirm('Delete this user?')) return;
+  if (!await UI.confirm(I18n.t('users_dyn.delete_confirm'))) return;
 
   try {
     await UserService.delete(id);
-    UI.toast('User deleted.');
+    UI.toast(I18n.t('users_dyn.deleted'));
 
     allUsers = allUsers.filter((user) => user.id !== id);
     updatePendingCount();
@@ -316,33 +314,33 @@ async function grantMembership() {
 
   try {
     await Http.put(`/api/users/${membershipTargetId}/membership`, payload);
-    UI.toast('Đã cấp membership thành công.', 'success');
+    UI.toast(I18n.t('users_dyn.grant_success'), 'success');
     bootstrap.Modal.getInstance(document.getElementById('membershipModal'))?.hide();
     await loadUsers();
   } catch (err) {
-    UI.toast('Lỗi: ' + err.message, 'danger');
+    UI.toast(I18n.t('users_dyn.error_prefix') + err.message, 'danger');
   }
 }
 
 async function revokeMembership(userId) {
-  if (!await UI.confirm('Thu hồi membership của user này?')) return;
+  if (!await UI.confirm(I18n.t('users_dyn.revoke_confirm'))) return;
 
   try {
     await Http.delete(`/api/users/${userId}/membership`);
-    UI.toast('Đã thu hồi membership.', 'success');
+    UI.toast(I18n.t('users_dyn.revoked'), 'success');
     await loadUsers();
   } catch (err) {
-    UI.toast('Lỗi: ' + err.message, 'danger');
+    UI.toast(I18n.t('users_dyn.error_prefix') + err.message, 'danger');
   }
 }
 
 async function resetPassword(id) {
-  if (!await UI.confirm('Bạn có chắc chắn muốn tạo mật khẩu mới và gửi email cho user này?')) return;
+  if (!await UI.confirm(I18n.t('users_dyn.reset_confirm'))) return;
   try {
     await Http.post(`/api/users/${id}/reset-password`);
-    UI.toast('Đã đặt lại mật khẩu và gửi email thành công.', 'success');
+    UI.toast(I18n.t('users_dyn.reset_success'), 'success');
   } catch (err) {
-    UI.toast('Lỗi: ' + err.message, 'danger');
+    UI.toast(I18n.t('users_dyn.error_prefix') + err.message, 'danger');
   }
 }
 
@@ -359,9 +357,9 @@ function resetAddUserModal() {
   if (!modalEl) return;
 
   delete modalEl.dataset.editId;
-  document.getElementById('addUserModalLabel').innerHTML = '<i class="bi bi-person-plus me-2"></i>Add New User';
+  document.getElementById('addUserModalLabel').innerHTML = I18n.t('users_dyn.btn_add_modal_title');
   const submitBtn = document.querySelector('button[form="addUserForm"]');
-  if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Create User';
+  if (submitBtn) submitBtn.innerHTML = I18n.t('users_dyn.btn_create');
   document.getElementById('newUserUsername').value = '';
   document.getElementById('newUserFullName').value = '';
   document.getElementById('newUserEmail').value = '';
@@ -371,7 +369,7 @@ function resetAddUserModal() {
   document.getElementById('newUserAvatarUrl').value = '';
   document.getElementById('previewAvatar').src = '../assets/images/user2-160x160.jpg';
   document.getElementById('newUserPassword').required = true;
-  document.getElementById('newUserPassword').placeholder = 'Password';
+  document.getElementById('newUserPassword').placeholder = I18n.t('users.label_password');
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
@@ -439,10 +437,9 @@ document.addEventListener('DOMContentLoaded', async function () {
     const confirmPassword = document.getElementById('newUserConfirmPassword').value;
 
     if (password && password !== confirmPassword) {
-      UI.toast('Mật khẩu nhập lại không khớp!', 'warning');
+      UI.toast(I18n.t('users_dyn.password_mismatch'), 'warning');
       return;
     }
-
 
     const imageUrl = document.getElementById('newUserAvatarUrl').value;
     if (imageUrl) payload.imageUrl = imageUrl;
@@ -455,16 +452,16 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (selectedRoleId) {
           await Http.post(`/api/users/${Number(editId)}/roles`, [selectedRoleId]);
         }
-        UI.toast('User updated.');
+        UI.toast(I18n.t('users_dyn.updated'));
         delete modalEl.dataset.editId;
-        // Nếu admin vừa sửa chính mình → cập nhật lại header avatar/tên
+        // Nếu admin vừa sửa chính mình thì cập nhật lại header avatar/tên
         await UI.renderCurrentUser();
       } else {
         const createdUser = await Http.post('/auth/register', { ...payload, password });
         if (selectedRoleId && createdUser?.id) {
           await Http.post(`/api/users/${createdUser.id}/roles`, [selectedRoleId]);
         }
-        UI.toast('User created.');
+        UI.toast(I18n.t('users_dyn.created'));
       }
 
       bootstrap.Modal.getInstance(modalEl)?.hide();
@@ -474,7 +471,6 @@ document.addEventListener('DOMContentLoaded', async function () {
       UI.toast(err.message, 'danger');
     }
   });
-
 
   try {
     const roles = await Http.get('/api/roles') || [];
@@ -513,9 +509,9 @@ document.addEventListener('DOMContentLoaded', async function () {
 
       document.getElementById('newUserAvatarUrl').value = data.path;
       document.getElementById('previewAvatar').src = data.url;
-      UI.toast('Tải ảnh thành công.', 'success');
+      UI.toast(I18n.t('users_dyn.upload_success'), 'success');
     } catch (err) {
-      UI.toast('Lỗi upload ảnh: ' + err.message, 'danger');
+      UI.toast(I18n.t('users_dyn.upload_error') + err.message, 'danger');
     }
   });
 

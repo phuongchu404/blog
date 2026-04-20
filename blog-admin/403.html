@@ -22,24 +22,29 @@
         <div class="card card-outline card-danger">
             <div class="card-header text-center">
                 <h1 class="display-1 text-danger"><i class="bi bi-exclamation-triangle"></i> 403</h1>
-                <h4>Truy cập bị từ chối</h4>
+                <h4>Truy cap bi tu choi</h4>
             </div>
             <div class="card-body">
-                <p class="text-center">Bạn không có quyền truy cập vào trang này.<br>Vui lòng liên hệ quản trị viên hoặc
-                    quay lại trang chủ.</p>
+                <p class="text-center">Ban khong co quyen truy cap vao trang nay.<br>Vui long lien he quan tri vien hoac
+                    quay lai trang chu.</p>
                 <div class="d-grid gap-2 mt-4">
-                    <a href="../blog-public/index.html" class="btn btn-primary"><i class="bi bi-globe me-2"></i>Về trang
+                    <a href="#" class="btn btn-primary" id="backToBlogLink"><i class="bi bi-globe me-2"></i>Ve trang
                         Blog</a>
                     <button type="button" class="btn btn-outline-secondary" onclick="Auth.logout()"><i
-                            class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
+                            class="bi bi-box-arrow-right me-2"></i>Dang xuat</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts cần thiết để Auth.logout hoạt động -->
-    <script src="js/http.js"></script>
+    <script src="js/locales/vi.js"></script>
+  <script src="js/locales/en.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/http.js"></script>
     <script src="js/auth.js"></script>
+    <script>
+        document.getElementById('backToBlogLink')?.setAttribute('href', AppConfig.buildPublicUrl('index.html'));
+    </script>
 </body>
 
 </html>

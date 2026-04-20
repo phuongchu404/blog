@@ -16,150 +16,9 @@
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
   <div class="app-wrapper">
-    <!-- ======= Header ======= -->
-    <nav class="app-header navbar navbar-expand bg-body">
-      <div class="container-fluid">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
-          </li>
-          <li class="nav-item d-none d-md-block">
-            <a href="../index.html" class="nav-link">Dashboard</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-              <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-              <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-            </a>
-          </li>
-          <!-- Notification Bell -->
-          <li class="nav-item dropdown">
-            <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
-              <i class="bi bi-bell-fill"></i>
-              <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display: none">0</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width: 300px; max-width: 340px">
-              <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                <span class="fw-semibold small">Thông báo</span>
-                <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">
-                  Đọc tất cả
-                </button>
-              </div>
-              <div id="admin-notif-list" style="max-height: 320px; overflow-y: auto">
-                <div class="dropdown-item text-center text-muted py-3">
-                  Đang tải...
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item dropdown user-menu">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-              <img src="../assets/images/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
-              <span class="d-none d-md-inline">Admin</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-              <li class="user-header text-bg-primary">
-                <img src="../assets/images/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
-                <p>Admin <small>Blog Administrator</small></p>
-              </li>
-              <li class="user-footer">
-                <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
-                <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <div data-admin-header></div>
 
-    <!-- ======= Sidebar ======= -->
-    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-      <div class="sidebar-brand">
-        <a href="../index.html" class="brand-link">
-          <img src="../assets/images/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
-          <span class="brand-text fw-light">Blog Admin</span>
-        </a>
-      </div>
-      <div class="sidebar-wrapper">
-        <nav class="mt-2">
-          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
-            <li class="nav-header">MAIN MENU</li>
-            <li class="nav-item">
-              <a href="../index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i>
-                <p>Dashboard</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon bi bi-file-earmark-text"></i>
-                <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="../posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i>
-                    <p>All Posts</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="../posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i>
-                    <p>Create Post</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a href="../categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i>
-                <p>Categories</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="index.html" class="nav-link active"><i class="nav-icon bi bi-hash"></i>
-                <p>Tags</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../comments/index.html" class="nav-link"><i class="nav-icon bi bi-chat-dots"></i>
-                <p>Comments</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i>
-                <p>Users</p>
-              </a>
-            </li>
-            <li class="nav-header">ACCESS CONTROL</li>
-            <li class="nav-item">
-              <a href="../roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i>
-                <p>Roles</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../permissions/index.html" class="nav-link"><i class="nav-icon bi bi-key"></i>
-                <p>Permissions</p>
-              </a>
-            </li>
-            <li class="nav-header">SETTINGS</li>
-            <li class="nav-item">
-              <a href="../audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i>
-                <p>Audit Logs</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i>
-                <p>Settings</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i>
-                <p>Logout</p>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </aside>
+    <div data-admin-sidebar></div>
 
     <!-- ======= Main Content ======= -->
     <main class="app-main">
@@ -167,14 +26,14 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-sm-6">
-              <h3 class="mb-0">Tags</h3>
+              <h3 class="mb-0" data-i18n="tags.title">Tags</h3>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-end">
                 <li class="breadcrumb-item">
-                  <a href="../index.html">Home</a>
+                  <a href="../index.html" data-i18n="common.home">Home</a>
                 </li>
-                <li class="breadcrumb-item active">Tags</li>
+                <li class="breadcrumb-item active" data-i18n="tags.title">Tags</li>
               </ol>
             </div>
           </div>
@@ -195,21 +54,21 @@
                 <div class="card-body">
                   <form action="#" method="post" id="addTagForm">
                     <div class="mb-3">
-                      <label for="tagName" class="form-label">Name <span class="text-danger">*</span></label>
-                      <input type="text" class="form-control" id="tagName" placeholder="Tag name" required />
+                      <label for="tagName" class="form-label" data-i18n="tags.label_title">Name <span class="text-danger">*</span></label>
+                      <input type="text" class="form-control" id="tagName" data-i18n-placeholder="tags.placeholder_title" placeholder="Tag name" required />
                     </div>
                     <div class="mb-4">
-                      <label for="tagSlug" class="form-label">Slug</label>
-                      <input type="text" class="form-control" id="tagSlug" placeholder="tag-slug" />
-                      <small class="text-muted">Auto-generated if blank.</small>
+                      <label for="tagSlug" class="form-label" data-i18n="tags.label_slug">Slug</label>
+                      <input type="text" class="form-control" id="tagSlug" data-i18n-placeholder="tags.placeholder_slug" placeholder="tag-slug" />
+                      <small class="text-muted" data-i18n="tags.hint_slug">Auto-generated if blank.</small>
                     </div>
                     <div class="mb-3">
-                      <label for="tagContent" class="form-label">Content</label>
+                      <label for="tagContent" class="form-label" data-i18n="tags.label_content">Content</label>
                       <textarea class="form-control" id="tagContent" rows="3"
                         placeholder="Tag description or content..."></textarea>
                     </div>
                     <div class="mb-3">
-                      <label class="form-label">Image</label>
+                      <label class="form-label" data-i18n="tags.label_image">Image</label>
                       <div id="tagImgDropZone" class="border rounded p-3 text-center bg-body-secondary"
                         style="min-height: 100px; cursor: pointer"
                         onclick="document.getElementById('tagImageFile').click()">
@@ -222,10 +81,10 @@
                     </div>
                     <div class="mb-4">
                       <button type="submit" id="submitBtn" class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-1"></i> Add Tag
+                        <i class="bi bi-plus-circle me-1"></i> <span data-i18n="tags.btn_add">Add Tag</span>
                       </button>
                       <button type="button" id="cancelEditBtn" class="btn btn-secondary d-none">
-                        <i class="bi bi-x-circle me-1"></i> Cancel
+                        <i class="bi bi-x-circle me-1"></i> <span data-i18n="tags.btn_cancel">Cancel</span>
                       </button>
                     </div>
                   </form>
@@ -238,7 +97,7 @@
               <!-- Search -->
               <div class="mb-3">
                 <div class="input-group">
-                  <input type="text" id="tag-search" class="form-control" placeholder="Search tags by name or slug..."
+                  <input type="text" id="tag-search" class="form-control" data-i18n-placeholder="tags.search" placeholder="Search tags by name or slug..."
                     autocomplete="off" />
                   <button id="tag-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
                     <i class="bi bi-arrow-clockwise"></i>
@@ -248,9 +107,7 @@
 
               <div class="card">
                 <div class="card-header">
-                  <h3 class="card-title">
-                    <i class="bi bi-hash me-2"></i>All Tags
-                  </h3>
+                  <h3 class="card-title" data-i18n="tags.card_list"><i class="bi bi-hash me-2"></i>All Tags</h3>
                   <div class="card-tools ms-auto">
                     <span class="badge text-bg-primary"><span id="tag-count">0</span> total</span>
                   </div>
@@ -263,10 +120,10 @@
                           <input type="checkbox" class="form-check-input" id="selectAll" />
                         </th>
                         <th>STT</th>
-                        <th>Name</th>
-                        <th>Slug</th>
-                        <th>Posts</th>
-                        <th>Actions</th>
+                        <th data-i18n="tags.col_title">Name</th>
+                        <th data-i18n="tags.col_slug">Slug</th>
+                        <th data-i18n="tags.col_posts">Posts</th>
+                        <th data-i18n="tags.col_actions">Actions</th>
                       </tr>
                     </thead>
                     <tbody id="tags-tbody">
@@ -282,7 +139,7 @@
                 <div class="card-footer clearfix">
                   <div id="tags-pagination"></div>
                   <button class="btn btn-sm btn-danger float-start" id="deleteSelectedBtn">
-                    <i class="bi bi-trash me-1"></i> Delete Selected
+                    <i class="bi bi-trash me-1"></i> <span data-i18n="tags.btn_delete_selected">Delete Selected</span>
                   </button>
                 </div>
               </div>
@@ -292,11 +149,7 @@
       </div>
     </main>
 
-    <footer class="app-footer">
-      <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-      <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
-      rights reserved.
-    </footer>
+    <div data-admin-footer></div>
   </div>
 
   <!-- Edit Tag Modal -->
@@ -312,15 +165,15 @@
         <div class="modal-body">
           <form id="editTagForm">
             <div class="mb-3">
-              <label for="editTagName" class="form-label">Name <span class="text-danger">*</span></label>
+              <label for="editTagName" class="form-label" data-i18n="tags.label_title">Name <span class="text-danger">*</span></label>
               <input type="text" class="form-control" id="editTagName" required />
             </div>
             <div class="mb-3">
-              <label for="editTagSlug" class="form-label">Slug</label>
+              <label for="editTagSlug" class="form-label" data-i18n="tags.label_slug">Slug</label>
               <input type="text" class="form-control" id="editTagSlug" />
             </div>
             <div class="mb-3">
-              <label for="editTagContent" class="form-label">Content</label>
+              <label for="editTagContent" class="form-label" data-i18n="tags.label_content">Content</label>
               <textarea class="form-control" id="editTagContent" rows="3"
                 placeholder="Tag description or content..."></textarea>
             </div>
@@ -339,11 +192,9 @@
           </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            Cancel
-          </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="tags.btn_cancel">Cancel</button>
           <button type="submit" form="editTagForm" class="btn btn-primary">
-            <i class="bi bi-check-circle me-1"></i> Save Changes
+            <i class="bi bi-check-circle me-1"></i> <span data-i18n="common.save">Save Changes</span>
           </button>
         </div>
       </div>
@@ -354,6 +205,9 @@
   <script src="../js/template/popper.min.js" crossorigin="anonymous"></script>
   <script src="../js/template/bootstrap.min.js" crossorigin="anonymous"></script>
   <script src="../js/template/adminlte.min.js"></script>
+  <script src="../js/locales/vi.js"></script>
+  <script src="../js/locales/en.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="../js/http.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/ui.js"></script>

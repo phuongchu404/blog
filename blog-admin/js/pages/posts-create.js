@@ -54,9 +54,9 @@ async function savePost(status) {
     ? ckEditor.getData()
     : (document.getElementById('postContent')?.value || pendingEditorData || '');
 
-  if (!title) { UI.toast('Title is required.', 'warning'); return; }
+  if (!title) { UI.toast(I18n.t('create_post_dyn.title_required'), 'warning'); return; }
   if (!content || content === '<p>&nbsp;</p>') {
-    UI.toast('Content cannot be empty.', 'warning');
+    UI.toast(I18n.t('create_post_dyn.content_required'), 'warning');
     return;
   }
 
@@ -81,14 +81,14 @@ async function savePost(status) {
   try {
     if (editPostId) {
       await PostService.update(editPostId, payload);
-      UI.toast('Post updated successfully.');
+      UI.toast(I18n.t('create_post_dyn.updated'));
     } else {
       await PostService.create(payload);
-      UI.toast('Post created successfully.');
+      UI.toast(I18n.t('create_post_dyn.created'));
     }
     setTimeout(() => { window.location.href = 'index.html'; }, 800);
   } catch (err) {
-    UI.toast('Failed to save post: ' + err.message, 'danger');
+    UI.toast(I18n.t('create_post_dyn.save_failed') + err.message, 'danger');
   }
 }
 
@@ -167,9 +167,9 @@ async function loadPostForEdit(postId) {
   const btnPublish = document.getElementById('btnPublish');
   const publishDate = document.getElementById('publishDate');
 
-  if (pageTitle) pageTitle.textContent = 'Edit Post';
-  if (breadcrumbAction) breadcrumbAction.textContent = 'Edit';
-  if (btnPublish) btnPublish.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Post';
+  if (pageTitle) pageTitle.textContent = I18n.t('create_post_dyn.edit_title');
+  if (breadcrumbAction) breadcrumbAction.textContent = I18n.t('create_post_dyn.edit_breadcrumb');
+  if (btnPublish) btnPublish.innerHTML = I18n.t('create_post_dyn.btn_update') || '<i class="bi bi-check-circle me-1"></i> Update Post';
   if (publishDate) publishDate.disabled = true;
 
   try {
@@ -225,7 +225,7 @@ async function loadPostForEdit(postId) {
       }
     }
   } catch (err) {
-    UI.toast('Failed to load post: ' + err.message, 'danger');
+    UI.toast(I18n.t('create_post_dyn.load_failed') + err.message, 'danger');
   }
 }
 
@@ -312,7 +312,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         ckEditor.setData(pendingEditorData);
       }
       } catch (_) {
-        UI.toast('CKEditor failed to initialize. Post data will still load.', 'warning');
+        UI.toast(I18n.t('create_post_dyn.editor_failed'), 'warning');
       }
     })();
   }
@@ -397,10 +397,10 @@ document.addEventListener('DOMContentLoaded', async function () {
         if (res && res.url) {
           window.featuredImageUrl  = res.url;   // dùng để hiển thị preview
           window.featuredImagePath = res.path;  // lưu vào DB (path tương đối)
-          UI.toast('Featured image uploaded.');
+          UI.toast(I18n.t('create_post_dyn.upload_success'));
         }
       } catch (err) {
-        UI.toast('Failed to upload featured image: ' + err.message, 'danger');
+        UI.toast(I18n.t('create_post_dyn.upload_failed') + err.message, 'danger');
       }
     });
   }
@@ -412,12 +412,12 @@ document.addEventListener('DOMContentLoaded', async function () {
       const cats = Array.isArray(res) ? res : (res.content ?? []);
       const sel = document.getElementById('postCategory');
       if (sel) {
-        sel.innerHTML = '<option value="">-- Choose Category --</option>' +
+        sel.innerHTML = `<option value="">${I18n.t('create_post_dyn.choose_category')}</option>` +
           cats.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
         applyPendingCategorySelection();
       }
     } catch (_) {
-      UI.toast('Could not load categories.', 'warning');
+      UI.toast(I18n.t('create_post_dyn.cat_load_failed'), 'warning');
     }
   })();
 

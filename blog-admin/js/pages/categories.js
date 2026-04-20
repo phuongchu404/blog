@@ -72,7 +72,7 @@ async function loadCategories() {
 
     renderTable(displayItems);
   } catch (err) {
-    UI.toast('Failed to load categories: ' + err.message, 'danger');
+    UI.toast(I18n.t('categories_dyn.load_failed') + err.message, 'danger');
   }
 }
 
@@ -81,7 +81,7 @@ async function loadAllForDropdown() {
     const data = await CategoryService.getAll();
     state.allCategories = Array.isArray(data) ? data : (data?.content || []);
 
-    elements.parentDropdown.innerHTML = '<option value="">None (Top Level)</option>' +
+    elements.parentDropdown.innerHTML = `<option value="">${I18n.t('categories_dyn.none_parent')}</option>` +
       state.allCategories.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
   } catch (err) {
     console.error('Dropdown load error:', err);
@@ -91,10 +91,10 @@ async function loadAllForDropdown() {
 // --- 5. Rendering Logic ---
 
 function renderTable(items) {
-  if (elements.totalBadge) elements.totalBadge.textContent = `${state.totalElements} total`;
+  if (elements.totalBadge) elements.totalBadge.textContent = `${state.totalElements} ${I18n.t('categories_dyn.total')}`;
 
   if (!items.length) {
-    elements.tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No categories found.</td></tr>';
+    elements.tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">' + I18n.t('categories_dyn.no_categories') + '</td></tr>';
     elements.pagination.innerHTML = '';
     return;
   }
@@ -107,8 +107,8 @@ function renderTable(items) {
             <td class="text-truncate" style="max-width: 250px;">${c.content || '—'}</td>
             <td><span class="badge text-bg-primary">${c.postCount ?? 0}</span></td>
             <td>
-                <button class="btn btn-sm btn-warning" onclick="editCategory(${c.id})" title="Edit"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-danger" onclick="deleteCategory(${c.id})" title="Delete"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-sm btn-warning" onclick="editCategory(${c.id})" title="${I18n.t('common.edit')}"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-danger" onclick="deleteCategory(${c.id})" title="${I18n.t('common.delete')}"><i class="bi bi-trash"></i></button>
                 
             </td>
         </tr>`).join('');
@@ -190,10 +190,10 @@ function setupEventListeners() {
     try {
       if (state.editingId) {
         await CategoryService.update(state.editingId, payload);
-        UI.toast('Category updated successfully!');
+        UI.toast(I18n.t('categories_dyn.updated'));
       } else {
         await CategoryService.create(payload);
-        UI.toast('Category created successfully!');
+        UI.toast(I18n.t('categories_dyn.created'));
         state.currentPage = 0; // Về trang đầu khi tạo mới
       }
       resetForm();
@@ -240,8 +240,8 @@ function setupEventListeners() {
     formData.append('upload', file);
     try {
       const res = await Http.upload('/api/files/upload?folder=blog/categories', formData);
-      if (res && res.path) { elements.inputs.imageUrl.value = res.path; UI.toast('Image uploaded.'); } // lưu path tương đối vào DB
-    } catch (err) { UI.toast('Failed to upload image: ' + err.message, 'danger'); }
+      if (res && res.path) { elements.inputs.imageUrl.value = res.path; UI.toast(I18n.t('categories_dyn.upload_success')); } // lưu path tương đối vào DB
+    } catch (err) { UI.toast(I18n.t('categories_dyn.upload_failed') + err.message, 'danger'); }
   });
 }
 
@@ -259,14 +259,14 @@ async function performSearch(keyword) {
     renderTable(list.slice(0, state.pageSize));
     elements.pagination.innerHTML = ''; // Tắt phân trang khi đang search kết quả tự do
   } catch (err) {
-    UI.toast('Search failed, showing all categories.', 'warning');
+    UI.toast(I18n.t('categories_dyn.search_failed'), 'warning');
     await loadCategories();
   }
 }
 
 window.editCategory = (id) => {
   const cat = state.allCategories.find(c => c.id === id);
-  if (!cat) return UI.toast('Category not found.', 'warning');
+  if (!cat) return UI.toast(I18n.t('categories_dyn.not_found'), 'warning');
 
   state.editingId = id;
   elements.inputs.title.value = cat.title;
@@ -285,17 +285,17 @@ window.editCategory = (id) => {
     elements.imgDropZone?.classList.remove('d-none');
   }
 
-  elements.submitBtn.textContent = 'Update Category';
+  elements.submitBtn.textContent = I18n.t('categories_dyn.btn_update');
   elements.cancelBtn?.classList.remove('d-none');
   elements.inputs.title.scrollIntoView({ behavior: 'smooth' });
   elements.inputs.title.focus();
 };
 
 window.deleteCategory = async (id) => {
-  if (!await UI.confirm('Are you sure you want to delete this category?')) return;
+  if (!await UI.confirm(I18n.t('categories_dyn.delete_confirm'))) return;
   try {
     await CategoryService.delete(id);
-    UI.toast('Deleted successfully.');
+    UI.toast(I18n.t('categories_dyn.deleted'));
 
     // Kiểm tra nếu trang hiện tại hết item thì lùi trang
     const remainingOnPage = elements.tbody.querySelectorAll('tr').length;
@@ -309,12 +309,12 @@ async function deleteSelected() {
   const ids = Array.from(document.querySelectorAll('.row-check:checked'))
     .map(cb => Number(cb.closest('tr').dataset.id));
 
-  if (!ids.length) return UI.toast('Please select at least one item.', 'warning');
-  if (!await UI.confirm(`Delete ${ids.length} selected items?`)) return;
+  if (!ids.length) return UI.toast(I18n.t('categories_dyn.delete_selected_min'), 'warning');
+  if (!await UI.confirm(I18n.t('categories_dyn.delete_selected_confirm').replace('{n}', ids.length))) return;
 
   try {
     await Promise.all(ids.map(id => CategoryService.delete(id)));
-    UI.toast('Selected categories deleted.');
+    UI.toast(I18n.t('categories_dyn.deleted_count').replace('{n}', ids.length));
     if (elements.selectAll) elements.selectAll.checked = false;
     await refreshData();
   } catch (err) { UI.toast(err.message, 'danger'); }
@@ -326,6 +326,6 @@ function resetForm() {
   if (elements.inputs.imageUrl) elements.inputs.imageUrl.value = '';
   if (elements.imgPreview) elements.imgPreview.classList.add('d-none');
   elements.imgDropZone?.classList.remove('d-none');
-  elements.submitBtn.textContent = 'Add Category';
+  elements.submitBtn.textContent = I18n.t('categories_dyn.btn_add');
   elements.cancelBtn?.classList.add('d-none');
 }

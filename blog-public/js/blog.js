@@ -35,10 +35,10 @@ function renderPage() {
   const start = currentPage * PAGE_SIZE;
   const page = sorted.slice(start, start + PAGE_SIZE);
 
-  countEl.textContent = `${total} bài viết`;
+  countEl.textContent = I18n.t('blog_dyn.posts_count', { n: total });
 
   if (!page.length) {
-    UI.emptyState(grid, 'Chưa có bài viết nào');
+    UI.emptyState(grid, I18n.t('blog_dyn.no_posts'));
     document.getElementById('pagination').innerHTML = '';
     return;
   }
@@ -78,14 +78,14 @@ async function init() {
   UI.renderTagWidget('sidebar-tags');
 
   const grid = document.getElementById('posts-grid');
-  UI.loading(grid, 'Đang tải bài viết...');
+  UI.loading(grid, I18n.t('blog_dyn.loading'));
 
   try {
     const res = await PostService.getPublished();
     allPosts = Array.isArray(res) ? res : (res?.content || []);
     renderPage();
   } catch (err) {
-    UI.emptyState(grid, 'Không thể tải bài viết', 'Vui lòng thử lại sau.');
+    UI.emptyState(grid, I18n.t('blog_dyn.cannot_load'), I18n.t('blog_dyn.try_again'));
   }
 }
 

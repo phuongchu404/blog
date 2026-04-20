@@ -5,10 +5,10 @@
 // ── CRUD ───────────────────────────────────────────────────────────────────────
 
 async function deletePost(id) {
-  if (!await UI.confirm('Delete this post?')) return;
+  if (!await UI.confirm(I18n.t('dashboard_dyn.delete_confirm'))) return;
   try {
     await PostService.delete(id);
-    UI.toast('Post deleted.');
+    UI.toast(I18n.t('dashboard_dyn.post_deleted'));
     location.reload();
   } catch (err) {
     UI.toast(err.message, 'danger');
@@ -56,10 +56,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     if (commentList && comments.status === 'fulfilled' && Array.isArray(comments.value)) {
       const latest = comments.value.slice(0, 5);
       if (latest.length === 0) {
-        commentList.innerHTML = '<li class="list-group-item text-center text-muted">Chưa có bình luận nào.</li>';
+        commentList.innerHTML = `<li class="list-group-item text-center text-muted">${I18n.t('dashboard_dyn.no_comments')}</li>`;
       } else {
         commentList.innerHTML = latest.map(c => {
-          const author = c.user?.fullName || c.user?.username || 'Ẩn danh';
+          const author = c.user?.fullName || c.user?.username || I18n.t('dashboard_dyn.anonymous');
           const preview = (c.content || '').substring(0, 80) + ((c.content || '').length > 80 ? '...' : '');
           const timeAgo = UI.formatDate(c.createdAt);
           return `
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const tbody = document.getElementById('recent-posts-body');
     if (tbody) {
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No posts found.</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted">${I18n.t('dashboard_dyn.no_posts')}</td></tr>`;
       } else {
         tbody.innerHTML = list.slice(0, 5).map((p, i) => `
           <tr>

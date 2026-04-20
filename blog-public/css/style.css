@@ -2119,3 +2119,23 @@ h1,h2,h3,h4,h5,h6 {
 .benefit-icon  { font-size: 1.75rem; flex-shrink: 0; }
 .benefit-title { font-weight: 600; margin-bottom: .25rem; color: var(--text-primary); }
 .benefit-desc  { font-size: .875rem; color: var(--text-muted); }
+
+/* ── Language Switcher ───────────────────────────────────────── */
+.lang-toggle {
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .2rem .55rem;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background .15s, color .15s, border-color .15s;
+  line-height: 1.5;
+}
+.lang-toggle:hover {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+}

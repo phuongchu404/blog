@@ -21,6 +21,11 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // Test API connection
   document.getElementById('testApiBtn')?.addEventListener('click', testApiConnection);
+  document.getElementById('saveApiBtn')?.addEventListener('click', saveApiSettings);
+
+  // Fill local config fields
+  setVal('apiBaseUrl', AppConfig.getApiBaseUrl());
+  setVal('publicBaseUrl', AppConfig.getPublicBaseUrl());
 
   // Tải settings từ server
   await loadAllSettings();
@@ -43,6 +48,8 @@ async function loadAllSettings() {
     setVal('siteName',    g.siteName);
     setVal('siteTagline', g.siteTagline);
     setVal('siteUrl',     g.siteUrl);
+    if (g.siteUrl) AppConfig.setPublicBaseUrl(g.siteUrl);
+    setVal('publicBaseUrl', AppConfig.getPublicBaseUrl());
     setVal('adminEmail',  g.adminEmail);
     setSelect('timezone', g.timezone);
     setSelect('language', g.language);
@@ -76,7 +83,7 @@ async function loadAllSettings() {
     updateCount('metaDescription','metaDescCount',  160);
 
   } catch (err) {
-    UI.toast('Không thể tải settings.', 'danger');
+    UI.toast(I18n.t('settings_dyn.load_error'), 'danger');
     console.error(err);
   }
 }
@@ -86,14 +93,18 @@ async function saveGroup(event, group) {
   event.preventDefault();
   const btn = event.submitter;
   const original = btn?.innerHTML;
-  if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Đang lưu...'; }
+  if (btn) { btn.disabled = true; btn.innerHTML = `<span class="spinner-border spinner-border-sm me-1"></span>${I18n.t('settings_dyn.saving')}`; }
 
   try {
     const payload = buildPayload(group);
     await SettingService.updateGroup(group, payload);
-    UI.toast(`Đã lưu ${capitalize(group)} Settings.`, 'success');
+    if (group === 'general' && payload.siteUrl) {
+      AppConfig.setPublicBaseUrl(payload.siteUrl);
+      setVal('publicBaseUrl', AppConfig.getPublicBaseUrl());
+    }
+    UI.toast(I18n.t('settings_dyn.saved').replace('{group}', capitalize(group)), 'success');
   } catch (err) {
-    UI.toast('Lưu thất bại: ' + (err?.message || 'Lỗi không xác định'), 'danger');
+    UI.toast(I18n.t('settings_dyn.save_error') + (err?.message || ''), 'danger');
   } finally {
     if (btn) { btn.disabled = false; btn.innerHTML = original; }
   }
@@ -143,20 +154,33 @@ async function testApiConnection() {
   btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
 
   try {
-    const res = await fetch(`${localStorage.getItem('apiBaseUrl') || 'http://localhost:8055'}/actuator/health`);
+    const apiBaseUrl = normalizeUrlInput(getVal('apiBaseUrl')) || AppConfig.getApiBaseUrl();
+    const res = await fetch(`${apiBaseUrl}/actuator/health`);
     result.classList.remove('d-none');
     if (res.ok) {
-      result.innerHTML = '<span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>Connected</span>';
+      result.innerHTML = `<span class="badge text-bg-success"><i class="bi bi-check-circle me-1"></i>${I18n.t('settings_dyn.connected')}</span>`;
     } else {
-      result.innerHTML = '<span class="badge text-bg-warning"><i class="bi bi-exclamation-triangle me-1"></i>Unreachable</span>';
+      result.innerHTML = `<span class="badge text-bg-warning"><i class="bi bi-exclamation-triangle me-1"></i>${I18n.t('settings_dyn.unreachable')}</span>`;
     }
   } catch {
     result.classList.remove('d-none');
-    result.innerHTML = '<span class="badge text-bg-danger"><i class="bi bi-x-circle me-1"></i>Connection failed</span>';
+    result.innerHTML = `<span class="badge text-bg-danger"><i class="bi bi-x-circle me-1"></i>${I18n.t('settings_dyn.connection_failed')}</span>`;
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '<i class="bi bi-activity me-1"></i>Test';
+    btn.innerHTML = `<i class="bi bi-activity me-1"></i>${I18n.t('settings.btn_test')}`;
   }
+}
+
+function saveApiSettings() {
+  const apiBaseUrl = normalizeUrlInput(getVal('apiBaseUrl'));
+  if (!apiBaseUrl) {
+    UI.toast(I18n.t('settings_dyn.api_url_required'), 'warning');
+    return;
+  }
+
+  AppConfig.setApiBaseUrl(apiBaseUrl);
+  setVal('apiBaseUrl', apiBaseUrl);
+  UI.toast(I18n.t('settings_dyn.api_saved'), 'success');
 }
 
 // ── DOM helpers ───────────────────────────────────────────────────────────
@@ -166,6 +190,9 @@ function setVal(id, val) {
 }
 function getVal(id) {
   return document.getElementById(id)?.value?.trim() ?? '';
+}
+function normalizeUrlInput(value) {
+  return String(value || '').trim().replace(/\/+$/, '');
 }
 function setSelect(id, val) {
   const el = document.getElementById(id);

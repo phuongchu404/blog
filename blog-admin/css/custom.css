@@ -1069,3 +1069,22 @@ h6 {
     flex-direction: column-reverse;
   }
 }
+
+/* ── Language Switcher ───────────────────────────────────────── */
+.lang-switcher-btn {
+  background: none;
+  border: 1.5px solid rgba(255,255,255,.35);
+  border-radius: 4px;
+  padding: .15rem .5rem;
+  font-size: .75rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  color: inherit;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  line-height: 1.6;
+}
+.lang-switcher-btn:hover {
+  background: rgba(255,255,255,.15);
+  border-color: rgba(255,255,255,.6);
+}

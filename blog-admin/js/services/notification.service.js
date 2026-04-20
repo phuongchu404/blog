@@ -94,8 +94,8 @@ const AdminNotif = {
     await NotificationService.markRead(id);
     await this.refreshBadge();
     if (postSlug) {
-      const hash = commentId ? `#comment-${commentId}` : '';
-      window.location.href = `../blog-public/post.html?slug=${postSlug}${hash}`;
+      const hash = commentId ? `comment-${commentId}` : '';
+      window.location.href = AppConfig.buildPublicUrl('post.html', { slug: postSlug }, hash);
     } else {
       await this.loadList();
     }

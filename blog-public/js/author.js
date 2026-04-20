@@ -21,16 +21,16 @@ function renderPage() {
   const start = currentPage * PAGE_SIZE;
   const page = allPosts.slice(start, start + PAGE_SIZE);
 
-  if (!page.length) { UI.emptyState(grid, 'Tác giả chưa có bài viết nào'); document.getElementById('pagination').innerHTML = ''; return; }
+  if (!page.length) { UI.emptyState(grid, I18n.t('author.no_posts')); document.getElementById('pagination').innerHTML = ''; return; }
   grid.innerHTML = page.map(p => UI.postCard(p)).join('');
 
   const totalPages = Math.ceil(allPosts.length / PAGE_SIZE);
   const paginEl = document.getElementById('pagination');
   if (totalPages <= 1) { paginEl.innerHTML = ''; return; }
   let btns = `<div class="pagination">`;
-  btns += `<button onclick="goPage(${currentPage-1})" ${currentPage===0?'disabled':''}>&#8592;</button>`;
-  for (let i = 0; i < totalPages; i++) btns += `<button class="${i===currentPage?'active':''}" onclick="goPage(${i})">${i+1}</button>`;
-  btns += `<button onclick="goPage(${currentPage+1})" ${currentPage===totalPages-1?'disabled':''}>&#8594;</button></div>`;
+  btns += `<button onclick="goPage(${currentPage - 1})" ${currentPage === 0 ? 'disabled' : ''}>&#8592;</button>`;
+  for (let i = 0; i < totalPages; i++) btns += `<button class="${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i + 1}</button>`;
+  btns += `<button onclick="goPage(${currentPage + 1})" ${currentPage === totalPages - 1 ? 'disabled' : ''}>&#8594;</button></div>`;
   paginEl.innerHTML = btns;
 }
 
@@ -43,10 +43,10 @@ async function init() {
 
   const params = new URLSearchParams(window.location.search);
   const authorId = params.get('id');
-  if (!authorId) { document.getElementById('author-header').innerHTML = '<h1 style="color:white">Tác giả không hợp lệ</h1>'; return; }
+  if (!authorId) { document.getElementById('author-header').innerHTML = `<h1 style="color:white">${I18n.t('author.invalid')}</h1>`; return; }
 
   const grid = document.getElementById('posts-grid');
-  UI.loading(grid, 'Đang tải...');
+  UI.loading(grid, I18n.t('author.loading'));
 
   try {
     const posts = await PostService.getByAuthor(authorId);
@@ -74,14 +74,14 @@ async function init() {
         <div>
           <h1 style="color:white;margin-bottom:.25rem">${authorName}</h1>
           ${authorIntro ? `<p style="opacity:.8;font-size:.9rem;margin-bottom:.25rem">${authorIntro}</p>` : ''}
-          <p style="opacity:.7;font-size:.95rem">${allPosts.length} bài viết</p>
+          <p style="opacity:.7;font-size:.95rem">${I18n.t('author.post_count', { n: allPosts.length })}</p>
         </div>
       </div>`;
     document.title = `${authorName} - Blog`;
 
     renderPage();
   } catch (err) {
-    UI.emptyState(grid, 'Không thể tải bài viết', err.message);
+    UI.emptyState(grid, I18n.t('author.cannot_load'), err.message);
   }
 }
 

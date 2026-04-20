@@ -81,11 +81,11 @@ function renderPagination() {
 function renderRoles(items) {
   const tbody      = document.getElementById('roles-tbody');
   const countBadge = document.getElementById('roles-count-badge');
-  if (countBadge) countBadge.textContent = `${totalElements} total`;
+  if (countBadge) countBadge.textContent = `${totalElements} ${I18n.t('roles_dyn.total')}`;
 
   if (!tbody) return;
   if (!items.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No roles found.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">${I18n.t('roles_dyn.no_roles')}</td></tr>`;
     renderPagination();
     return;
   }
@@ -125,7 +125,7 @@ async function loadRoles() {
 
     renderRoles(filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE));
   } catch (err) {
-    UI.toast('Failed to load roles: ' + err.message, 'danger');
+    UI.toast(I18n.t('roles_dyn.load_failed') + err.message, 'danger');
   }
 }
 
@@ -244,10 +244,10 @@ function syncPermissionCheckboxes(permissionId, checked) {
 }
 
 async function deleteRole(id) {
-  if (!await UI.confirm('Delete this role?')) return;
+  if (!await UI.confirm(I18n.t('roles_dyn.delete_confirm'))) return;
   try {
     await RoleService.delete(id);
-    UI.toast('Role deleted.');
+    UI.toast(I18n.t('roles_dyn.deleted'));
     await loadRoles();
   } catch (err) {
     UI.toast(err.message, 'danger');
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           name:        document.getElementById('roleName').value.trim().toUpperCase(),
           description: document.getElementById('roleDescription').value.trim(),
         });
-        UI.toast('Role created.');
+        UI.toast(I18n.t('roles_dyn.created'));
         bootstrap.Modal.getInstance(document.getElementById('addRoleModal'))?.hide();
         this.reset();
         currentPage = 0;
@@ -292,7 +292,7 @@ document.addEventListener('DOMContentLoaded', async function () {
           name:        document.getElementById('editRoleName').value.trim().toUpperCase(),
           description: document.getElementById('editRoleDescription').value.trim(),
         });
-        UI.toast('Role updated.');
+        UI.toast(I18n.t('roles_dyn.updated'));
         bootstrap.Modal.getInstance(document.getElementById('editRoleModal'))?.hide();
         await loadRoles();
       } catch (err) { UI.toast(err.message, 'danger'); }
@@ -345,7 +345,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     const selected = [...new Set([...document.querySelectorAll('.perm-check:checked')].map(cb => Number(cb.value)))];
     try {
       await RoleService.assignPermissions(managingRoleId, selected);
-      UI.toast('Permissions saved successfully.');
+      UI.toast(I18n.t('roles_dyn.permissions_saved'));
       bootstrap.Modal.getInstance(document.getElementById('managePermissionsModal'))?.hide();
       await loadRoles();
     } catch (err) { UI.toast(err.message, 'danger'); }

@@ -1,45 +1,76 @@
 <!doctype html>
 <html lang="en">
-
-<head>
+  <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Blog Admin | 403 Forbidden</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes"
+    />
     <meta name="color-scheme" content="light dark" />
-    <link rel="stylesheet" href="assets/css/source-sans-3.css" crossorigin="anonymous" media="print"
-        onload="this.media='all'" />
-    <link rel="stylesheet" href="assets/css/overlayscrollbars.min.css" crossorigin="anonymous" />
-    <link rel="stylesheet" href="assets/css/bootstrap-icons.min.css" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="assets/css/source-sans-3.css"
+      crossorigin="anonymous"
+      media="print"
+      onload="this.media = 'all'"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/css/overlayscrollbars.min.css"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="assets/css/bootstrap-icons.min.css"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="assets/css/adminlte.min.css" />
     <link rel="stylesheet" href="css/custom.css" />
-</head>
+  </head>
 
-<body class="login-page bg-body-secondary">
-    <div class="login-box" style="width: 450px;">
-        <div class="login-logo">
-            <a href="index.html"><b>Blog</b> Admin</a>
+  <body class="login-page bg-body-secondary">
+    <div class="login-box" style="width: 450px">
+      <div class="login-logo">
+        <a href="index.html"><b>Blog</b> Admin</a>
+      </div>
+      <div class="card card-outline card-danger">
+        <div class="card-header text-center">
+          <h1 class="display-1 text-danger">
+            <i class="bi bi-exclamation-triangle"></i> 403
+          </h1>
+          <h4>Truy cập bị từ chối</h4>
         </div>
-        <div class="card card-outline card-danger">
-            <div class="card-header text-center">
-                <h1 class="display-1 text-danger"><i class="bi bi-exclamation-triangle"></i> 403</h1>
-                <h4>Truy cập bị từ chối</h4>
-            </div>
-            <div class="card-body">
-                <p class="text-center">Bạn không có quyền truy cập vào trang này.<br>Vui lòng liên hệ quản trị viên hoặc
-                    quay lại trang chủ.</p>
-                <div class="d-grid gap-2 mt-4">
-                    <a href="../blog-public/index.html" class="btn btn-primary"><i class="bi bi-globe me-2"></i>Về trang
-                        Blog</a>
-                    <button type="button" class="btn btn-outline-secondary" onclick="Auth.logout()"><i
-                            class="bi bi-box-arrow-right me-2"></i>Đăng xuất</button>
-                </div>
-            </div>
+        <div class="card-body">
+          <p class="text-center">
+            Bạn không có quyền truy cập vào trang này.<br />Vui lòng liên hệ
+            quản trị viên và quay lại trang chủ.
+          </p>
+          <div class="d-grid gap-2 mt-4">
+            <a href="#" class="btn btn-primary" id="backToBlogLink"
+              ><i class="bi bi-globe me-2"></i>Về trang blog</a
+            >
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              onclick="Auth.logout()"
+            >
+              <i class="bi bi-box-arrow-right me-2"></i>Đăng xuất
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
-    <!-- Scripts cần thiết để Auth.logout hoạt động -->
-    <script src="js/http.js"></script>
+    <script src="js/locales/vi.js"></script>
+  <script src="js/locales/en.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/http.js"></script>
     <script src="js/auth.js"></script>
-</body>
-
+    <script>
+      document
+        .getElementById("backToBlogLink")
+        ?.setAttribute("href", AppConfig.buildPublicUrl("index.html"));
+    </script>
+  </body>
 </html>

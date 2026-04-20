@@ -74,8 +74,8 @@ function renderLogs(page) {
   const infoEl = document.getElementById('audit-page-info');
 
   if (!page || !page.content?.length) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No logs found.</td></tr>';
-    if (countEl) countEl.textContent = '0 total';
+    if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">${I18n.t('audit_logs.no_logs')}</td></tr>`;
+    if (countEl) countEl.textContent = `0 ${I18n.t('audit_logs.total')}`;
     if (infoEl) infoEl.textContent = '';
     renderPagination(0, 0);
     return;
@@ -84,8 +84,8 @@ function renderLogs(page) {
   totalPages = page.totalPages;
   totalItems = page.totalElements;
 
-  if (countEl) countEl.textContent = `${totalItems} total`;
-  if (infoEl) infoEl.textContent = `Page ${page.number + 1} of ${page.totalPages}`;
+  if (countEl) countEl.textContent = `${totalItems} ${I18n.t('audit_logs.total')}`;
+  if (infoEl) infoEl.textContent = I18n.t('audit_logs.page_info').replace('{current}', page.number + 1).replace('{total}', page.totalPages);
 
   if (tbody) {
     tbody.innerHTML = page.content.map(log => {
@@ -93,14 +93,14 @@ function renderLogs(page) {
       const resourceIcon = RESOURCE_ICONS[log.resource] || 'bi-box';
       const resourceLabel = `<i class="bi ${resourceIcon} me-1"></i>${log.resource}`;
       const statusBadge = log.status === 'SUCCESS'
-        ? `<span class="badge text-bg-success">SUCCESS</span>`
-        : `<span class="badge text-bg-danger" title="${log.errorMessage || ''}">FAIL</span>`;
+        ? `<span class="badge text-bg-success">${I18n.t('audit_logs.status_success')}</span>`
+        : `<span class="badge text-bg-danger" title="${log.errorMessage || ''}">${I18n.t('audit_logs.status_fail')}</span>`;
       const duration = log.durationMs != null ? `${log.durationMs} ms` : '—';
       const time = log.createdAt ? log.createdAt.replace('T', ' ').substring(0, 19) : '—';
 
       return `<tr>
         <td class="text-nowrap">${time}</td>
-        <td>${log.username || '<span class="text-muted">anonymous</span>'}</td>
+        <td>${log.username || `<span class="text-muted">${I18n.t('audit_logs.anonymous')}</span>`}</td>
         <td>${actionBadge}</td>
         <td class="text-nowrap">${resourceLabel}</td>
         <td class="text-truncate" style="max-width:200px" title="${log.detail || ''}">${log.detail || '—'}</td>
@@ -156,7 +156,7 @@ function renderPagination(current, total) {
 
 async function loadLogs() {
   const tbody = document.getElementById('audit-tbody');
-  if (tbody) tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3"><i class="bi bi-hourglass-split me-2"></i>Loading...</td></tr>';
+  if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-3"><i class="bi bi-hourglass-split me-2"></i>${I18n.t('audit_logs.loading')}</td></tr>`;
 
   try {
     const params = getFilters();
@@ -167,7 +167,7 @@ async function loadLogs() {
     renderLogs(data);
   } catch (err) {
     if (tbody) tbody.innerHTML = `<tr><td colspan="8" class="text-center text-danger py-3">${err.message}</td></tr>`;
-    UI.toast('Failed to load audit logs: ' + err.message, 'danger');
+    UI.toast(I18n.t('audit_logs.load_failed') + err.message, 'danger');
   }
 }
 

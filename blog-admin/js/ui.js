@@ -4,6 +4,229 @@
  */
 
 const UI = {
+  getRelativePrefix() {
+    const uiScript = document.querySelector('script[src$="js/ui.js"]');
+    if (!uiScript) return '';
+
+    const src = uiScript.getAttribute('src') || '';
+    return src.replace(/js\/ui\.js$/, '');
+  },
+
+  getCurrentPageKey() {
+    const path = window.location.pathname.toLowerCase();
+
+    if (path.endsWith('/blog-admin/') || path.endsWith('/blog-admin/index.html')) return 'dashboard';
+    if (path.includes('/posts/create.html')) return 'posts-create';
+    if (path.includes('/posts/index.html')) return 'posts-index';
+    if (path.includes('/categories/')) return 'categories';
+    if (path.includes('/tags/')) return 'tags';
+    if (path.includes('/comments/')) return 'comments';
+    if (path.includes('/users/')) return 'users';
+    if (path.includes('/roles/')) return 'roles';
+    if (path.includes('/permissions/')) return 'permissions';
+    if (path.includes('/audit-logs/')) return 'audit-logs';
+    if (path.includes('/profile.html')) return 'profile';
+    if (path.includes('/settings.html')) return 'settings';
+
+    return '';
+  },
+
+  renderSharedLayout() {
+    const wrapper = document.querySelector('.app-wrapper');
+    if (!wrapper) return;
+
+    const headerHost = document.querySelector('[data-admin-header]');
+    const sidebarHost = document.querySelector('[data-admin-sidebar]');
+    const footerHost = document.querySelector('[data-admin-footer]');
+    if (!headerHost && !sidebarHost && !footerHost) return;
+
+    const prefix = this.getRelativePrefix();
+    const currentPage = this.getCurrentPageKey();
+    const isActive = (...keys) => keys.includes(currentPage);
+    const postsOpen = isActive('posts-index', 'posts-create');
+    const asset = (path) => `${prefix}${path}`;
+    const t = (key) => (typeof I18n !== 'undefined' ? I18n.t(key) : key);
+    const lang = typeof I18n !== 'undefined' ? I18n.getLang() : 'en';
+    const nextLang = lang === 'vi' ? 'en' : 'vi';
+    const langLabel = t('lang.current');
+    const switchLabel = t('lang.switch_label');
+
+    if (headerHost) {
+      headerHost.outerHTML = `
+        <nav class="app-header navbar navbar-expand bg-body">
+          <div class="container-fluid">
+            <ul class="navbar-nav">
+              <li class="nav-item">
+                <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
+                  <i class="bi bi-list"></i>
+                </a>
+              </li>
+              <li class="nav-item d-none d-md-block">
+                <a href="${asset('index.html')}" class="nav-link">${t('nav.dashboard')}</a>
+              </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="#" data-lte-toggle="fullscreen">
+                  <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
+                  <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
+                </a>
+              </li>
+              <li class="nav-item" title="${switchLabel}">
+                <button class="nav-link btn btn-link lang-switcher-btn" onclick="I18n.toggle()" style="min-width:2.5rem;font-weight:600;font-size:.8rem;letter-spacing:.05em">
+                  ${langLabel}
+                </button>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
+                  <i class="bi bi-bell-fill"></i>
+                  <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display: none">0</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width: 300px; max-width: 340px">
+                  <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+                    <span class="fw-semibold small">${t('notif.title')}</span>
+                    <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">
+                      ${t('notif.mark_all')}
+                    </button>
+                  </div>
+                  <div id="admin-notif-list" style="max-height: 320px; overflow-y: auto">
+                    <div class="dropdown-item text-center text-muted py-3">
+                      ${t('notif.loading')}
+                    </div>
+                  </div>
+                </div>
+              </li>
+              <li class="nav-item dropdown user-menu">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                  <img src="${asset('assets/images/user2-160x160.jpg')}" class="user-image rounded-circle shadow" alt="Admin" />
+                  <span class="d-none d-md-inline current-user-name">Admin</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
+                  <li class="user-header text-bg-primary">
+                    <img src="${asset('assets/images/user2-160x160.jpg')}" class="rounded-circle shadow" alt="Admin" />
+                    <p id="menuUserName">Admin <small>Blog Administrator</small></p>
+                  </li>
+                  <li class="user-footer">
+                    <a href="${asset('profile.html')}" class="btn btn-outline-secondary">${t('nav.profile')}</a>
+                    <a href="${asset('login.html')}" class="btn btn-outline-danger float-end" data-action="logout">${t('nav.sign_out')}</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>`;
+    }
+
+    if (sidebarHost) {
+      sidebarHost.outerHTML = `
+        <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
+          <div class="sidebar-brand">
+            <a href="${asset('index.html')}" class="brand-link">
+              <img src="${asset('assets/images/AdminLTELogo.png')}" alt="Logo" class="brand-image opacity-75 shadow" />
+              <span class="brand-text fw-light">Blog Admin</span>
+            </a>
+          </div>
+          <div class="sidebar-wrapper">
+            <nav class="mt-2">
+              <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation"
+                aria-label="Main navigation" data-accordion="false">
+                <li class="nav-header" data-section="main">${t('nav.main_menu')}</li>
+                <li class="nav-item">
+                  <a href="${asset('index.html')}" class="nav-link ${isActive('dashboard') ? 'active' : ''}" data-nav-key="dashboard">
+                    <i class="nav-icon bi bi-speedometer2"></i>
+                    <p>${t('nav.dashboard')}</p>
+                  </a>
+                </li>
+                <li class="nav-item ${postsOpen ? 'menu-open' : ''}">
+                  <a href="#" class="nav-link ${postsOpen ? 'active' : ''}" data-nav-key="posts">
+                    <i class="nav-icon bi bi-file-earmark-text"></i>
+                    <p>${t('nav.posts')} <i class="nav-arrow bi bi-chevron-right"></i></p>
+                  </a>
+                  <ul class="nav nav-treeview">
+                    <li class="nav-item">
+                      <a href="${asset('posts/index.html')}" class="nav-link ${isActive('posts-index') ? 'active' : ''}" data-nav-key="posts">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>${t('nav.all_posts')}</p>
+                      </a>
+                    </li>
+                    <li class="nav-item">
+                      <a href="${asset('posts/create.html')}" class="nav-link ${isActive('posts-create') ? 'active' : ''}" data-nav-key="posts">
+                        <i class="nav-icon bi bi-circle"></i>
+                        <p>${t('nav.create_post')}</p>
+                      </a>
+                    </li>
+                  </ul>
+                </li>
+                <li class="nav-item">
+                  <a href="${asset('categories/index.html')}" class="nav-link ${isActive('categories') ? 'active' : ''}" data-nav-key="categories">
+                    <i class="nav-icon bi bi-tags"></i>
+                    <p>${t('nav.categories')}</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="${asset('tags/index.html')}" class="nav-link ${isActive('tags') ? 'active' : ''}" data-nav-key="tags">
+                    <i class="nav-icon bi bi-hash"></i>
+                    <p>${t('nav.tags')}</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="${asset('comments/index.html')}" class="nav-link ${isActive('comments') ? 'active' : ''}" data-nav-key="comments">
+                    <i class="nav-icon bi bi-chat-dots"></i>
+                    <p>${t('nav.comments')}</p>
+                  </a>
+                </li>
+                <li class="nav-header" data-section="access">${t('nav.access_control')}</li>
+                <li class="nav-item">
+                  <a href="${asset('users/index.html')}" class="nav-link ${isActive('users') ? 'active' : ''}" data-nav-key="users">
+                    <i class="nav-icon bi bi-people"></i>
+                    <p>${t('nav.users')}</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="${asset('roles/index.html')}" class="nav-link ${isActive('roles') ? 'active' : ''}" data-nav-key="roles">
+                    <i class="nav-icon bi bi-shield-check"></i>
+                    <p>${t('nav.roles')}</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="${asset('permissions/index.html')}" class="nav-link ${isActive('permissions') ? 'active' : ''}" data-nav-key="permissions">
+                    <i class="nav-icon bi bi-key"></i>
+                    <p>${t('nav.permissions')}</p>
+                  </a>
+                </li>
+                <li class="nav-header" data-section="settings">${t('nav.settings_section')}</li>
+                <li class="nav-item">
+                  <a href="${asset('audit-logs/index.html')}" class="nav-link ${isActive('audit-logs') ? 'active' : ''}" data-nav-key="audit-logs">
+                    <i class="nav-icon bi bi-journal-text"></i>
+                    <p>${t('nav.audit_logs')}</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="${asset('settings.html')}" class="nav-link ${isActive('settings') ? 'active' : ''}" data-nav-key="settings">
+                    <i class="nav-icon bi bi-gear"></i>
+                    <p>${t('nav.settings')}</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="${asset('login.html')}" class="nav-link" data-action="logout">
+                    <i class="nav-icon bi bi-box-arrow-right"></i>
+                    <p>${t('nav.logout')}</p>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </aside>`;
+    }
+
+    if (footerHost) {
+      footerHost.outerHTML = `
+        <footer class="app-footer">
+          <div class="float-end d-none d-sm-inline">${t('common.version')}</div>
+          <strong>${t('common.copyright')}</strong>
+        </footer>`;
+    }
+  },
   /**
    * Hiển thị toast thông báo góc trên phải, tự biến mất sau 3.5 giây.
    * @param {string} message - Nội dung thông báo
@@ -92,15 +315,14 @@ const UI = {
       });
 
       // Cập nhật avatar nếu user có ảnh đại diện
-      const defaultAvatar = 'assets/images/user2-160x160.jpg';
+      const defaultAvatar = 'assets/images/user.png';
+      const prefix = this.getRelativePrefix();
       if (user.imageUrl) {
         document.querySelectorAll('.user-image, .user-header img, #profilePhotoPreview').forEach(img => {
           img.src = user.imageUrl;
           img.onerror = function () {
             this.onerror = null;
             // Tính đường dẫn tương đối dựa trên độ sâu của trang hiện tại
-            const depth = window.location.pathname.split('/').filter(Boolean).length;
-            const prefix = depth > 1 ? '../'.repeat(depth - 1) : '';
             this.src = prefix + defaultAvatar;
           };
         });
@@ -118,91 +340,52 @@ const UI = {
   applyAccessControl(user) {
     const permissions = user?.permissions || [];
 
-    // Ánh xạ Keyword trên sidebar text thành thẻ Quyền: menu:* 
+    // Map data-nav-key → required permission (language-independent)
     const permissionMap = {
-      'DASHBOARD': 'menu:dashboard',
-      'ALL POSTS': 'menu:posts',
-      'CREATE POST': 'menu:posts',
-      'POSTS': 'menu:posts', // thư mục ngoài
-      'CATEGORIES': 'menu:categories',
-      'TAGS': 'menu:tags',
-      'COMMENTS': 'menu:comment',
-      'USERS': 'menu:users',
-      'ROLES': 'menu:roles',
-      'PERMISSIONS': 'menu:permissions',
-      'AUDIT LOGS': 'menu:audit-logs', // Mặc định không có, giả sử map với menu:audit-logs
-      'SETTINGS': 'menu:settings',
+      'dashboard':   'menu:dashboard',
+      'posts':       'menu:posts',
+      'categories':  'menu:categories',
+      'tags':        'menu:tags',
+      'comments':    'menu:comment',
+      'users':       'menu:users',
+      'roles':       'menu:roles',
+      'permissions': 'menu:permissions',
+      'audit-logs':  'menu:audit-logs',
+      'settings':    'menu:settings',
     };
 
-    const headerKeywords = ['MAIN MENU', 'ACCESS CONTROL', 'SETTINGS'];
-
-    let hasAnyPermission = false;
-    let allowedToViewCurrentPage = false;
-    // Current Path
     const path = window.location.pathname.toLowerCase();
 
     document.querySelectorAll('.app-sidebar .nav-item').forEach(item => {
-      // Bỏ qua nếu item này là header, sẽ xử lý sau
       if (item.classList.contains('nav-header')) return;
 
       const link = item.querySelector('a.nav-link');
       if (!link) return;
 
-      const text = link.textContent.trim().toUpperCase()
-        // Lọc bỏ mũi tên dropdown của treeview
-        .replace(/[<>]/g, '').trim();
+      // Skip logout link
+      if (link.dataset.action === 'logout') return;
 
-      // Mặc định cho phép logout
-      if (text === 'LOGOUT') return;
+      const navKey = link.dataset.navKey;
+      if (!navKey) return;
 
-      let isAllowed = false;
+      const requiredPerm = permissionMap[navKey];
+      if (!requiredPerm) return;
 
-      // Nếu có mapping
-      for (const key of Object.keys(permissionMap)) {
-        if (text.includes(key)) {
-          const requiredPerm = permissionMap[key];
-          isAllowed = permissions.includes(requiredPerm);
-          break; // Đã match keyword thì dừng
-        }
-      }
-
-      // Những cái nào không nằm trong permissionMap thì auto cho mượn đường (hiển thị)
-      // Ví dụ submenu hoặc link đặc biệt, nhưng ở đây hầu hết đã được cover
-      if (typeof isAllowed !== 'undefined') {
-        item.style.display = isAllowed ? '' : 'none';
-
-        // Cập nhật Allowed flag nếu item link đang trỏ tới page của mình (page hiện tại)
-        if (isAllowed) {
-          hasAnyPermission = true;
-          // Nếu link chứa path hiện tại (gần đúng)
-          const linkHref = link.getAttribute('href');
-          if (linkHref && linkHref !== '#' && linkHref !== '') {
-            // Kiểm tra xem href có nằm trong pathname hiện tại không
-            const hrefPart = linkHref.replace('../', '').replace('./', '');
-            if (path.includes(hrefPart) || (hrefPart === 'index.html' && path.endsWith('/blog-admin/'))) {
-              // Allowed to view current context
-            }
-          }
-        }
-      }
+      const isAllowed = permissions.includes(requiredPerm);
+      item.style.display = isAllowed ? '' : 'none';
     });
 
-    // Ẩn Header nếu tất cả item bên dưới bị ẩn
-    // Khó phân tích nextElementSibling dễ bị sai, ở đây hardcode theo logic
-    const sections = [
-      { key: 'ACCESS CONTROL', childItems: ['ROLES', 'PERMISSIONS'] },
-      { key: 'SETTINGS', childItems: ['AUDIT LOGS', 'SETTINGS'] },
-    ];
-    document.querySelectorAll('.app-sidebar .nav-header').forEach(header => {
-      const text = header.textContent.trim().toUpperCase();
-      let headerAllowed = true;
-      const sec = sections.find(s => text.includes(s.key));
-      if (sec) {
-        // Kiểm tra xem user có quyền nào trong mục đó không
-        const requiredPerms = sec.childItems.map(c => permissionMap[c]);
-        headerAllowed = requiredPerms.some(p => permissions.includes(p));
+    // Ẩn section header nếu tất cả item bên dưới bị ẩn
+    const sectionPerms = {
+      'access':   ['menu:users', 'menu:roles', 'menu:permissions'],
+      'settings': ['menu:audit-logs', 'menu:settings'],
+    };
+    document.querySelectorAll('.app-sidebar .nav-header[data-section]').forEach(header => {
+      const section = header.dataset.section;
+      const required = sectionPerms[section];
+      if (required) {
+        header.style.display = required.some(p => permissions.includes(p)) ? '' : 'none';
       }
-      header.style.display = headerAllowed ? '' : 'none';
     });
 
     // Guard route hiện hành (Nếu user không có quyền vào trang đang đứng, chuyển về trang khác)
@@ -238,13 +421,7 @@ const UI = {
 
     // Allow user to stay if they have the necessary permission or if no permission is mapped
     if (requiredPerm && !permissions.includes(requiredPerm)) {
-      let relativePrefix = '';
-      const uiScript = document.querySelector('script[src$="js/ui.js"]');
-      if (uiScript) {
-        const src = uiScript.getAttribute('src');
-        relativePrefix = src.replace('js/ui.js', '');
-      }
-
+      const relativePrefix = this.getRelativePrefix();
       const fallbackPath = this.getFirstAccessiblePage(permissions, relativePrefix);
       if (fallbackPath) {
         document.body.style.display = 'none';
@@ -375,6 +552,8 @@ const UI = {
 };
 
 // Thực thi đồng bộ sớm (Synchronous execution) để ẩn menu ngay lập tức dựa trên cache, tránh flicker
+UI.renderSharedLayout();
+
 (function applyCachedAccessControl() {
   try {
     const cachedUser = localStorage.getItem('user');
@@ -391,3 +570,4 @@ const UI = {
     }
   } catch (e) { }
 })();
+

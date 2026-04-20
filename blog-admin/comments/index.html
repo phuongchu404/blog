@@ -16,150 +16,9 @@
 
 <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
   <div class="app-wrapper">
-    <!-- ======= Header ======= -->
-    <nav class="app-header navbar navbar-expand bg-body">
-      <div class="container-fluid">
-        <ul class="navbar-nav">
-          <li class="nav-item">
-            <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="bi bi-list"></i></a>
-          </li>
-          <li class="nav-item d-none d-md-block">
-            <a href="../index.html" class="nav-link">Dashboard</a>
-          </li>
-        </ul>
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-              <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-              <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-            </a>
-          </li>
-          <!-- Notification Bell -->
-          <li class="nav-item dropdown">
-            <a class="nav-link" data-bs-toggle="dropdown" href="#" id="admin-notif-dropdown-toggle">
-              <i class="bi bi-bell-fill"></i>
-              <span class="badge bg-danger navbar-badge" id="admin-notif-badge" style="display: none">0</span>
-            </a>
-            <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end" style="min-width: 300px; max-width: 340px">
-              <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                <span class="fw-semibold small">Thông báo</span>
-                <button class="btn btn-sm btn-link p-0 text-decoration-none" id="admin-notif-mark-all">
-                  Đọc tất cả
-                </button>
-              </div>
-              <div id="admin-notif-list" style="max-height: 320px; overflow-y: auto">
-                <div class="dropdown-item text-center text-muted py-3">
-                  Đang tải...
-                </div>
-              </div>
-            </div>
-          </li>
-          <li class="nav-item dropdown user-menu">
-            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-              <img src="../assets/images/user2-160x160.jpg" class="user-image rounded-circle shadow" alt="Admin" />
-              <span class="d-none d-md-inline">Admin</span>
-            </a>
-            <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-              <li class="user-header text-bg-primary">
-                <img src="../assets/images/user2-160x160.jpg" class="rounded-circle shadow" alt="Admin" />
-                <p>Admin <small>Blog Administrator</small></p>
-              </li>
-              <li class="user-footer">
-                <a href="../profile.html" class="btn btn-outline-secondary">Profile</a>
-                <a href="../login.html" class="btn btn-outline-danger float-end">Sign out</a>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-    </nav>
+    <div data-admin-header></div>
 
-    <!-- ======= Sidebar ======= -->
-    <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-      <div class="sidebar-brand">
-        <a href="../index.html" class="brand-link">
-          <img src="../assets/images/AdminLTELogo.png" alt="Logo" class="brand-image opacity-75 shadow" />
-          <span class="brand-text fw-light">Blog Admin</span>
-        </a>
-      </div>
-      <div class="sidebar-wrapper">
-        <nav class="mt-2">
-          <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="navigation" data-accordion="false">
-            <li class="nav-header">MAIN MENU</li>
-            <li class="nav-item">
-              <a href="../index.html" class="nav-link"><i class="nav-icon bi bi-speedometer2"></i>
-                <p>Dashboard</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="#" class="nav-link">
-                <i class="nav-icon bi bi-file-earmark-text"></i>
-                <p>Posts <i class="nav-arrow bi bi-chevron-right"></i></p>
-              </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="../posts/index.html" class="nav-link"><i class="nav-icon bi bi-circle"></i>
-                    <p>All Posts</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="../posts/create.html" class="nav-link"><i class="nav-icon bi bi-circle"></i>
-                    <p>Create Post</p>
-                  </a>
-                </li>
-              </ul>
-            </li>
-            <li class="nav-item">
-              <a href="../categories/index.html" class="nav-link"><i class="nav-icon bi bi-tags"></i>
-                <p>Categories</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../tags/index.html" class="nav-link"><i class="nav-icon bi bi-hash"></i>
-                <p>Tags</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="index.html" class="nav-link active"><i class="nav-icon bi bi-chat-dots"></i>
-                <p>Comments</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../users/index.html" class="nav-link"><i class="nav-icon bi bi-people"></i>
-                <p>Users</p>
-              </a>
-            </li>
-            <li class="nav-header">ACCESS CONTROL</li>
-            <li class="nav-item">
-              <a href="../roles/index.html" class="nav-link"><i class="nav-icon bi bi-shield-check"></i>
-                <p>Roles</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../permissions/index.html" class="nav-link"><i class="nav-icon bi bi-key"></i>
-                <p>Permissions</p>
-              </a>
-            </li>
-            <li class="nav-header">SETTINGS</li>
-            <li class="nav-item">
-              <a href="../audit-logs/index.html" class="nav-link"><i class="nav-icon bi bi-journal-text"></i>
-                <p>Audit Logs</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../settings.html" class="nav-link"><i class="nav-icon bi bi-gear"></i>
-                <p>Settings</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="../login.html" class="nav-link"><i class="nav-icon bi bi-box-arrow-right"></i>
-                <p>Logout</p>
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </div>
-    </aside>
+    <div data-admin-sidebar></div>
 
     <!-- ======= Main Content ======= -->
     <main class="app-main">
@@ -167,14 +26,14 @@
         <div class="container-fluid">
           <div class="row">
             <div class="col-sm-6">
-              <h3 class="mb-0">Comments</h3>
+              <h3 class="mb-0" data-i18n="comments.title">Comments</h3>
             </div>
             <div class="col-sm-6">
               <ol class="breadcrumb float-sm-end">
                 <li class="breadcrumb-item">
-                  <a href="../index.html">Home</a>
+                  <a href="../index.html" data-i18n="common.home">Home</a>
                 </li>
-                <li class="breadcrumb-item active">Comments</li>
+                <li class="breadcrumb-item active" data-i18n="comments.title">Comments</li>
               </ol>
             </div>
           </div>
@@ -189,7 +48,7 @@
               <div class="info-box">
                 <span class="info-box-icon text-bg-primary"><i class="bi bi-chat-dots"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">Total</span>
+                  <span class="info-box-text" data-i18n="comments.lbl_total">Total</span>
                   <span class="info-box-number">128</span>
                 </div>
               </div>
@@ -198,7 +57,7 @@
               <div class="info-box">
                 <span class="info-box-icon text-bg-warning"><i class="bi bi-hourglass-split"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">Pending</span>
+                  <span class="info-box-text" data-i18n="comments.lbl_pending">Pending</span>
                   <span class="info-box-number">14</span>
                 </div>
               </div>
@@ -207,7 +66,7 @@
               <div class="info-box">
                 <span class="info-box-icon text-bg-success"><i class="bi bi-check-circle"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">Approved</span>
+                  <span class="info-box-text" data-i18n="comments.lbl_approved">Approved</span>
                   <span class="info-box-number">108</span>
                 </div>
               </div>
@@ -216,7 +75,7 @@
               <div class="info-box">
                 <span class="info-box-icon text-bg-danger"><i class="bi bi-slash-circle"></i></span>
                 <div class="info-box-content">
-                  <span class="info-box-text">Spam</span>
+                  <span class="info-box-text" data-i18n="comments.lbl_spam">Spam</span>
                   <span class="info-box-number">6</span>
                 </div>
               </div>
@@ -227,7 +86,7 @@
           <div class="row mb-3">
             <div class="col-md-5">
               <div class="input-group">
-                <input type="text" id="comments-search" class="form-control" placeholder="Search comments..."
+                <input type="text" id="comments-search" class="form-control" placeholder="Search comments..." data-i18n-placeholder="comments.search"
                   autocomplete="off" />
                 <button id="comments-refresh-btn" class="btn btn-outline-secondary" type="button" title="Refresh">
                   <i class="bi bi-arrow-clockwise"></i>
@@ -236,18 +95,18 @@
             </div>
             <div class="col-md-3">
               <select class="form-select">
-                <option value="">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="spam">Spam</option>
+                <option value="" data-i18n="comments.filter_all">All Status</option>
+                <option value="pending" data-i18n="common.pending">Pending</option>
+                <option value="approved" data-i18n="common.approved">Approved</option>
+                <option value="spam" data-i18n="common.spam">Spam</option>
               </select>
             </div>
             <div class="col-md-4 text-end">
               <button id="btn-approve-all" class="btn btn-success me-1">
-                <i class="bi bi-check-all me-1"></i>Approve All Pending
+                <i class="bi bi-check-all me-1"></i><span data-i18n="comments.btn_approve_all">Approve All Pending</span>
               </button>
               <button class="btn btn-danger">
-                <i class="bi bi-trash me-1"></i>Delete Spam
+                <i class="bi bi-trash me-1"></i><span data-i18n="comments.btn_delete_spam">Delete Spam</span>
               </button>
             </div>
           </div>
@@ -255,9 +114,7 @@
           <!-- Comments Table -->
           <div class="card">
             <div class="card-header">
-              <h3 class="card-title">
-                <i class="bi bi-chat-dots me-2"></i>All Comments
-              </h3>
+              <h3 class="card-title" data-i18n="comments.card_list"><i class="bi bi-chat-dots me-2"></i>All Comments</h3>
               <div class="card-tools ms-auto">
                 <span class="badge text-bg-primary" id="comments-total-badge">0 total</span>
               </div>
@@ -269,12 +126,12 @@
                     <th>
                       <input type="checkbox" class="form-check-input" />
                     </th>
-                    <th>Author</th>
-                    <th>Comment</th>
-                    <th>Post</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th data-i18n="comments.col_author">Author</th>
+                    <th data-i18n="comments.col_comment">Comment</th>
+                    <th data-i18n="comments.col_post">Post</th>
+                    <th data-i18n="comments.col_status">Status</th>
+                    <th data-i18n="comments.col_date">Date</th>
+                    <th data-i18n="comments.col_actions">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="comments-tbody">
@@ -285,10 +142,10 @@
               <div id="comments-pagination" class="float-end"></div>
               <div class="float-start">
                 <button class="btn btn-sm btn-danger me-1">
-                  <i class="bi bi-trash me-1"></i>Delete Selected
+                  <i class="bi bi-trash me-1"></i><span data-i18n="comments.btn_delete_selected">Delete Selected</span>
                 </button>
                 <button class="btn btn-sm btn-success">
-                  <i class="bi bi-check-circle me-1"></i>Approve Selected
+                  <i class="bi bi-check-circle me-1"></i><span data-i18n="comments.btn_approve_selected">Approve Selected</span>
                 </button>
               </div>
             </div>
@@ -297,17 +154,16 @@
       </div>
     </main>
 
-    <footer class="app-footer">
-      <div class="float-end d-none d-sm-inline">Blog Admin v1.0</div>
-      <strong>Copyright &copy; 2026 <a href="#">Blog Admin</a>.</strong> All
-      rights reserved.
-    </footer>
+    <div data-admin-footer></div>
   </div>
 
   <script src="../js/template/overlayscrollbars.browser.es6.min.js" crossorigin="anonymous"></script>
   <script src="../js/template/popper.min.js" crossorigin="anonymous"></script>
   <script src="../js/template/bootstrap.min.js" crossorigin="anonymous"></script>
   <script src="../js/template/adminlte.min.js"></script>
+  <script src="../js/locales/vi.js"></script>
+  <script src="../js/locales/en.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="../js/http.js"></script>
   <script src="../js/auth.js"></script>
   <script src="../js/ui.js"></script>

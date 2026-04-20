@@ -67,7 +67,7 @@ function renderPagination() {
 function renderPosts(items) {
   const tbody   = document.getElementById('posts-tbody');
   const countEl = document.getElementById('posts-total');
-  if (countEl) countEl.textContent = `${totalElements} total`;
+  if (countEl) countEl.textContent = `${totalElements} ${I18n.t('posts_dyn.total')}`;
 
   if (!items.length) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="9" class="text-center text-muted py-4">No posts found.</td></tr>';
@@ -119,7 +119,7 @@ async function loadPosts() {
       renderPosts(filtered.slice(currentPage * PAGE_SIZE, (currentPage + 1) * PAGE_SIZE));
     }
   } catch (err) {
-    UI.toast('Failed to load posts: ' + err.message, 'danger');
+    UI.toast(I18n.t('posts_dyn.load_failed') + err.message, 'danger');
   }
 }
 
@@ -135,10 +135,10 @@ function applyClientFilter(list) {
 // ── CRUD ───────────────────────────────────────────────────────────────────────
 
 async function deletePost(id) {
-  if (!await UI.confirm('Delete this post? This action cannot be undone.')) return;
+  if (!await UI.confirm(I18n.t('posts_dyn.delete_confirm'))) return;
   try {
     await PostService.delete(id);
-    UI.toast('Post deleted successfully.');
+    UI.toast(I18n.t('posts_dyn.deleted'));
     await loadPosts();
   } catch (err) {
     UI.toast(err.message, 'danger');

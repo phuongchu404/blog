@@ -3,7 +3,58 @@
  * Phụ thuộc: không có
  */
 
-const API_BASE = localStorage.getItem('apiBaseUrl') || 'http://localhost:8055';
+const DEFAULT_API_BASE = 'http://localhost:8055';
+const DEFAULT_PUBLIC_BASE = 'http://localhost:5500';
+
+const AppConfig = {
+  getApiBaseUrl() {
+    return this._normalizeBaseUrl(
+      localStorage.getItem('apiBaseUrl')
+      || window.APP_CONFIG?.apiBaseUrl
+      || DEFAULT_API_BASE
+    );
+  },
+
+  setApiBaseUrl(value) {
+    const normalized = this._normalizeBaseUrl(value) || DEFAULT_API_BASE;
+    localStorage.setItem('apiBaseUrl', normalized);
+    return normalized;
+  },
+
+  getPublicBaseUrl() {
+    return this._normalizeBaseUrl(
+      localStorage.getItem('publicBaseUrl')
+      || window.APP_CONFIG?.publicBaseUrl
+      || DEFAULT_PUBLIC_BASE
+    );
+  },
+
+  setPublicBaseUrl(value) {
+    const normalized = this._normalizeBaseUrl(value) || DEFAULT_PUBLIC_BASE;
+    localStorage.setItem('publicBaseUrl', normalized);
+    return normalized;
+  },
+
+  buildPublicUrl(path = '', query = null, hash = '') {
+    const base = this.getPublicBaseUrl();
+    const normalizedPath = String(path || '').replace(/^\/+/, '');
+    const url = new URL(normalizedPath, `${base}/`);
+    if (query && typeof query === 'object') {
+      Object.entries(query).forEach(([key, val]) => {
+        if (val !== undefined && val !== null && val !== '') {
+          url.searchParams.set(key, String(val));
+        }
+      });
+    }
+    if (hash) url.hash = hash.startsWith('#') ? hash : `#${hash}`;
+    return url.toString();
+  },
+
+  _normalizeBaseUrl(value) {
+    if (!value) return '';
+    return String(value).trim().replace(/\/+$/, '');
+  },
+};
 
 const Http = {
   _token() {
@@ -19,7 +70,8 @@ const Http = {
   },
 
   async _fetch(path, options) {
-    let res = await fetch(`${API_BASE}${path}`, options);
+    const apiBaseUrl = AppConfig.getApiBaseUrl();
+    let res = await fetch(`${apiBaseUrl}${path}`, options);
 
     // Xử lý tự động dùng Refresh Token khi hết hạn (401)
     if (res.status === 401 && typeof Auth !== 'undefined' && !path.includes('/auth/refresh')) {
@@ -29,7 +81,7 @@ const Http = {
           options.headers['Authorization'] = `Bearer ${newData.accessToken}`;
         }
         // Gọi lại original request
-        res = await fetch(`${API_BASE}${path}`, options);
+        res = await fetch(`${apiBaseUrl}${path}`, options);
       } catch (err) {
         // Hết cứu (refresh token hỏng/hết hạn), đá ra login
         localStorage.removeItem('token');

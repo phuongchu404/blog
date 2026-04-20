@@ -78,7 +78,7 @@ function renderPagination() {
 function renderTagPage() {
   const tbody = document.getElementById('tags-tbody');
   const totalEl = document.querySelector('.card-tools .badge');
-  if (totalEl) totalEl.textContent = `${totalElements} total`;
+  if (totalEl) totalEl.textContent = `${totalElements} ${I18n.t('tags_dyn.total')}`;
 
   totalPages = Math.max(1, Math.ceil(displayList.length / PAGE_SIZE));
   if (currentPage >= totalPages) currentPage = 0;
@@ -88,7 +88,7 @@ function renderTagPage() {
 
   if (!tbody) return;
   if (!items.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No tags found.</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">${I18n.t('tags_dyn.no_tags')}</td></tr>`;
     renderPagination();
     return;
   }
@@ -103,8 +103,8 @@ function renderTagPage() {
       <td><code>${t.slug}</code></td>
       <td><span class="badge text-bg-secondary">${t.postCount ?? 0}</span></td>
       <td>
-        <button class="btn btn-sm btn-warning" onclick="openEditTag(${t.id})"><i class="bi bi-pencil"></i></button>
-        <button class="btn btn-sm btn-danger" onclick="deleteTag(${t.id})"><i class="bi bi-trash"></i></button>
+        <button class="btn btn-sm btn-warning" title="${I18n.t('common.edit')}" onclick="openEditTag(${t.id})"><i class="bi bi-pencil"></i></button>
+        <button class="btn btn-sm btn-danger" title="${I18n.t('common.delete')}" onclick="deleteTag(${t.id})"><i class="bi bi-trash"></i></button>
       </td>
     </tr>`).join('');
 
@@ -130,7 +130,7 @@ async function loadTags() {
     currentPage = 0;
     renderTagPage();
   } catch (err) {
-    UI.toast('Failed to load tags: ' + err.message, 'danger');
+    UI.toast(I18n.t('tags_dyn.load_failed') + err.message, 'danger');
   }
 }
 
@@ -139,7 +139,7 @@ async function loadTags() {
 function openEditTag(id) {
   const tag = allTags.find(t => t.id === id);
   if (!tag) {
-    UI.toast('Không tìm thấy tag trong danh sách. Thử reload trang.', 'warning');
+    UI.toast(I18n.t('tags_dyn.not_found'), 'warning');
     return;
   }
   editingTagId = id;
@@ -154,9 +154,9 @@ function openEditTag(id) {
   if (slugInput) slugInput.value = tag.slug;
   const contentInput = document.getElementById('tagContent');
   if (contentInput) contentInput.value = tag.content || '';
-  if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-check-circle me-1"></i> Update Tag';
+  if (submitBtn) submitBtn.innerHTML = I18n.t('tags_dyn.btn_update');
   if (cancelEditBtn) cancelEditBtn.classList.remove('d-none');
-  if (cardTitle) cardTitle.innerHTML = '<i class="bi bi-pencil me-2"></i>Update Tag';
+  if (cardTitle) cardTitle.innerHTML = I18n.t('tags_dyn.card_title_update');
 
   // Populate image
   const imgUrlInput = document.getElementById('tagImageUrl');
@@ -177,10 +177,10 @@ function openEditTag(id) {
 }
 
 async function deleteTag(id) {
-  if (!await UI.confirm('Delete this tag?')) return;
+  if (!await UI.confirm(I18n.t('tags_dyn.delete_confirm'))) return;
   try {
     await TagService.delete(id);
-    UI.toast('Tag deleted.');
+    UI.toast(I18n.t('tags_dyn.deleted'));
     if (currentPage > 0) {
       const remainingOnPage = document.querySelectorAll('#tags-tbody tr[data-id]').length - 1;
       if (remainingOnPage <= 0) currentPage--;
@@ -193,11 +193,11 @@ async function deleteSelectedTags() {
   const checkedBoxes = document.querySelectorAll('.row-check:checked');
 
   if (checkedBoxes.length === 0) {
-    UI.toast('Vui lòng chọn ít nhất một tag để xóa.', 'warning');
+    UI.toast(I18n.t('tags_dyn.delete_selected_min'), 'warning');
     return;
   }
 
-  if (!await UI.confirm(`Bạn có chắc chắn muốn xóa ${checkedBoxes.length} tag đã chọn không?`)) {
+  if (!await UI.confirm(I18n.t('tags_dyn.delete_selected_confirm').replace('{n}', checkedBoxes.length))) {
     return;
   }
 
@@ -208,13 +208,13 @@ async function deleteSelectedTags() {
 
   try {
     await Promise.all(tagIds.map(id => TagService.delete(id)));
-    UI.toast(`${tagIds.length} tag đã được xóa thành công.`, 'success');
+    UI.toast(I18n.t('tags_dyn.deleted_count').replace('{n}', tagIds.length), 'success');
     const selectAll = document.getElementById('selectAll');
     if (selectAll) selectAll.checked = false;
     if (currentPage > 0 && tagIds.length >= PAGE_SIZE) currentPage--;
     await loadTags();
   } catch (err) {
-    UI.toast(err.message || 'Đã xảy ra lỗi khi xóa các tag.', 'danger');
+    UI.toast(err.message, 'danger');
   }
 }
 
@@ -274,9 +274,9 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (tagImageFile) tagImageFile.value = '';
       this.classList.add('d-none');
       const submitBtn = document.getElementById('submitBtn');
-      if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Add Tag';
+      if (submitBtn) submitBtn.innerHTML = I18n.t('tags_dyn.btn_add');
       const cardTitle = document.getElementById('formCardTitle');
-      if (cardTitle) cardTitle.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Add New Tag';
+      if (cardTitle) cardTitle.innerHTML = I18n.t('tags_dyn.card_title_add');
     });
   }
 
@@ -294,7 +294,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       };
       try {
         await TagService.update(editingTagId, payload);
-        UI.toast('Tag updated.');
+        UI.toast(I18n.t('tags_dyn.updated'));
         bootstrap.Modal.getInstance(document.getElementById('editTagModal'))?.hide();
         editingTagId = null;
         await loadTags();
@@ -321,9 +321,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         const res = await Http.upload('/api/files/upload?folder=blog/tags', formData);
         if (res && res.path) {
           document.getElementById('tagImageUrl').value = res.path; // lưu path tương đối vào DB
-          UI.toast('Image uploaded.');
+          UI.toast(I18n.t('tags_dyn.upload_success'));
         }
-      } catch (err) { UI.toast('Failed to upload image: ' + err.message, 'danger'); }
+      } catch (err) { UI.toast(I18n.t('tags_dyn.upload_failed') + err.message, 'danger'); }
     });
   }
 
@@ -346,9 +346,9 @@ document.addEventListener('DOMContentLoaded', async function () {
         const res = await Http.upload('/api/files/upload?folder=blog/tags', formData);
         if (res && res.path) {
           document.getElementById('editTagImageUrl').value = res.path; // lưu path tương đối vào DB
-          UI.toast('Image uploaded.');
+          UI.toast(I18n.t('tags_dyn.upload_success'));
         }
-      } catch (err) { UI.toast('Failed to upload image: ' + err.message, 'danger'); }
+      } catch (err) { UI.toast(I18n.t('tags_dyn.upload_failed') + err.message, 'danger'); }
     });
   }
 
@@ -366,11 +366,11 @@ document.addEventListener('DOMContentLoaded', async function () {
       try {
         if (editingTagId) {
           await TagService.update(editingTagId, payload);
-          UI.toast('Tag updated.');
+          UI.toast(I18n.t('tags_dyn.updated'));
           editingTagId = null;
         } else {
           await TagService.create(payload);
-          UI.toast('Tag created.');
+          UI.toast(I18n.t('tags_dyn.created'));
         }
         // Reset form completely
         this.reset();
@@ -381,11 +381,11 @@ document.addEventListener('DOMContentLoaded', async function () {
         const tagImageFile = document.getElementById('tagImageFile');
         if (tagImageFile) tagImageFile.value = '';
         const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn) submitBtn.innerHTML = '<i class="bi bi-plus-circle me-1"></i> Add Tag';
+        if (submitBtn) submitBtn.innerHTML = I18n.t('tags_dyn.btn_add');
         const cancelBtn = document.getElementById('cancelEditBtn');
         if (cancelBtn) cancelBtn.classList.add('d-none');
         const cardTitle = document.getElementById('formCardTitle');
-        if (cardTitle) cardTitle.innerHTML = '<i class="bi bi-plus-circle me-2"></i>Add New Tag';
+        if (cardTitle) cardTitle.innerHTML = I18n.t('tags_dyn.card_title_add');
         currentPage = 0;
         await loadTags();
       } catch (err) { UI.toast(err.message, 'danger'); }
@@ -412,7 +412,7 @@ document.addEventListener('DOMContentLoaded', async function () {
       renderTagPage();
       document.getElementById('tags-pagination').innerHTML = ''; // tắt phân trang khi search
     } catch {
-      UI.toast('Không thể tìm kiếm, hiển thị tất cả.', 'warning');
+      UI.toast(I18n.t('tags_dyn.search_failed'), 'warning');
       currentPage = 0;
       await loadTags();
     }

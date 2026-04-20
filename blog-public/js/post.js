@@ -17,7 +17,7 @@ let currentPost = null;
 
 /* ── Render post header ─────────────────────────────────── */
 function renderPostHeader(post) {
-  const authorName = post.author?.fullName || post.author?.username || 'Ẩn danh';
+  const authorName = post.author?.fullName || post.author?.username || UI._t('ui.anonymous');
   const authorAvatar = UI.avatarUrl(post.author);
   const categories = (post.categories || []).map(c =>
     `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
@@ -41,7 +41,7 @@ function renderPostHeader(post) {
         </div>
         <div class="post-meta-row">
           <span>${UI.formatDate(post.publishedAt || post.createdAt)}</span>
-          ${post.viewCount != null ? `<span>· 👁 ${post.viewCount} lượt xem</span>` : ''}
+          ${post.viewCount != null ? `<span>· 👁 ${UI._t('post.view_count').replace('{n}', post.viewCount)}</span>` : ''}
         </div>
       </div>
     </div>`;
@@ -72,8 +72,8 @@ function buildTOC(contentHtml) {
 
   tocEl.innerHTML = `
     <div class="toc-header">
-      <span class="toc-title">Nội dung bài viết</span>
-      <button class="toc-toggle" onclick="this.closest('.post-toc-sidebar').classList.toggle('collapsed')" title="Ẩn/hiện mục lục">☰</button>
+      <span class="toc-title">${UI._t('post.toc_title')}</span>
+      <button class="toc-toggle" onclick="this.closest('.post-toc-sidebar').classList.toggle('collapsed')" title="${UI._t('post.toc_toggle')}">☰</button>
     </div>
     <ol class="toc-list">${items}</ol>`;
 
@@ -105,24 +105,23 @@ function renderMembershipGate() {
 
   let actionHtml = '';
   if (!isLoggedIn) {
-    actionHtml = `<a href="login.html" class="btn btn-primary membership-gate-btn">Đăng nhập</a>`;
+    actionHtml = `<a href="login.html" class="btn btn-primary membership-gate-btn">${UI._t('post.gate_btn_login')}</a>`;
   } else if (status === 2) {
-    actionHtml = `<span class="membership-gate-pending">⏳ Yêu cầu của bạn đang chờ duyệt</span>`;
+    actionHtml = `<span class="membership-gate-pending">${UI._t('post.gate_btn_pending')}</span>`;
   } else {
-    // status = 0 (none) — chưa có membership, cho phép gửi yêu cầu
-    actionHtml = `<a href="membership.html" class="btn btn-primary membership-gate-btn">🚀 Đăng ký Membership</a>`;
+    actionHtml = `<a href="membership.html" class="btn btn-primary membership-gate-btn">${UI._t('post.gate_btn_register')}</a>`;
   }
 
   const desc = !isLoggedIn
-    ? 'Đăng nhập rồi đăng ký membership để đọc toàn bộ nội dung.'
+    ? UI._t('post.gate_desc_login')
     : status === 2
-      ? 'Admin sẽ xét duyệt yêu cầu của bạn sớm nhất.'
-      : 'Tài khoản của bạn chưa có membership. Gửi yêu cầu để được duyệt truy cập miễn phí.';
+      ? UI._t('post.gate_desc_pending')
+      : UI._t('post.gate_desc_none');
 
   return `
     <div class="membership-gate">
       <div class="membership-gate-icon">🔒</div>
-      <h3 class="membership-gate-title">Nội dung dành cho thành viên</h3>
+      <h3 class="membership-gate-title">${UI._t('post.gate_title')}</h3>
       <p class="membership-gate-desc">${desc}</p>
       ${actionHtml}
     </div>`;
@@ -134,7 +133,7 @@ function renderPostContent(post) {
     `<a href="tag.html?slug=${t.slug}" class="tag-chip tag">${t.title}</a>`
   ).join('');
 
-  const bodyHtml = post.content || '<p style="color:var(--text-muted)">Bài viết chưa có nội dung.</p>';
+  const bodyHtml = post.content || `<p style="color:var(--text-muted)">${UI._t('post.no_content')}</p>`;
 
   const memberBadge = post.memberOnly
     ? `<div class="member-only-badge"><span>🔒 Member Only</span></div>`
@@ -173,13 +172,13 @@ async function refreshComments(postId) {
     const user = Auth.getUser();
     const topLevel = fresh.filter(c => !c.parentId);
     if (fresh.length === 0) {
-      list.innerHTML = `<div class="no-comments">Chưa có bình luận nào. Hãy là người đầu tiên!</div>`;
+      list.innerHTML = `<div class="no-comments">${UI._t('comments.empty')}</div>`;
     } else {
       list.innerHTML = topLevel.map(c => renderComment(c, fresh, user)).join('');
     }
     const countEl = document.querySelector('.comments-count');
-    if (countEl) countEl.textContent = `💬 ${fresh.length} bình luận`;
-  } catch (_) {}
+    if (countEl) countEl.textContent = UI._t('comments.title').replace('{n}', fresh.length);
+  } catch (_) { }
 }
 
 async function loadComments(postId) {
@@ -197,29 +196,29 @@ async function loadComments(postId) {
 
   wrap.innerHTML = `
     <div class="comments-section">
-      <h3 class="comments-count">💬 ${comments.length} bình luận</h3>
+      <h3 class="comments-count">${UI._t('comments.title').replace('{n}', comments.length)}</h3>
 
       ${isLoggedIn ? `
         <div class="comment-form" style="margin-bottom:2rem">
-          <textarea id="new-comment-text" placeholder="Viết bình luận của bạn..."></textarea>
+          <textarea id="new-comment-text" placeholder="${UI._t('comments.placeholder')}"></textarea>
           <div class="comment-form-footer">
-            <button class="btn btn-primary btn-sm" onclick="submitComment()">Gửi bình luận</button>
+            <button class="btn btn-primary btn-sm" onclick="submitComment()">${UI._t('comments.btn_submit')}</button>
           </div>
         </div>` : `
         <div style="background:var(--primary-light);border-radius:var(--radius-sm);padding:1rem 1.25rem;margin-bottom:2rem;font-size:.9rem;color:var(--primary)">
-          <a href="login.html" style="font-weight:600">Đăng nhập</a> để bình luận bài viết này.
+          <a href="login.html" style="font-weight:600">${UI._t('nav.login')}</a> ${UI._t('comments.login_to_comment')}
         </div>`}
 
       <div class="comment-list" id="comment-list">
         ${comments.length === 0
-          ? `<div class="no-comments">Chưa có bình luận nào. Hãy là người đầu tiên!</div>`
-          : comments.filter(c => !c.parentId).map(c => renderComment(c, comments, user)).join('')}
+      ? `<div class="no-comments">${UI._t('comments.empty')}</div>`
+      : comments.filter(c => !c.parentId).map(c => renderComment(c, comments, user)).join('')}
       </div>
     </div>`;
 }
 
 function renderComment(comment, allComments, currentUser) {
-  const authorName = comment.user?.fullName || comment.user?.username || 'Người dùng';
+  const authorName = comment.user?.fullName || comment.user?.username || UI._t('ui.user');
   const avatar = UI.avatarUrl(comment.user);
   const replies = allComments.filter(c => c.parentId === comment.id);
   const isOwner = currentUser && comment.user?.id === currentUser.id;
@@ -237,16 +236,16 @@ function renderComment(comment, allComments, currentUser) {
       <div class="comment-body">${comment.content || ''}</div>
       <div class="comment-actions">
         ${Auth.isLoggedIn()
-          ? `<button onclick="showReplyForm(${comment.id})">↩ Trả lời</button>`
-          : ''}
+      ? `<button onclick="showReplyForm(${comment.id})">${UI._t('comments.reply_btn')}</button>`
+      : ''}
         ${isOwner
-          ? `<button onclick="deleteComment(${comment.id})" style="color:var(--danger)">🗑 Xóa</button>`
-          : ''}
+      ? `<button onclick="deleteComment(${comment.id})" style="color:var(--danger)">${UI._t('comments.delete_btn')}</button>`
+      : ''}
       </div>
       <div id="reply-form-${comment.id}"></div>
       ${replies.length > 0
-        ? `<div class="comment-replies">${replies.map(r => renderComment(r, allComments, currentUser)).join('')}</div>`
-        : ''}
+      ? `<div class="comment-replies">${replies.map(r => renderComment(r, allComments, currentUser)).join('')}</div>`
+      : ''}
     </div>`;
 }
 
@@ -256,10 +255,10 @@ function showReplyForm(parentId) {
   if (container.innerHTML) { container.innerHTML = ''; return; }
   container.innerHTML = `
     <div class="reply-form-wrap">
-      <textarea id="reply-text-${parentId}" placeholder="Viết trả lời..."></textarea>
+      <textarea id="reply-text-${parentId}" placeholder="${UI._t('comments.reply_placeholder')}"></textarea>
       <div class="reply-form-footer">
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('reply-form-${parentId}').innerHTML=''">Hủy</button>
-        <button class="btn btn-primary btn-sm" onclick="submitReply(${parentId})">Gửi</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('reply-form-${parentId}').innerHTML=''">${UI._t('comments.cancel')}</button>
+        <button class="btn btn-primary btn-sm" onclick="submitReply(${parentId})">${UI._t('comments.send')}</button>
       </div>
     </div>`;
 }
@@ -268,19 +267,19 @@ async function submitComment() {
   if (!Auth.requireLogin()) return;
   const user = Auth.getUser();
   const text = document.getElementById('new-comment-text')?.value.trim();
-  if (!text) { UI.toast('Vui lòng nhập nội dung bình luận.', 'error'); return; }
+  if (!text) { UI.toast(UI._t('comments.enter_comment'), 'error'); return; }
   try {
     await CommentService.create({
-      postId:  currentPost.id,
-      userId:  user.id,
+      postId: currentPost.id,
+      userId: user.id,
       content: text,
-      title:   text.length > 60 ? text.substring(0, 60) + '...' : text,
+      title: text.length > 60 ? text.substring(0, 60) + '...' : text,
     });
-    UI.toast('Bình luận đã được đăng!', 'success');
+    UI.toast(UI._t('comments.posted'), 'success');
     document.getElementById('new-comment-text').value = '';
     await loadComments(currentPost.id);
   } catch (err) {
-    UI.toast(err.message || 'Không thể gửi bình luận.', 'error');
+    UI.toast(err.message || UI._t('comments.send_failed'), 'error');
   }
 }
 
@@ -288,31 +287,30 @@ async function submitReply(parentId) {
   if (!Auth.requireLogin()) return;
   const user = Auth.getUser();
   const text = document.getElementById(`reply-text-${parentId}`)?.value.trim();
-  if (!text) { UI.toast('Vui lòng nhập nội dung trả lời.', 'error'); return; }
+  if (!text) { UI.toast(UI._t('comments.enter_reply'), 'error'); return; }
   try {
     await CommentService.create({
-      postId:   currentPost.id,
-      userId:   user.id,
+      postId: currentPost.id,
+      userId: user.id,
       parentId: parentId,
-      content:  text,
-      title:    text.length > 60 ? text.substring(0, 60) + '...' : text,
+      content: text,
+      title: text.length > 60 ? text.substring(0, 60) + '...' : text,
     });
-    UI.toast('Trả lời đã được đăng!', 'success');
+    UI.toast(UI._t('comments.reply_posted'), 'success');
     await loadComments(currentPost.id);
   } catch (err) {
-    UI.toast(err.message || 'Không thể gửi trả lời.', 'error');
+    UI.toast(err.message || UI._t('comments.reply_failed'), 'error');
   }
 }
 
 async function deleteComment(id) {
-  if (!confirm('Bạn có chắc muốn xóa bình luận này?')) return;
+  if (!confirm(UI._t('comments.delete_confirm'))) return;
   try {
     await CommentService.delete(id);
-    UI.toast('Đã xóa bình luận.', 'success');
+    UI.toast(UI._t('comments.deleted'), 'success');
     await loadComments(currentPost.id);
   } catch (err) {
-    // Người dùng thường không có quyền xóa — chỉ admin/moderator mới được
-    UI.toast('Bạn không có quyền xóa bình luận này.', 'error');
+    UI.toast(UI._t('comments.delete_forbidden'), 'error');
   }
 }
 
@@ -322,11 +320,11 @@ async function init() {
 
   const params = new URLSearchParams(window.location.search);
   const slug = params.get('slug');
-  const id   = params.get('id');
+  const id = params.get('id');
 
   if (!slug && !id) {
     document.getElementById('post-header-content').innerHTML =
-      `<div class="empty-state"><h3>Không tìm thấy bài viết</h3><p>Thiếu tham số slug hoặc id.</p></div>`;
+      `<div class="empty-state"><h3>${UI._t('post.not_found_title')}</h3><p>${UI._t('post.not_found_desc')}</p></div>`;
     return;
   }
 
@@ -356,7 +354,7 @@ async function init() {
     }
   } catch (err) {
     document.getElementById('post-header-content').innerHTML =
-      `<div class="empty-state"><h3>Không tìm thấy bài viết</h3><p>${err.message}</p></div>`;
+      `<div class="empty-state"><h3>${UI._t('post.not_found_title')}</h3><p>${err.message}</p></div>`;
     document.getElementById('post-content-wrap').innerHTML = '';
   }
 }

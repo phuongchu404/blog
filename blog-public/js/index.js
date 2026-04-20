@@ -20,9 +20,9 @@ async function renderCategoriesPills() {
   const el = document.getElementById('categories-pills');
   if (!el) return;
   try {
-    const cats  = await CategoryService.getAll();
+    const cats = await CategoryService.getAll();
     const roots = (cats || []).filter(c => !c.parentId);
-    if (!roots.length) { el.innerHTML = '<p style="color:var(--text-muted);font-size:.875rem">Chưa có thể loại nào.</p>'; return; }
+    if (!roots.length) { el.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem">${I18n.t('index_dyn.no_categories')}</p>`; return; }
     el.innerHTML = roots.map(c => `
       <a href="category.html?slug=${c.slug}" class="cat-pill">
         <span>${c.title}</span>
@@ -52,7 +52,7 @@ async function renderTagsSection() {
 function renderFeaturedPosts(posts) {
   const el = document.getElementById('featured-posts');
   if (!el) return;
-  if (!posts.length) { UI.emptyState(el, 'Chưa có bài viết nổi bật'); return; }
+  if (!posts.length) { UI.emptyState(el, I18n.t('index_dyn.no_featured')); return; }
   el.innerHTML = posts.map(p => UI.featuredCard(p)).join('');
 }
 
@@ -60,7 +60,7 @@ function renderFeaturedPosts(posts) {
 function renderRecentPosts(posts) {
   const el = document.getElementById('recent-posts');
   if (!el) return;
-  if (!posts.length) { UI.emptyState(el, 'Chưa có bài viết nào', 'Hãy quay lại sau nhé!'); return; }
+  if (!posts.length) { UI.emptyState(el, I18n.t('index_dyn.no_posts'), I18n.t('index_dyn.no_posts_sub')); return; }
   el.innerHTML = posts.map(p => UI.postCard(p)).join('');
 }
 
@@ -75,26 +75,26 @@ async function init() {
 
   // Section 2 & 3: Posts
   const featuredEl = document.getElementById('featured-posts');
-  const recentEl   = document.getElementById('recent-posts');
-  UI.loading(featuredEl, 'Đang tải...');
-  UI.loading(recentEl,   'Đang tải bài viết...');
+  const recentEl = document.getElementById('recent-posts');
+  UI.loading(featuredEl, I18n.t('index_dyn.loading'));
+  UI.loading(recentEl, I18n.t('index_dyn.loading_posts'));
 
   try {
     const posts = await PostService.getPublished();
-    const list  = Array.isArray(posts) ? posts : (posts?.content || []);
+    const list = Array.isArray(posts) ? posts : (posts?.content || []);
 
     if (list.length > 0) {
       // 3 bài đầu → nổi bật, 3 bài tiếp → mới nhất
       renderFeaturedPosts(list.slice(0, 3));
       renderRecentPosts(list.slice(3, 6));
     } else {
-      UI.emptyState(featuredEl, 'Chưa có bài viết nào');
-      UI.emptyState(recentEl,   'Chưa có bài viết nào');
+      UI.emptyState(featuredEl, I18n.t('index_dyn.no_posts'));
+      UI.emptyState(recentEl, I18n.t('index_dyn.no_posts'));
     }
   } catch (err) {
     console.error(err);
-    UI.emptyState(featuredEl, 'Không thể tải bài viết', 'Vui lòng kiểm tra kết nối.');
-    UI.emptyState(recentEl,   'Không thể tải bài viết', 'Vui lòng kiểm tra kết nối.');
+    UI.emptyState(featuredEl, I18n.t('index_dyn.cannot_load'), I18n.t('index_dyn.check_connection'));
+    UI.emptyState(recentEl, I18n.t('index_dyn.cannot_load'), I18n.t('index_dyn.check_connection'));
   }
 }
 

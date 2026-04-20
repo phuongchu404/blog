@@ -73,27 +73,27 @@ async function handleLogin(e) {
 
   if (!username) {
     document.getElementById('username')?.classList.add('error');
-    showFormError('username-error', 'Vui lòng nhập tên đăng nhập');
+    showFormError('username-error', I18n.t('auth.err_username_required'));
     valid = false;
   }
   if (!password) {
     document.getElementById('password')?.classList.add('error');
-    showFormError('password-error', 'Vui lòng nhập mật khẩu');
+    showFormError('password-error', I18n.t('auth.err_password_required'));
     valid = false;
   }
   if (!valid) return;
 
-  setLoading('login-btn', true, 'Đăng nhập');
+  setLoading('login-btn', true, I18n.t('auth.btn_login'));
   try {
     await Auth.login(username, password);
-    UI.toast('Đăng nhập thành công!', 'success');
+    UI.toast(I18n.t('auth.login_success'), 'success');
     const params = new URLSearchParams(window.location.search);
     const returnUrl = params.get('returnUrl');
     setTimeout(() => { window.location.href = returnUrl || 'index.html'; }, 600);
   } catch (err) {
-    showFormError('login-error', err.message || 'Tên đăng nhập hoặc mật khẩu không đúng.');
+    showFormError('login-error', err.message || I18n.t('auth.login_failed'));
   } finally {
-    setLoading('login-btn', false, 'Đăng nhập');
+    setLoading('login-btn', false, I18n.t('auth.btn_login'));
   }
 }
 
@@ -114,36 +114,36 @@ async function handleRegister(e) {
 
   if (!username) {
     document.getElementById('username')?.classList.add('error');
-    showFormError('username-error', 'Vui lòng nhập tên đăng nhập');
+    showFormError('username-error', I18n.t('auth.err_username_required'));
     valid = false;
   }
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     document.getElementById('email')?.classList.add('error');
-    showFormError('email-error', 'Vui lòng nhập email hợp lệ');
+    showFormError('email-error', I18n.t('auth.err_email_invalid'));
     valid = false;
   }
   if (!password || password.length < 6) {
     document.getElementById('password')?.classList.add('error');
-    showFormError('password-error', 'Mật khẩu phải có ít nhất 6 ký tự');
+    showFormError('password-error', I18n.t('auth.err_password_min'));
     valid = false;
   }
   if (password !== confirmPwd) {
     document.getElementById('confirmPassword')?.classList.add('error');
-    showFormError('confirmPassword-error', 'Mật khẩu xác nhận không khớp');
+    showFormError('confirmPassword-error', I18n.t('auth.err_confirm_mismatch'));
     valid = false;
   }
   if (!valid) return;
 
-  setLoading('register-btn', true, 'Tạo tài khoản');
+  setLoading('register-btn', true, I18n.t('auth.btn_register'));
   try {
     await Auth.register({ username, email, password, fullName: fullName || undefined });
-    UI.toast('Đăng ký thành công! Đang đăng nhập...', 'success');
+    UI.toast(I18n.t('auth.register_success'), 'success');
     await Auth.login(username, password);
     setTimeout(() => { window.location.href = 'index.html'; }, 800);
   } catch (err) {
-    showFormError('register-error', err.message || 'Đăng ký thất bại. Vui lòng thử lại.');
+    showFormError('register-error', err.message || I18n.t('auth.register_failed'));
   } finally {
-    setLoading('register-btn', false, 'Tạo tài khoản');
+    setLoading('register-btn', false, I18n.t('auth.btn_register'));
   }
 }
 
@@ -239,10 +239,10 @@ function populateEditForm(user) {
         const res = await Http.upload('/api/files/upload?folder=blog/avatars', formData);
         if (res && res.path) {
           document.getElementById('edit-imageUrl').value = res.path;
-          UI.toast('Ảnh đại diện đã được tải lên!', 'success');
+          UI.toast(I18n.t('auth.avatar_uploaded'), 'success');
         }
       } catch (err) {
-        UI.toast('Upload thất bại: ' + err.message, 'danger');
+        UI.toast(I18n.t('auth.avatar_upload_failed') + err.message, 'danger');
       }
     });
   });
@@ -251,14 +251,14 @@ function populateEditForm(user) {
 async function loadMyPosts(userId) {
   const grid = document.getElementById('my-posts-grid');
   if (!grid) return;
-  UI.loading(grid, 'Đang tải bài viết...');
+  UI.loading(grid, I18n.t('auth.cannot_load_posts'));
   try {
     const posts = await PostService.getByAuthor(userId);
     const list = Array.isArray(posts) ? posts : (posts?.content || []);
-    if (!list.length) { UI.emptyState(grid, 'Bạn chưa có bài viết nào'); return; }
+    if (!list.length) { UI.emptyState(grid, I18n.t('auth.no_posts')); return; }
     grid.innerHTML = list.map(p => UI.postCard(p)).join('');
   } catch (_) {
-    UI.emptyState(grid, 'Không thể tải bài viết');
+    UI.emptyState(grid, I18n.t('auth.cannot_load_posts'));
   }
 }
 
@@ -277,7 +277,7 @@ async function handleProfileUpdate(e) {
     imageUrl: document.getElementById('edit-imageUrl')?.value.trim() || undefined,
   };
 
-  setLoading('profile-save-btn', true, 'Lưu thay đổi');
+  setLoading('profile-save-btn', true, I18n.t('profile.btn_save'));
   try {
     await Http.put(`/api/users/${profileUser.id}`, data);
     const updated = await Auth.me();
@@ -285,12 +285,12 @@ async function handleProfileUpdate(e) {
     profileUser = updated;
     renderProfileHeader(updated);
     UI.renderNav();
-    UI.toast('Cập nhật hồ sơ thành công!', 'success');
+    UI.toast(I18n.t('auth.profile_updated'), 'success');
     switchTab('posts', document.querySelector('.tab-btn'));
   } catch (err) {
-    showFormError('profile-update-error', err.message || 'Cập nhật thất bại.');
+    showFormError('profile-update-error', err.message || I18n.t('auth.profile_update_failed'));
   } finally {
-    setLoading('profile-save-btn', false, 'Lưu thay đổi');
+    setLoading('profile-save-btn', false, I18n.t('profile.btn_save'));
   }
 }
 
@@ -301,26 +301,26 @@ async function handleChangePassword(e) {
   const confirmPwd = document.getElementById('confirm-new-password')?.value;
 
   if (!newPwd || newPwd.length < 6) {
-    showFormError('confirm-password-error', 'Mật khẩu phải có ít nhất 6 ký tự');
+    showFormError('confirm-password-error', I18n.t('auth.err_password_min'));
     return;
   }
   if (newPwd !== confirmPwd) {
-    showFormError('confirm-password-error', 'Mật khẩu xác nhận không khớp');
+    showFormError('confirm-password-error', I18n.t('auth.err_confirm_mismatch'));
     return;
   }
 
-  setLoading('password-save-btn', true, 'Đổi mật khẩu');
+  setLoading('password-save-btn', true, I18n.t('profile.btn_change_password'));
   try {
     await Http.post('/auth/change-password', {
       userName: profileUser.username,
       newPassword: newPwd,
     });
-    UI.toast('Đổi mật khẩu thành công!', 'success');
+    UI.toast(I18n.t('auth.password_changed'), 'success');
     document.getElementById('password-form').reset();
   } catch (err) {
-    showFormError('confirm-password-error', err.message || 'Đổi mật khẩu thất bại.');
+    showFormError('confirm-password-error', err.message || I18n.t('auth.password_change_failed'));
   } finally {
-    setLoading('password-save-btn', false, 'Đổi mật khẩu');
+    setLoading('password-save-btn', false, I18n.t('profile.btn_change_password'));
   }
 }
 
@@ -351,7 +351,7 @@ async function handleChangePassword(e) {
           const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
           jwtSubject = payload.sub;
         }
-      } catch (_) {}
+      } catch (_) { }
       const _dbg = { step: 'callback-start', time: new Date().toISOString(), tokenPrefix: oauthToken.slice(0, 20), jwtSubject };
       console.log('[OAuth] Callback nhận token → JWT subject (username):', jwtSubject);
       sessionStorage.setItem('_oauthDebug', JSON.stringify(_dbg));
@@ -381,7 +381,7 @@ async function handleChangePassword(e) {
         localStorage.removeItem('refreshToken');
         const errorEl = document.getElementById('login-error');
         if (errorEl) {
-          errorEl.textContent = 'Đăng nhập thành công nhưng không thể lấy thông tin tài khoản. Vui lòng thử lại.';
+          errorEl.textContent = I18n.t('auth.login_failed_no_token');
           errorEl.style.display = 'block';
         }
         return;
@@ -422,16 +422,16 @@ async function handleChangePassword(e) {
         </div>
         <div style="text-align:center;padding:1rem 0">
           <div style="font-size:2.5rem;margin-bottom:1rem">👤</div>
-          <h2 style="margin-bottom:.5rem">Bạn đã đăng nhập</h2>
+          <h2 style="margin-bottom:.5rem">${I18n.t('auth.login_success')}</h2>
           <p style="color:var(--text-muted);margin-bottom:1.5rem">
-            Đang đăng nhập với tài khoản <strong>${username}</strong>
+            ${I18n.t('auth.login_success')} <strong>${username}</strong>
           </p>
           <div style="display:flex;flex-direction:column;gap:.75rem">
             <a href="index.html" class="btn btn-primary" style="justify-content:center;text-align:center">
-              Về trang chủ
+              ${I18n.t('auth.btn_back_home')}
             </a>
             <button onclick="Auth.logout()" class="btn btn-ghost" style="justify-content:center">
-              Đăng xuất để đổi tài khoản
+              ${I18n.t('nav.logout')}
             </button>
           </div>
         </div>`;
@@ -471,7 +471,7 @@ async function handleChangePassword(e) {
       }
     } catch (err) {
       document.getElementById('profile-header').innerHTML =
-        `<div class="empty-state"><h3>Không thể tải hồ sơ</h3><p>${err.message}</p></div>`;
+        `<div class="empty-state"><h3>${I18n.t('auth.profile_update_failed')}</h3><p>${err.message}</p></div>`;
     }
   }
 })();
