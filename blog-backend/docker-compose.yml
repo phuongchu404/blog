@@ -1,6 +1,24 @@
 version: '3.8'
 
 services:
+  mysql:
+    image: mysql:8.4
+    container_name: blog_mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: blog
+      MYSQL_USER: phuongchu
+      MYSQL_PASSWORD: Phuong1590@
+      MYSQL_ROOT_PASSWORD: Phuong1590@
+    command:
+      - --default-authentication-plugin=mysql_native_password
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - blog-network
+
   redis:
     image: redis:7.2-alpine
     container_name: blog_redis
@@ -9,6 +27,8 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+    networks:
+      - blog-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.0
@@ -19,6 +39,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     restart: unless-stopped
+    networks:
+      - blog-network
 
   kafka:
     image: confluentinc/cp-kafka:7.5.0
@@ -31,10 +53,13 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:29092,EXTERNAL://localhost:9092
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:29092,EXTERNAL://0.0.0.0:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     restart: unless-stopped
+    networks:
+      - blog-network
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -48,6 +73,8 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     restart: unless-stopped
+    networks:
+      - blog-network
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.11.3
@@ -65,6 +92,8 @@ services:
     volumes:
       - es_data:/usr/share/elasticsearch/data
     restart: unless-stopped
+    networks:
+      - blog-network
 
   dejavu:
     image: appbaseio/dejavu:latest
@@ -74,6 +103,8 @@ services:
     ports:
       - "1358:1358"
     restart: unless-stopped
+    networks:
+      - blog-network
 
   minio:
     image: minio/minio
@@ -88,8 +119,15 @@ services:
       - minio_data:/data
     command: server /data --console-address ":9001"
     restart: unless-stopped
+    networks:
+      - blog-network
 
 volumes:
+  mysql_data:
   redis_data:
   es_data:
   minio_data:
+
+networks:
+  blog-network:
+    name: blog-network

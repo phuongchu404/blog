@@ -132,7 +132,8 @@ app:
   public-url: http://127.0.0.1:5500
 
 minio:
-    url: http://103.149.86.208:9000
+    endpoint: http://103.149.86.208:9000
+    public-url: http://103.149.86.208:9000
     access:
         name: phuongchu404
         secret: Phuong1590@

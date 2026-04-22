@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  blog-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        JAR_FILE: "*.jar"
+    image: blog-backend:latest
+    container_name: blog-backend
+    restart: unless-stopped
+    ports:
+      - "8055:8055"
+    environment:
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    volumes:
+      - /opt/blog/blog-backend/config:/app/config
+      - /opt/blog/blog-backend/logs:/app/logs
+      - /opt/blog/blog-backend/uploads:/app/uploads
+    networks:
+      - blog-network
+
+networks:
+  blog-network:
+    external: true
+    name: blog-network

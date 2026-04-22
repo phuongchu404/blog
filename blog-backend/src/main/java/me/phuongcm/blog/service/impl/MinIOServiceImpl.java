@@ -17,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -32,8 +34,8 @@ public class MinIOServiceImpl implements MinIOService {
 
     private final MinioClient minioClient;
 
-    @Value("${minio.url}")
-    private String minioUrl;
+    @Value("${minio.public-url:${minio.url:http://localhost:9000}}")
+    private String minioPublicUrl;
 
     @Value("${minio.bucket-private}")
     private String bucketPrivate;
@@ -97,7 +99,8 @@ public class MinIOServiceImpl implements MinIOService {
             if (option.getExpirationDuration() > 0) {
                 getPresignedObjectUrlArgs.expiry(option.getExpirationDuration(), option.getExpirationUnit());
             }
-            return minioClient.getPresignedObjectUrl(getPresignedObjectUrlArgs.build());
+            String presignedUrl = minioClient.getPresignedObjectUrl(getPresignedObjectUrlArgs.build());
+            return rewriteToPublicUrl(presignedUrl);
         } catch (ErrorResponseException | InsufficientDataException | InternalException | InvalidKeyException |
                  InvalidResponseException | IOException | NoSuchAlgorithmException | XmlParserException |
                  ServerException e) {
@@ -110,7 +113,7 @@ public class MinIOServiceImpl implements MinIOService {
     @Override
     public String getPublicFileUrl(String filePath) {
         if (filePath == null || filePath.isBlank()) return null;
-        return minioUrl + "/" + bucketPublic + "/" + filePath;
+        return joinUrl(minioPublicUrl, bucketPublic + "/" + trimLeadingSlash(filePath));
     }
 
     @Override
@@ -137,5 +140,50 @@ public class MinIOServiceImpl implements MinIOService {
 
     private String renameFile(String name) {
         return FilenameUtils.removeExtension(name) + "_" + UlidCreator.getMonotonicUlid(System.currentTimeMillis()) + "." + FilenameUtils.getExtension(name);
+    }
+
+    private String rewriteToPublicUrl(String rawUrl) {
+        if (rawUrl == null || rawUrl.isBlank() || minioPublicUrl == null || minioPublicUrl.isBlank()) {
+            return rawUrl;
+        }
+
+        try {
+            URI original = URI.create(rawUrl);
+            URI publicBase = URI.create(minioPublicUrl);
+            String rewrittenPath = joinPath(publicBase.getPath(), original.getPath());
+
+            return new URI(
+                    publicBase.getScheme(),
+                    null,
+                    publicBase.getHost(),
+                    publicBase.getPort(),
+                    rewrittenPath,
+                    original.getQuery(),
+                    original.getFragment()
+            ).toString();
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid MinIO public URL '{}', using raw URL instead", minioPublicUrl, e);
+            return rawUrl;
+        } catch (URISyntaxException e) {
+            log.warn("Unable to rewrite presigned MinIO URL to public URL", e);
+            return rawUrl;
+        }
+    }
+
+    private String joinUrl(String base, String path) {
+        return base.replaceAll("/+$", "") + "/" + trimLeadingSlash(path);
+    }
+
+    private String joinPath(String basePath, String path) {
+        String normalizedBase = basePath == null ? "" : basePath.replaceAll("/+$", "");
+        String normalizedPath = trimLeadingSlash(path);
+        if (normalizedBase.isBlank()) {
+            return "/" + normalizedPath;
+        }
+        return normalizedBase + "/" + normalizedPath;
+    }
+
+    private String trimLeadingSlash(String value) {
+        return value == null ? "" : value.replaceFirst("^/+", "");
     }
 }

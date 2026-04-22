@@ -24,8 +24,8 @@ public class MinIOConfig {
     @Value("${minio.access.secret:Phuong1590@}")
     private String accessSecret;
 
-    @Value("${minio.url:http://localhost:9000}")
-    private String minioUrl;
+    @Value("${minio.endpoint:${minio.url:http://localhost:9000}}")
+    private String minioEndpoint;
 
     @Value("${minio.bucket-private:private-bucket}")
     private String bucketPrivate;
@@ -39,7 +39,7 @@ public class MinIOConfig {
     @Bean
     public MinioClient minioClient() {
         MinioClient minioClient = MinioClient.builder()
-                .endpoint(minioUrl)
+                .endpoint(minioEndpoint)
                 .credentials(accessKey, accessSecret)
                 .build();
 

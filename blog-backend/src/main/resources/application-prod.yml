@@ -20,7 +20,7 @@ application:
       token-validity-in-seconds-for-remember-me: 2592000
       token-validity-in-seconds-for-refresh: 604800
     oauth2:
-      authorizedRedirectUris: http://localhost:5500/login.html,http://127.0.0.1:5500/login.html,http://localhost:5500/blog-public/login.html,http://127.0.0.1:5500/blog-public/login.html,myandroidapp://oauth2/redirect,myiosapp://oauth2/redirect
+      authorizedRedirectUris: https://phuongcm.com/login.html,https://www.phuongcm.com/login.html,https://admin.phuongcm.com/login.html,myandroidapp://oauth2/redirect,myiosapp://oauth2/redirect
 
 spring:
   application:
@@ -36,11 +36,11 @@ spring:
 
   data:
     redis:
-      host: 103.149.86.208
+      host: redis
       port: 6379
 
   kafka:
-    bootstrap-servers: 103.149.86.208:9092
+    bootstrap-servers: kafka:29092
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -53,7 +53,7 @@ spring:
         spring.json.trusted.packages: "*"
 
   elasticsearch:
-    uris: http://103.149.86.208:8011
+    uris: http://elasticsearch:9200
     connection-timeout: 3s
     socket-timeout: 30s
   datasource:
@@ -61,17 +61,17 @@ spring:
 #    url: jdbc:mysql://localhost:3307/blog
 #    username: root
 #    password: 123456
-    url: jdbc:mysql://103.149.86.208:3306/blog
+    url: jdbc:mysql://mysql:3306/blog
     username: phuongchu
     password: Phuong1590@
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
+      ddl-auto: none
+    show-sql: false
     format_sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
+#        dialect: org.hibernate.dialect.MySQLDialect
 #      hibernate.id.new_generator_mappings: true
 #      hibernate.cache.use_second_level_cache: false
 #      hibernate.cache.use_query_cache: false
@@ -128,11 +128,12 @@ spring:
         debug: false
 
 app:
-  base-url: http://localhost:8055
-  public-url: http://127.0.0.1:5500
+  base-url: https://api.phuongcm.com
+  public-url: https://phuongcm.com
 
 minio:
-    url: http://103.149.86.208:9000
+    endpoint: http://minio:9000
+    public-url: https://media.phuongcm.com
     access:
         name: phuongchu404
         secret: Phuong1590@
