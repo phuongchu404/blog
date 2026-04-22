@@ -73,6 +73,19 @@
         <div class="sidebar-widget-title" data-i18n="search.sidebar_tags">Tags</div>
         <div class="sidebar-widget-body" id="sidebar-tags"></div>
       </div>
+      <div class="sidebar-widget newsletter-widget">
+        <div class="sidebar-widget-title" data-i18n="blog.newsletter_title">Nhận bài viết mới</div>
+        <div class="sidebar-widget-body">
+          <p class="newsletter-desc" data-i18n="blog.newsletter_desc">Đăng ký để nhận bài viết mới nhất về AI, Backend &
+            DevOps.</p>
+          <form class="newsletter-form" onsubmit="UI.newsletterSubmit(event)">
+            <input type="email" class="newsletter-input" placeholder="Email của bạn..."
+              data-i18n-placeholder="blog.newsletter_placeholder" required>
+            <button type="submit" class="btn btn-primary" style="width:100%" data-i18n="blog.newsletter_btn">Đăng
+              ký</button>
+          </form>
+        </div>
+      </div>
     </aside>
   </main>
 

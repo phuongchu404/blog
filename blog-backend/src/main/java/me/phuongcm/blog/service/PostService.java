@@ -2,6 +2,7 @@ package me.phuongcm.blog.service;
 
 import me.phuongcm.blog.dto.PostDTO;
 import me.phuongcm.blog.entity.Post;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +11,8 @@ public interface PostService {
     List<PostDTO> getAllPosts();
 
     List<PostDTO> getPublishedPosts();
+
+    Page<PostDTO> getPublishedPosts(int page, int size, String sort);
 
     Optional<PostDTO> getPostById(Long id);
 

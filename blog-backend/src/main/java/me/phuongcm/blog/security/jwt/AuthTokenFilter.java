@@ -5,7 +5,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +18,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 
 @Slf4j
@@ -54,15 +54,27 @@ public class AuthTokenFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-
     }
 
     private String parseJwt(HttpServletRequest request) {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         if (StringUtils.hasText(header) && header.startsWith(tokenPrefix)) {
             return header.substring(tokenPrefix.length());
         }
+
+        if (isNotificationStreamRequest(request)) {
+            String token = request.getParameter("token");
+            if (StringUtils.hasText(token) && token.startsWith(tokenPrefix)) {
+                return token.substring(tokenPrefix.length());
+            }
+            if (StringUtils.hasText(token)) {
+                return token;
+            }
+        }
         return null;
+    }
+
+    private boolean isNotificationStreamRequest(HttpServletRequest request) {
+        return "/api/notifications/stream".equals(request.getRequestURI());
     }
 }

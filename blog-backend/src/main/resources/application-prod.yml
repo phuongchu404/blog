@@ -1,0 +1,141 @@
+server:
+    port: 8055
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+application:
+  security:
+    token-prefix: "Bearer "
+    jwt:
+      # QUAN TRONG: Dat secret la chuoi Base64 it nhat 32 bytes (256-bit) de dung voi HMAC-SHA256+
+      # Tao bang lenh: openssl rand -base64 32
+#      secret: jwt-secret-key-which-is-at-least-256-bits-long-and-base64-encoded
+      secret:
+      token-validity-in-seconds: 3600
+      token-validity-in-seconds-for-remember-me: 2592000
+      token-validity-in-seconds-for-refresh: 604800
+    oauth2:
+      authorizedRedirectUris: http://localhost:5500/login.html,http://127.0.0.1:5500/login.html,http://localhost:5500/blog-public/login.html,http://127.0.0.1:5500/blog-public/login.html,myandroidapp://oauth2/redirect,myiosapp://oauth2/redirect
+
+spring:
+  application:
+    name: Blog
+  config:
+    activate:
+      on-profile: prod
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+  data:
+    redis:
+      host: 103.149.86.208
+      port: 6379
+
+  kafka:
+    bootstrap-servers: 103.149.86.208:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    consumer:
+      group-id: blog-backend-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
+  elasticsearch:
+    uris: http://103.149.86.208:8011
+    connection-timeout: 3s
+    socket-timeout: 30s
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3307/blog
+#    username: root
+#    password: 123456
+    url: jdbc:mysql://103.149.86.208:3306/blog
+    username: phuongchu
+    password: Phuong1590@
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    format_sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+#      hibernate.id.new_generator_mappings: true
+#      hibernate.cache.use_second_level_cache: false
+#      hibernate.cache.use_query_cache: false
+#      hibernate.generate_statistics: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+            google:
+              client-id:
+              client-secret:
+              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+              scope:
+                - email
+                - profile
+#            facebook:
+#              client-id:
+#              client-secret:
+#              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+#              scope:
+#                - email
+#                - public_profile
+#            github:
+#              client-id:
+#              client-secret:
+#              redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+#              scope:
+#                - user:email
+#                - read:user
+        provider:
+          facebook:
+            authorization-uri: https://www.facebook.com/v3.0/dialog/oauth
+            token-uri: https://graph.facebook.com/v3.0/oauth/access_token
+            user-info-uri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: phuongchu404@gmail.com
+    password: oftc zykk zprw ivwi
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: false
+
+app:
+  base-url: http://localhost:8055
+  public-url: http://127.0.0.1:5500
+
+minio:
+    url: http://103.149.86.208:9000
+    access:
+        name: phuongchu404
+        secret: Phuong1590@
+    bucket-private: private-bucket
+    bucket-public: public-bucket
+    bucket-public-policy: public-policy.json

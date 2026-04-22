@@ -13,6 +13,10 @@ window.__i18n__.vi = {
     toggle_menu: 'Menu',
     mark_all_read: 'Đánh dấu đã đọc',
     membership: 'Membership',
+    change_password: 'Đổi mật khẩu',
+    upgrade_membership: 'Nâng cấp Membership',
+    membership_active: 'Đã là thành viên',
+    membership_pending: 'Membership đang chờ duyệt',
   },
 
   common: {
@@ -93,10 +97,13 @@ window.__i18n__.vi = {
     send: 'Gửi',
     enter_comment: 'Vui lòng nhập nội dung bình luận.',
     posted: 'Bình luận đã được đăng!',
+    posted_pending: 'Bình luận đã được gửi và đang chờ duyệt.',
     send_failed: 'Không thể gửi bình luận.',
     enter_reply: 'Vui lòng nhập nội dung trả lời.',
     reply_posted: 'Trả lời đã được đăng!',
+    reply_posted_pending: 'Trả lời đã được gửi và đang chờ duyệt.',
     reply_failed: 'Không thể gửi trả lời.',
+    pending_status: '• Chờ duyệt',
     delete_confirm: 'Bạn có chắc muốn xóa bình luận này?',
     deleted: 'Đã xóa bình luận.',
     delete_forbidden: 'Bạn không có quyền xóa bình luận này.',
@@ -285,7 +292,7 @@ window.__i18n__.vi = {
     link_profile: 'Trang cá nhân',
     link_email: 'Email',
     link_github: 'GitHub',
-    copyright: '© 2024 MyBlog. All rights reserved.',
+    copyright: '© 2026 MyBlog. All rights reserved.',
     made_with: 'Made with ❤️',
   },
 

@@ -256,7 +256,7 @@ function editUser(id) {
   document.getElementById('newUserPassword').value = '';
   document.getElementById('newUserConfirmPassword').value = '';
   document.getElementById('newUserAvatarUrl').value = user.imageUrl || '';
-  document.getElementById('previewAvatar').src = user.imageUrl || '../assets/images/user2-160x160.jpg';
+  document.getElementById('previewAvatar').src = user.imageUrl || '../assets/images/user.jpg';
   document.getElementById('newUserPassword').placeholder = I18n.t('users_dyn.pw_keep');
   document.getElementById('newUserPassword').required = false;
 
@@ -367,7 +367,7 @@ function resetAddUserModal() {
   document.getElementById('newUserPassword').value = '';
   document.getElementById('newUserConfirmPassword').value = '';
   document.getElementById('newUserAvatarUrl').value = '';
-  document.getElementById('previewAvatar').src = '../assets/images/user2-160x160.jpg';
+  document.getElementById('previewAvatar').src = '../assets/images/user.jpg';
   document.getElementById('newUserPassword').required = true;
   document.getElementById('newUserPassword').placeholder = I18n.t('users.label_password');
 }

@@ -15,17 +15,15 @@ import me.phuongcm.blog.entity.id.PostCategoryId;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostCategory {
+    @EmbeddedId
+    private PostCategoryId id;
 
-//    @EmbeddedId
-//    private PostCategoryId id;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @MapsId("postId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false, referencedColumnName = "id")
     private Post post;
 
+    @MapsId("categoryId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false, referencedColumnName = "id")
     private Category category;

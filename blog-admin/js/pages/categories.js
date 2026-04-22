@@ -6,6 +6,7 @@
 // --- 1. State Management ---
 // Tập trung tất cả biến trạng thái vào một object để dễ quản lý và debug
 const state = {
+  rootCategories: [],
   allCategories: [],      // Dùng cho dropdown parent (load full)
   totalElements: 0,
   totalPages: 1,
@@ -78,14 +79,27 @@ async function loadCategories() {
 
 async function loadAllForDropdown() {
   try {
-    const data = await CategoryService.getAll();
-    state.allCategories = Array.isArray(data) ? data : (data?.content || []);
-
-    elements.parentDropdown.innerHTML = `<option value="">${I18n.t('categories_dyn.none_parent')}</option>` +
-      state.allCategories.map(c => `<option value="${c.id}">${c.title}</option>`).join('');
+    const [allData, rootData] = await Promise.all([
+      CategoryService.getAll(),
+      CategoryService.getRoots()
+    ]);
+    state.allCategories = Array.isArray(allData) ? allData : (allData?.content || []);
+    state.rootCategories = Array.isArray(rootData) ? rootData : (rootData?.content || []);
+    renderParentDropdown();
   } catch (err) {
     console.error('Dropdown load error:', err);
   }
+}
+
+function renderParentDropdown(selectedValue = '') {
+  const options = state.rootCategories
+    .filter(c => c.id !== state.editingId)
+    .map(c => `<option value="${c.id}">${c.title}</option>`)
+    .join('');
+
+  elements.parentDropdown.innerHTML =
+    `<option value="">${I18n.t('categories_dyn.none_parent')}</option>${options}`;
+  elements.parentDropdown.value = selectedValue || '';
 }
 
 // --- 5. Rendering Logic ---
@@ -269,10 +283,10 @@ window.editCategory = (id) => {
   if (!cat) return UI.toast(I18n.t('categories_dyn.not_found'), 'warning');
 
   state.editingId = id;
+  renderParentDropdown(cat.parentId || '');
   elements.inputs.title.value = cat.title;
   elements.inputs.slug.value = cat.slug;
   elements.inputs.content.value = cat.content || '';
-  elements.parentDropdown.value = cat.parentId || '';
 
   // Populate image
   if (elements.inputs.imageUrl) elements.inputs.imageUrl.value = cat.imageUrl || '';
@@ -323,6 +337,7 @@ async function deleteSelected() {
 function resetForm() {
   state.editingId = null;
   elements.form.reset();
+  renderParentDropdown();
   if (elements.inputs.imageUrl) elements.inputs.imageUrl.value = '';
   if (elements.imgPreview) elements.imgPreview.classList.add('d-none');
   elements.imgDropZone?.classList.remove('d-none');

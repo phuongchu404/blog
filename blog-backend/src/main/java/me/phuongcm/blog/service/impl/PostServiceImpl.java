@@ -20,6 +20,9 @@ import me.phuongcm.blog.service.TagService;
 import me.phuongcm.blog.service.UploadTrackerService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -88,6 +91,17 @@ public class PostServiceImpl implements PostService {
     @Cacheable(value = "posts", key = "'published'")
     public List<PostDTO> getPublishedPosts() {
         return postMapper.toDTOs(postRepository.findByStatus(1));
+    }
+
+    @Override
+    public Page<PostDTO> getPublishedPosts(int page, int size, String sort) {
+        boolean oldestFirst = "oldest".equalsIgnoreCase(sort);
+        Sort direction = oldestFirst
+                ? Sort.by(Sort.Order.asc("publishedAt"), Sort.Order.asc("createdAt"))
+                : Sort.by(Sort.Order.desc("publishedAt"), Sort.Order.desc("createdAt"));
+        PageRequest pageable = PageRequest.of(page, size, direction);
+        return postRepository.findByStatus(1, pageable)
+                .map(post -> resolveImageUrl(postMapper.toDTO(post)));
     }
 
     @Override

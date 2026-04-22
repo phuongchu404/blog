@@ -1,5 +1,6 @@
 package me.phuongcm.blog.config;
 
+import jakarta.servlet.DispatcherType;
 import me.phuongcm.blog.security.jwt.AuthEntryPointJwt;
 import me.phuongcm.blog.security.jwt.AuthTokenFilter;
 import me.phuongcm.blog.security.oauth2.CustomAuthorizationRequestResolver;
@@ -15,8 +16,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -100,7 +99,10 @@ public class WebSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/actuator/health").permitAll()
 
                         // GET public content
-                        .dispatcherTypeMatchers(jakarta.servlet.DispatcherType.ERROR).permitAll()
+                        .dispatcherTypeMatchers(
+                                DispatcherType.ERROR,
+                                DispatcherType.ASYNC
+                        ).permitAll()
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/published").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/posts/slug/**").permitAll()

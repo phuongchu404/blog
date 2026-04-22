@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final NotificationStreamService notificationStreamService;
 
     /**
      * Kafka consumer — lắng nghe sự kiện comment mới.
@@ -59,7 +60,8 @@ public class NotificationService {
                 .read(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-        notificationRepository.save(notification);
+        Notification savedNotification = notificationRepository.save(notification);
+        notificationStreamService.publishNotification(savedNotification);
         log.info("[Notification] Đã lưu thông báo cho userId={}: {}", recipientId, message);
     }
 }

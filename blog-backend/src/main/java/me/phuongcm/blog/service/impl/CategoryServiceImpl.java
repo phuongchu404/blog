@@ -5,6 +5,7 @@ import me.phuongcm.blog.dto.CategoryMapper;
 import me.phuongcm.blog.entity.Category;
 import me.phuongcm.blog.entity.Post;
 import me.phuongcm.blog.entity.PostCategory;
+import me.phuongcm.blog.entity.id.PostCategoryId;
 import me.phuongcm.blog.repository.CategoryRepository;
 import me.phuongcm.blog.repository.PostCategoryRepository;
 import me.phuongcm.blog.common.utils.SlugUtils;
@@ -13,8 +14,10 @@ import me.phuongcm.blog.service.MinIOService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -123,11 +126,16 @@ public class CategoryServiceImpl implements CategoryService {
     @Transactional
     public void addCategoriesToPost(Post post, List<Long> categoryIds) {
         if (categoryIds == null) return;
-        for (Long categoryId : categoryIds) {
+        Set<Long> uniqueCategoryIds = new LinkedHashSet<>(categoryIds);
+        for (Long categoryId : uniqueCategoryIds) {
+            if (postCategoryRepository.existsByPostIdAndCategoryId(post.getId(), categoryId)) {
+                continue;
+            }
             Category category = categoryRepository.findById(categoryId)
                     .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
 
             PostCategory postCategory = new PostCategory();
+            postCategory.setId(new PostCategoryId(post.getId(), categoryId));
             postCategory.setPost(post);
             postCategory.setCategory(category);
 

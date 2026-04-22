@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import me.phuongcm.blog.annotation.Auditable;
 import me.phuongcm.blog.dto.PostDTO;
 import me.phuongcm.blog.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,8 +34,11 @@ public class PostController {
 
     /** GET /api/posts/published — PUBLIC: lấy bài đã đăng. */
     @GetMapping("/published")
-    public ResponseEntity<List<PostDTO>> getAllPublishedPosts() {
-        return ResponseEntity.ok(postService.getPublishedPosts());
+    public ResponseEntity<Page<PostDTO>> getAllPublishedPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "9") int size,
+            @RequestParam(defaultValue = "newest") String sort) {
+        return ResponseEntity.ok(postService.getPublishedPosts(page, size, sort));
     }
 
     /** GET /api/posts/{id} — PUBLIC. */

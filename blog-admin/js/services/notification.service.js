@@ -1,10 +1,19 @@
 /**
- * notification.service.js — Notification API client (blog-admin)
- * Phụ thuộc: http.js, auth.js
+ * notification.service.js - Notification API client (blog-admin)
+ * Depends on: http.js, auth.js
  */
 
 const NotificationService = {
   BASE: '/api/notifications',
+  POLL_INTERVAL_MS: 60000,
+
+  getStreamUrl() {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    const url = new URL(`${this.BASE}/stream`, `${AppConfig.getApiBaseUrl()}/`);
+    url.searchParams.set('token', token);
+    return url.toString();
+  },
 
   async getAll(page = 0, size = 15) {
     return Http.get(`${this.BASE}?page=${page}&size=${size}`);
@@ -24,11 +33,16 @@ const NotificationService = {
   },
 };
 
-/* ── Admin notification bell init ───────────────────────────── */
 const AdminNotif = {
+  _eventSource: null,
+  _pollTimer: null,
+  _streamUrl: null,
+  _lifecycleBound: false,
+
   async init() {
+    this.bindLifecycle();
     await this.refreshBadge();
-    setInterval(() => this.refreshBadge(), 60000);
+    this.startRealtime();
 
     document.getElementById('admin-notif-mark-all')?.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -38,26 +52,117 @@ const AdminNotif = {
       await this.loadList();
     });
 
-    // Load list when dropdown opens
     const dropdownEl = document.getElementById('admin-notif-dropdown-toggle');
     if (dropdownEl) {
       dropdownEl.addEventListener('show.bs.dropdown', () => this.loadList());
     }
   },
 
+  startRealtime() {
+    if (!window.EventSource || !Auth.isLoggedIn()) {
+      this.stopRealtime();
+      this.startPolling();
+      return;
+    }
+
+    const streamUrl = NotificationService.getStreamUrl();
+    if (!streamUrl) {
+      this.stopRealtime();
+      this.startPolling();
+      return;
+    }
+
+    if (document.visibilityState === 'hidden') {
+      this.stopRealtime();
+      this.startPolling();
+      return;
+    }
+
+    if (this._eventSource && this._streamUrl === streamUrl && this._eventSource.readyState !== EventSource.CLOSED) {
+      return;
+    }
+
+    this.stopRealtime();
+
+    const source = new EventSource(streamUrl);
+    this._eventSource = source;
+    this._streamUrl = streamUrl;
+
+    source.addEventListener('notification', (event) => {
+      try {
+        const payload = JSON.parse(event.data);
+        this.applyUnreadCount(payload?.unreadCount ?? 0);
+        const isOpen = document
+          .getElementById('admin-notif-dropdown-toggle')
+          ?.closest('.dropdown')
+          ?.querySelector('.dropdown-menu')
+          ?.classList.contains('show');
+        if (isOpen) this.loadList();
+      } catch (_) {}
+    });
+
+    source.onerror = async () => {
+      this.stopRealtime();
+      this.startPolling();
+      await this.refreshBadge();
+    };
+  },
+
+  stopRealtime() {
+    if (this._eventSource) {
+      this._eventSource.close();
+      this._eventSource = null;
+    }
+    this._streamUrl = null;
+    if (this._pollTimer) {
+      clearInterval(this._pollTimer);
+      this._pollTimer = null;
+    }
+  },
+
+  startPolling() {
+    if (this._pollTimer) return;
+    this._pollTimer = setInterval(() => this.refreshBadge(), NotificationService.POLL_INTERVAL_MS);
+  },
+
+  bindLifecycle() {
+    if (this._lifecycleBound) return;
+    this._lifecycleBound = true;
+
+    const handleVisibility = () => {
+      if (!Auth.isLoggedIn()) {
+        this.stopRealtime();
+        return;
+      }
+      if (document.visibilityState === 'hidden') {
+        this.stopRealtime();
+      } else {
+        this.startRealtime();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('pagehide', () => this.stopRealtime());
+    window.addEventListener('beforeunload', () => this.stopRealtime());
+  },
+
   async refreshBadge() {
     if (!Auth.isLoggedIn()) return;
     try {
       const count = await NotificationService.getUnreadCount();
-      const badge = document.getElementById('admin-notif-badge');
-      if (!badge) return;
-      if (count > 0) {
-        badge.textContent = count > 99 ? '99+' : count;
-        badge.style.display = '';
-      } else {
-        badge.style.display = 'none';
-      }
+      this.applyUnreadCount(count);
     } catch (_) {}
+  },
+
+  applyUnreadCount(count) {
+    const badge = document.getElementById('admin-notif-badge');
+    if (!badge) return;
+    if (count > 0) {
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.style.display = '';
+    } else {
+      badge.style.display = 'none';
+    }
   },
 
   async loadList() {
@@ -71,7 +176,8 @@ const AdminNotif = {
         return;
       }
       list.innerHTML = items.map(n => `
-        <a class="dropdown-item${n.read ? '' : ' fw-semibold bg-light'}" href="#"
+        <a class="dropdown-item${n.read ? '' : ' fw-semibold bg-light'}" href="${AdminNotif.buildItemUrl(n.postSlug, n.commentId)}"
+           ${n.postSlug ? 'target="_blank" rel="noopener noreferrer"' : ''}
            onclick="AdminNotif.onItemClick(event, ${n.id}, '${n.postSlug || ''}', ${n.commentId || 'null'})">
           <div class="d-flex align-items-start gap-2">
             <div class="flex-shrink-0 mt-1">
@@ -85,18 +191,24 @@ const AdminNotif = {
           </div>
         </a>`).join('');
     } catch (_) {
-      list.innerHTML = '<div class="dropdown-item text-center text-muted py-3">Không thể tải thông báo</div>';
+      list.innerHTML = '<div class="dropdown-item text-center text-muted py-3">Khong the tai thong bao</div>';
     }
   },
 
+  buildItemUrl(postSlug, commentId) {
+    if (!postSlug) return '#';
+    const hash = commentId ? `comment-${commentId}` : '';
+    return AppConfig.buildPublicUrl('post.html', { slug: postSlug }, hash);
+  },
+
   async onItemClick(e, id, postSlug, commentId) {
-    e.preventDefault();
     await NotificationService.markRead(id);
     await this.refreshBadge();
     if (postSlug) {
-      const hash = commentId ? `comment-${commentId}` : '';
-      window.location.href = AppConfig.buildPublicUrl('post.html', { slug: postSlug }, hash);
+      await this.loadList();
+      return;
     } else {
+      e.preventDefault();
       await this.loadList();
     }
   },
@@ -105,10 +217,10 @@ const AdminNotif = {
     if (!dateStr) return '';
     const diff = Date.now() - new Date(dateStr).getTime();
     const m = Math.floor(diff / 60000);
-    if (m < 1) return 'vừa xong';
-    if (m < 60) return `${m} phút trước`;
+    if (m < 1) return 'vua xong';
+    if (m < 60) return `${m} phut truoc`;
     const h = Math.floor(m / 60);
-    if (h < 24) return `${h} giờ trước`;
-    return `${Math.floor(h / 24)} ngày trước`;
+    if (h < 24) return `${h} gio truoc`;
+    return `${Math.floor(h / 24)} ngay truoc`;
   },
 };

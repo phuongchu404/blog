@@ -1,0 +1,10 @@
+.git
+.idea
+.vscode
+.mvn
+src
+uploads
+target
+!target/*.jar
+HELP.md
+*.iml

@@ -89,6 +89,28 @@ h6 {
   color: var(--primary) !important;
 }
 
+.app-header #admin-notif-dropdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+}
+
+.app-header #admin-notif-dropdown-toggle .bi-bell-fill {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.app-header #admin-notif-badge {
+  top: .15rem;
+  right: .2rem;
+  min-width: 1.1rem;
+  padding: .12rem .32rem !important;
+  font-size: .65rem !important;
+  font-weight: 700 !important;
+  line-height: 1;
+}
+
 /* User menu avatar */
 .user-menu .nav-link img.user-image {
   width: 32px !important;

@@ -4,6 +4,11 @@
  */
 
 const UI = {
+  _notifEventSource: null,
+  _notifPollTimer: null,
+  _notifStreamUrl: null,
+  _notifLifecycleBound: false,
+
   /* ── Toast ─────────────────────────────────────────────── */
   toast(message, type = 'success') {
     let container = document.getElementById('toast-container');
@@ -82,6 +87,116 @@ const UI = {
     return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-');
   },
 
+  uniqueCategories(categories = []) {
+    const seen = new Set();
+    return categories.filter((category) => {
+      if (!category) return false;
+      const key = category.id ?? category.slug ?? category.title;
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  },
+
+  buildCategoryTree(categories = []) {
+    const nodes = categories.map((category) => ({ ...category, children: [] }));
+    const nodeMap = new Map(nodes.map((node) => [node.id, node]));
+    const roots = [];
+
+    nodes.forEach((node) => {
+      const parent = node.parentId ? nodeMap.get(node.parentId) : null;
+      if (parent) parent.children.push(node);
+      else roots.push(node);
+    });
+
+    return roots;
+  },
+
+  renderMegaChildren(children = [], depth = 1) {
+    if (!children.length) return '';
+    return `
+      <div class="mega-subtree">
+        ${children.map((child) => `
+          <div class="mega-subnode" style="--mega-depth:${depth}">
+            <a href="category.html?slug=${child.slug}" class="mega-sub-item">
+              ${child.title}
+            </a>
+            ${this.renderMegaChildren(child.children, depth + 1)}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  },
+
+  renderMegaGroups(nodes = []) {
+    return nodes.map((node) => `
+      <div class="mega-group">
+        <a href="category.html?slug=${node.slug}" class="mega-group-title">${node.title}</a>
+        ${this.renderMegaChildren(node.children)}
+      </div>
+    `).join('');
+  },
+
+  renderMegaPanelSections(node) {
+    if (!node?.children?.length) {
+      return `
+        <div class="mega-browser-empty">
+          <a href="category.html?slug=${node.slug}" class="mega-browser-link">
+            Xem bài viết trong ${node.title}
+          </a>
+        </div>
+      `;
+    }
+
+    return node.children.map((child) => {
+      if (!child.children?.length) {
+        return `
+          <div class="mega-browser-section">
+            <div class="mega-browser-chip-row">
+              <a href="category.html?slug=${child.slug}" class="mega-browser-chip">${child.title}</a>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="mega-browser-section">
+          <div class="mega-browser-section-head">
+            <a href="category.html?slug=${child.slug}" class="mega-browser-section-title">${child.title}</a>
+          </div>
+          <div class="mega-browser-chip-row">
+            ${child.children.map((grandchild) => `
+              <a href="category.html?slug=${grandchild.slug}" class="mega-browser-chip">${grandchild.title}</a>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }).join('');
+  },
+
+  renderCategoryTreeList(nodes = [], depth = 0) {
+    if (!nodes.length) return '';
+    const listClass = depth === 0 ? 'cat-list' : 'cat-children';
+    return `
+      <ul class="${listClass}">
+        ${nodes.map((node) => `
+          <li class="cat-item${node.children.length ? ' has-children open' : ''}">
+            <div class="cat-row" style="--cat-depth:${depth}">
+              ${node.children.length
+                ? `<button type="button" class="cat-toggle" aria-expanded="true" aria-label="Toggle subcategories"
+                   onclick="const item=this.closest('.cat-item'); item.classList.toggle('open'); this.setAttribute('aria-expanded', item.classList.contains('open') ? 'true' : 'false');"></button>`
+                : '<span class="cat-toggle-spacer" aria-hidden="true"></span>'}
+              <a href="category.html?slug=${node.slug}" class="cat-link">
+                <span>${node.title}</span>
+              </a>
+            </div>
+            ${node.children.length ? this.renderCategoryTreeList(node.children, depth + 1) : ''}
+          </li>
+        `).join('')}
+      </ul>
+    `;
+  },
+
   /* ── Avatar placeholder ─────────────────────────────────── */
   avatarUrl(user) {
     if (user?.imageUrl) return user.imageUrl;
@@ -89,8 +204,36 @@ const UI = {
     return `https://ui-avatars.com/api/?name=${name}&background=3b82f6&color=fff&size=80`;
   },
 
+  _renderMembershipDropdown(user) {
+    const t = (k) => this._t(k);
+    const membershipStatus = user?.membershipStatus ?? 0;
+
+    if (membershipStatus === 1) {
+      return `
+        <div class="user-dropdown-status">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0l2.122 4.298L14.828 5l-3.414 3.328.806 4.705L8 10.8l-4.22 2.233.806-4.705L1.172 5l4.706-.702L8 0z"/></svg>
+          ${t('nav.membership_active')}
+        </div>`;
+    }
+
+    if (membershipStatus === 2) {
+      return `
+        <div class="user-dropdown-status user-dropdown-status-pending">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 3.5a.5.5 0 0 1 .5.5v3.293l2.146 2.147a.5.5 0 0 1-.707.707l-2.293-2.293A.5.5 0 0 1 7.5 7.5V4a.5.5 0 0 1 .5-.5z"/><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm0-1A7 7 0 1 1 8 1a7 7 0 0 1 0 14z"/></svg>
+          ${t('nav.membership_pending')}
+        </div>`;
+    }
+
+    return `
+      <a href="membership.html">
+        <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0l2.122 4.298L14.828 5l-3.414 3.328.806 4.705L8 10.8l-4.22 2.233.806-4.705L1.172 5l4.706-.702L8 0z"/></svg>
+        ${t('nav.upgrade_membership')}
+      </a>`;
+  },
+
   /* ── Render nav (header) ────────────────────────────────── */
   renderNav() {
+    this._ensureNotifLifecycle();
     this.initTheme();
 
     const user = Auth.getUser();
@@ -134,6 +277,12 @@ const UI = {
               ${t('nav.profile')}
             </a>
             <hr>
+            <a href="profile.html#doi-mat-khau">
+              <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path d="M8 1a2 2 0 0 1 2 2v1h1.5A1.5 1.5 0 0 1 13 5.5v7A1.5 1.5 0 0 1 11.5 14h-7A1.5 1.5 0 0 1 3 12.5v-7A1.5 1.5 0 0 1 4.5 4H6V3a2 2 0 0 1 2-2zm1 3V3a1 1 0 1 0-2 0v1h2zm-1 3a1.25 1.25 0 1 1 0 2.5A1.25 1.25 0 0 1 8 7z"/><path d="M4.5 5a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .5.5h7a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.5-.5h-7z"/></svg>
+              ${t('nav.change_password')}
+            </a>
+            ${this._renderMembershipDropdown(user)}
+            <hr>
             <button onclick="Auth.logout()">
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/><path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/></svg>
               ${t('nav.logout')}
@@ -173,10 +322,10 @@ const UI = {
 
       // Load unread count on page load
       this._refreshNotifBadge();
-      // Poll every 60s
-      setInterval(() => this._refreshNotifBadge(), 60000);
+      this._startNotifRealtime();
 
     } else {
+      this._stopNotifRealtime();
       const t = (k) => this._t(k);
       navAuth.innerHTML = `
         <a href="login.html" class="btn btn-ghost btn-sm">${t('nav.login')}</a>
@@ -187,19 +336,107 @@ const UI = {
     this.renderCategoriesMegamenu();
   },
 
+  _startNotifRealtime() {
+    if (!window.EventSource || !Auth.isLoggedIn()) {
+      this._stopNotifRealtime();
+      this._startNotifPolling();
+      return;
+    }
+
+    const streamUrl = NotificationService.getStreamUrl();
+    if (!streamUrl) {
+      this._stopNotifRealtime();
+      this._startNotifPolling();
+      return;
+    }
+
+    if (document.visibilityState === 'hidden') {
+      this._stopNotifRealtime();
+      this._startNotifPolling();
+      return;
+    }
+
+    if (this._notifEventSource && this._notifStreamUrl === streamUrl && this._notifEventSource.readyState !== EventSource.CLOSED) {
+      return;
+    }
+
+    this._stopNotifRealtime();
+
+    const source = new EventSource(streamUrl);
+    this._notifEventSource = source;
+    this._notifStreamUrl = streamUrl;
+
+    source.addEventListener('notification', (event) => {
+      try {
+        const payload = JSON.parse(event.data);
+        this._applyNotifBadge(payload?.unreadCount ?? 0);
+        const isOpen = document.getElementById('notif-dropdown')?.classList.contains('open');
+        if (isOpen) this._loadNotifications();
+      } catch (_) { }
+    });
+
+    source.onerror = async () => {
+      this._stopNotifRealtime();
+      this._startNotifPolling();
+      await this._refreshNotifBadge();
+    };
+  },
+
+  _stopNotifRealtime() {
+    if (this._notifEventSource) {
+      this._notifEventSource.close();
+      this._notifEventSource = null;
+    }
+    this._notifStreamUrl = null;
+    if (this._notifPollTimer) {
+      clearInterval(this._notifPollTimer);
+      this._notifPollTimer = null;
+    }
+  },
+
+  _startNotifPolling() {
+    if (this._notifPollTimer) return;
+    this._notifPollTimer = setInterval(() => this._refreshNotifBadge(), NotificationService.POLL_INTERVAL_MS);
+  },
+
+  _ensureNotifLifecycle() {
+    if (this._notifLifecycleBound) return;
+    this._notifLifecycleBound = true;
+
+    const handleVisibility = () => {
+      if (!Auth.isLoggedIn()) {
+        this._stopNotifRealtime();
+        return;
+      }
+      if (document.visibilityState === 'hidden') {
+        this._stopNotifRealtime();
+      } else {
+        this._startNotifRealtime();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('pagehide', () => this._stopNotifRealtime());
+    window.addEventListener('beforeunload', () => this._stopNotifRealtime());
+  },
+
   async _refreshNotifBadge() {
     if (!Auth.isLoggedIn()) return;
     try {
       const count = await NotificationService.getUnreadCount();
-      const badge = document.getElementById('notif-badge');
-      if (!badge) return;
-      if (count > 0) {
-        badge.textContent = count > 99 ? '99+' : count;
-        badge.style.display = 'flex';
-      } else {
-        badge.style.display = 'none';
-      }
+      this._applyNotifBadge(count);
     } catch (_) { }
+  },
+
+  _applyNotifBadge(count) {
+    const badge = document.getElementById('notif-badge');
+    if (!badge) return;
+    if (count > 0) {
+      badge.textContent = count > 99 ? '99+' : count;
+      badge.style.display = 'flex';
+    } else {
+      badge.style.display = 'none';
+    }
   },
 
   async _loadNotifications() {
@@ -256,22 +493,13 @@ const UI = {
       const menuEl = document.getElementById('cat-megamenu');
       if (!menuEl) return;
 
-      const roots = cats.filter(c => !c.parentId);
-      const childMap = {};
-      cats.filter(c => c.parentId).forEach(c => {
-        if (!childMap[c.parentId]) childMap[c.parentId] = [];
-        childMap[c.parentId].push(c);
-      });
+      const roots = this.buildCategoryTree(cats || []);
 
       if (roots.length <= 6) {
         // Simple dropdown nếu ít danh mục
         menuEl.innerHTML = `
           <div class="mega-simple">
-            ${roots.map(c => `
-              <a href="category.html?slug=${c.slug}" class="mega-item">
-                ${c.title}
-                ${childMap[c.id] ? `<span class="mega-count">${childMap[c.id].length}</span>` : ''}
-              </a>`).join('')}
+            ${this.renderMegaGroups(roots)}
             <div class="mega-divider"></div>
             <a href="blog.html" class="mega-item mega-all">${this._t('blog.title')} →</a>
           </div>`;
@@ -287,13 +515,7 @@ const UI = {
           <div class="mega-grid">
             ${columns.map(col => `
               <div class="mega-col">
-                ${col.map(c => `
-                  <div class="mega-group">
-                    <a href="category.html?slug=${c.slug}" class="mega-group-title">${c.title}</a>
-                    ${(childMap[c.id] || []).map(sub =>
-          `<a href="category.html?slug=${sub.slug}" class="mega-sub-item">${sub.title}</a>`
-        ).join('')}
-                  </div>`).join('')}
+                ${this.renderMegaGroups(col)}
               </div>`).join('')}
           </div>
           <div class="mega-footer">
@@ -304,6 +526,58 @@ const UI = {
   },
 
   /* ── Theme toggle ────────────────────────────────────────── */
+  async renderCategoriesMegamenu() {
+    const trigger = document.getElementById('cat-mega-trigger');
+    if (!trigger) return;
+    try {
+      const cats = await CategoryService.getAll();
+      const menuEl = document.getElementById('cat-megamenu');
+      if (!menuEl || !cats?.length) return;
+
+      const roots = this.buildCategoryTree(cats || []);
+      if (!roots.length) return;
+
+      menuEl.innerHTML = `
+        <div class="mega-browser">
+          <div class="mega-browser-nav">
+            ${roots.map((root, index) => `
+              <button type="button" class="mega-browser-nav-item${index === 0 ? ' active' : ''}" data-root-id="${root.id}">
+                <span>${root.title}</span>
+                <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
+              </button>
+            `).join('')}
+          </div>
+          <div class="mega-browser-content">
+            ${roots.map((root, index) => `
+              <section class="mega-browser-panel${index === 0 ? ' active' : ''}" data-root-panel="${root.id}">
+                <div class="mega-browser-panel-head">
+                  <a href="category.html?slug=${root.slug}" class="mega-browser-root-link">${root.title}</a>
+                  <a href="blog.html" class="mega-browser-all-link">${this._t('blog.title')} -></a>
+                </div>
+                <div class="mega-browser-sections">
+                  ${this.renderMegaPanelSections(root)}
+                </div>
+              </section>
+            `).join('')}
+          </div>
+        </div>`;
+
+      const navItems = menuEl.querySelectorAll('.mega-browser-nav-item');
+      const panels = menuEl.querySelectorAll('.mega-browser-panel');
+      const activateRoot = (rootId) => {
+        navItems.forEach((item) => item.classList.toggle('active', item.dataset.rootId === rootId));
+        panels.forEach((panel) => panel.classList.toggle('active', panel.dataset.rootPanel === rootId));
+      };
+
+      navItems.forEach((item) => {
+        item.addEventListener('mouseenter', () => activateRoot(item.dataset.rootId));
+        item.addEventListener('focus', () => activateRoot(item.dataset.rootId));
+      });
+    } catch (_) { }
+  },
+
   initTheme() {
     const navAuth = document.getElementById('nav-auth');
     if (!navAuth) return;
@@ -362,7 +636,7 @@ const UI = {
 
   /* ── Featured card (dùng ở trang chủ - 3 bài nổi bật) ──── */
   featuredCard(post) {
-    const categories = (post.categories || []).map(c =>
+    const categories = this.uniqueCategories(post.categories).map(c =>
       `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
     ).join('');
     const thumbUrl = post.imageUrl || post.thumbnailUrl;
@@ -406,7 +680,7 @@ const UI = {
 
   /* ── Post card HTML ─────────────────────────────────────── */
   postCard(post) {
-    const categories = (post.categories || []).map(c =>
+    const categories = this.uniqueCategories(post.categories).map(c =>
       `<a href="category.html?slug=${c.slug}" class="tag-chip">${c.title}</a>`
     ).join('');
 
@@ -485,14 +759,9 @@ const UI = {
     if (!el) return;
     try {
       const cats = await CategoryService.getAll();
-      const roots = (cats || []).filter(c => !c.parentId).slice(0, 8);
+      const roots = this.buildCategoryTree(cats || []).slice(0, 8);
       if (!roots.length) { el.innerHTML = `<p class="text-muted" style="font-size:.875rem">${this._t('ui.no_categories')}</p>`; return; }
-      el.innerHTML = `<ul class="cat-list">
-        ${roots.map(c => `
-          <li><a href="category.html?slug=${c.slug}">
-            <span>${c.title}</span>
-          </a></li>`).join('')}
-      </ul>`;
+      el.innerHTML = this.renderCategoryTreeList(roots);
     } catch (_) { }
   },
 
@@ -516,8 +785,9 @@ const UI = {
     const el = document.getElementById(containerId);
     if (!el) return;
     try {
-      const posts = await PostService.getPublished();
-      const list = (posts || []).filter(p => p.slug !== excludeSlug).slice(0, 5);
+      const posts = await PostService.getPublished({ page: 0, size: excludeSlug ? 6 : 5 });
+      const items = Array.isArray(posts) ? posts : (posts?.content || []);
+      const list = items.filter(p => p.slug !== excludeSlug).slice(0, 5);
       if (!list.length) { el.innerHTML = `<p class="text-muted" style="font-size:.875rem">${this._t('ui.no_posts')}</p>`; return; }
       el.innerHTML = `<ul class="recent-list">
         ${list.map(p => {

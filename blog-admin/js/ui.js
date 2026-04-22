@@ -98,12 +98,12 @@ const UI = {
               </li>
               <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                  <img src="${asset('assets/images/user2-160x160.jpg')}" class="user-image rounded-circle shadow" alt="Admin" />
+                  <img src="${asset('assets/images/user.jpg')}" class="user-image rounded-circle shadow" alt="Admin" />
                   <span class="d-none d-md-inline current-user-name">Admin</span>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                   <li class="user-header text-bg-primary">
-                    <img src="${asset('assets/images/user2-160x160.jpg')}" class="rounded-circle shadow" alt="Admin" />
+                    <img src="${asset('assets/images/user.jpg')}" class="rounded-circle shadow" alt="Admin" />
                     <p id="menuUserName">Admin <small>Blog Administrator</small></p>
                   </li>
                   <li class="user-footer">
@@ -122,7 +122,7 @@ const UI = {
         <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
           <div class="sidebar-brand">
             <a href="${asset('index.html')}" class="brand-link">
-              <img src="${asset('assets/images/AdminLTELogo.png')}" alt="Logo" class="brand-image opacity-75 shadow" />
+               <img src="${asset('assets/images/logo.jpg')}" alt="Logo" class="brand-image opacity-75 shadow" />
               <span class="brand-text fw-light">Blog Admin</span>
             </a>
           </div>

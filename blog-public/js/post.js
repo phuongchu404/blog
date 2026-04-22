@@ -157,6 +157,34 @@ function renderPostContent(post) {
 
 /* ── Comments ────────────────────────────────────────────── */
 let _commentPollInterval = null;
+let _pendingComments = [];
+
+function normalizeCommentsForView(publishedComments, currentUser, postId = currentPost?.id) {
+  const visiblePublished = Array.isArray(publishedComments) ? publishedComments : [];
+  if (!currentUser || !postId) return visiblePublished;
+
+  const publishedIds = new Set(visiblePublished.map(c => c.id));
+  _pendingComments = _pendingComments.filter(c => c?.postId === postId && !publishedIds.has(c.id));
+
+  const pendingForUser = _pendingComments.filter(c =>
+    c?.postId === postId &&
+    c?.user?.id === currentUser.id &&
+    !publishedIds.has(c.id)
+  );
+
+  return [...visiblePublished, ...pendingForUser].sort((a, b) => {
+    const aTime = new Date(a?.createdAt || 0).getTime();
+    const bTime = new Date(b?.createdAt || 0).getTime();
+    return aTime - bTime;
+  });
+}
+
+function upsertPendingComment(comment) {
+  if (!comment?.id) return;
+  const next = _pendingComments.filter(c => c.id !== comment.id);
+  next.push(comment);
+  _pendingComments = next;
+}
 
 function startCommentPolling(postId, intervalMs = 30000) {
   if (_commentPollInterval) clearInterval(_commentPollInterval);
@@ -166,12 +194,13 @@ function startCommentPolling(postId, intervalMs = 30000) {
 async function refreshComments(postId) {
   try {
     const res = await CommentService.getPublishedByPost(postId);
-    const fresh = Array.isArray(res) ? res : [];
+    const published = Array.isArray(res) ? res : [];
     const list = document.getElementById('comment-list');
     if (!list) return;
     const user = Auth.getUser();
+    const fresh = normalizeCommentsForView(published, user, postId);
     const topLevel = fresh.filter(c => !c.parentId);
-    if (fresh.length === 0) {
+    if (topLevel.length === 0) {
       list.innerHTML = `<div class="no-comments">${UI._t('comments.empty')}</div>`;
     } else {
       list.innerHTML = topLevel.map(c => renderComment(c, fresh, user)).join('');
@@ -183,16 +212,17 @@ async function refreshComments(postId) {
 
 async function loadComments(postId) {
   const wrap = document.getElementById('comments-section-wrap');
-  let comments = [];
+  let publishedComments = [];
   try {
     const res = await CommentService.getPublishedByPost(postId);
-    comments = Array.isArray(res) ? res : [];
+    publishedComments = Array.isArray(res) ? res : [];
   } catch (err) {
     console.error('loadComments error:', err);
   }
 
   const isLoggedIn = Auth.isLoggedIn();
   const user = Auth.getUser();
+  const comments = normalizeCommentsForView(publishedComments, user, postId);
 
   wrap.innerHTML = `
     <div class="comments-section">
@@ -222,6 +252,7 @@ function renderComment(comment, allComments, currentUser) {
   const avatar = UI.avatarUrl(comment.user);
   const replies = allComments.filter(c => c.parentId === comment.id);
   const isOwner = currentUser && comment.user?.id === currentUser.id;
+  const isPending = comment.status === 'PENDING';
 
   return `
     <div class="comment-item" id="comment-${comment.id}">
@@ -230,7 +261,10 @@ function renderComment(comment, allComments, currentUser) {
              onerror="this.src='https://ui-avatars.com/api/?name=U&background=3b82f6&color=fff'">
         <div>
           <div class="comment-author">${authorName}</div>
-          <div class="comment-date">${UI.timeAgo(comment.createdAt)}</div>
+          <div class="comment-date">
+            ${UI.timeAgo(comment.createdAt)}
+            ${isPending ? ` <span style="color:var(--warning);font-weight:600">${UI._t('comments.pending_status')}</span>` : ''}
+          </div>
         </div>
       </div>
       <div class="comment-body">${comment.content || ''}</div>
@@ -269,13 +303,14 @@ async function submitComment() {
   const text = document.getElementById('new-comment-text')?.value.trim();
   if (!text) { UI.toast(UI._t('comments.enter_comment'), 'error'); return; }
   try {
-    await CommentService.create({
+    const created = await CommentService.create({
       postId: currentPost.id,
       userId: user.id,
       content: text,
       title: text.length > 60 ? text.substring(0, 60) + '...' : text,
     });
-    UI.toast(UI._t('comments.posted'), 'success');
+    if (created?.status === 'PENDING') upsertPendingComment(created);
+    UI.toast(UI._t(created?.status === 'PENDING' ? 'comments.posted_pending' : 'comments.posted'), 'success');
     document.getElementById('new-comment-text').value = '';
     await loadComments(currentPost.id);
   } catch (err) {
@@ -289,14 +324,15 @@ async function submitReply(parentId) {
   const text = document.getElementById(`reply-text-${parentId}`)?.value.trim();
   if (!text) { UI.toast(UI._t('comments.enter_reply'), 'error'); return; }
   try {
-    await CommentService.create({
+    const created = await CommentService.create({
       postId: currentPost.id,
       userId: user.id,
       parentId: parentId,
       content: text,
       title: text.length > 60 ? text.substring(0, 60) + '...' : text,
     });
-    UI.toast(UI._t('comments.reply_posted'), 'success');
+    if (created?.status === 'PENDING') upsertPendingComment(created);
+    UI.toast(UI._t(created?.status === 'PENDING' ? 'comments.reply_posted_pending' : 'comments.reply_posted'), 'success');
     await loadComments(currentPost.id);
   } catch (err) {
     UI.toast(err.message || UI._t('comments.reply_failed'), 'error');

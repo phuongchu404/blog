@@ -21,15 +21,29 @@ async function renderCategoriesPills() {
   if (!el) return;
   try {
     const cats = await CategoryService.getAll();
-    const roots = (cats || []).filter(c => !c.parentId);
+    const roots = UI.buildCategoryTree(cats || []).slice(0, 6);
     if (!roots.length) { el.innerHTML = `<p style="color:var(--text-muted);font-size:.875rem">${I18n.t('index_dyn.no_categories')}</p>`; return; }
-    el.innerHTML = roots.map(c => `
-      <a href="category.html?slug=${c.slug}" class="cat-pill">
-        <span>${c.title}</span>
-        <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
-          <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
-        </svg>
-      </a>`).join('');
+    el.innerHTML = roots.map((root) => `
+      <article class="home-category-card">
+        <a href="category.html?slug=${root.slug}" class="home-category-root">
+          <span>${root.title}</span>
+          <svg width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+          </svg>
+        </a>
+        ${root.children?.length ? `
+          <div class="home-category-children">
+            ${root.children.map((child) => `
+              <a href="category.html?slug=${child.slug}" class="home-category-child">${child.title}</a>
+            `).join('')}
+          </div>
+        ` : `
+          <div class="home-category-empty">
+            <a href="category.html?slug=${root.slug}" class="home-category-child home-category-child--single">Xem bài viết</a>
+          </div>
+        `}
+      </article>
+    `).join('');
   } catch (_) {
     el.innerHTML = '';
   }
@@ -80,7 +94,7 @@ async function init() {
   UI.loading(recentEl, I18n.t('index_dyn.loading_posts'));
 
   try {
-    const posts = await PostService.getPublished();
+    const posts = await PostService.getPublished({ page: 0, size: 6 });
     const list = Array.isArray(posts) ? posts : (posts?.content || []);
 
     if (list.length > 0) {

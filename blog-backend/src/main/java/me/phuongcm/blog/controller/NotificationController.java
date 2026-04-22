@@ -6,12 +6,20 @@ import me.phuongcm.blog.entity.Notification;
 import me.phuongcm.blog.repository.NotificationRepository;
 import me.phuongcm.blog.security.SecurityUtil;
 import me.phuongcm.blog.security.service.CustomUserDetails;
+import me.phuongcm.blog.service.NotificationStreamService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.Map;
 
@@ -21,8 +29,8 @@ import java.util.Map;
 public class NotificationController {
 
     private final NotificationRepository notificationRepository;
+    private final NotificationStreamService notificationStreamService;
 
-    /** GET /api/notifications?page=0&size=20 — Lấy thông báo của user hiện tại */
     @GetMapping
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Page<Notification>> getMyNotifications(
@@ -34,7 +42,12 @@ public class NotificationController {
         return ResponseEntity.ok(result);
     }
 
-    /** GET /api/notifications/unread-count — Số thông báo chưa đọc */
+    @GetMapping(path = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PreAuthorize("isAuthenticated()")
+    public SseEmitter streamMyNotifications() {
+        return notificationStreamService.subscribe(currentUserId());
+    }
+
     @GetMapping("/unread-count")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Map<String, Long>> getUnreadCount() {
@@ -42,32 +55,33 @@ public class NotificationController {
         return ResponseEntity.ok(Map.of("count", count));
     }
 
-    /** PUT /api/notifications/{id}/read — Đánh dấu 1 thông báo đã đọc */
     @PutMapping("/{id}/read")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Void>> markAsRead(@PathVariable Long id) {
         Long userId = currentUserId();
-        notificationRepository.findById(id).ifPresent(n -> {
-            if (n.getRecipientId().equals(userId)) {
-                n.setRead(true);
-                notificationRepository.save(n);
+        notificationRepository.findById(id).ifPresent(notification -> {
+            if (notification.getRecipientId().equals(userId)) {
+                notification.setRead(true);
+                notificationRepository.save(notification);
+                notificationStreamService.publishUnreadCount(userId);
             }
         });
-        return ResponseEntity.ok(ApiResponse.ok("Đã đánh dấu đã đọc", null));
+        return ResponseEntity.ok(ApiResponse.ok("Da danh dau da doc", null));
     }
 
-    /** PUT /api/notifications/read-all — Đánh dấu tất cả đã đọc */
     @PutMapping("/read-all")
     @PreAuthorize("isAuthenticated()")
     @Transactional
     public ResponseEntity<ApiResponse<Void>> markAllAsRead() {
-        notificationRepository.markAllReadByRecipientId(currentUserId());
-        return ResponseEntity.ok(ApiResponse.ok("Đã đánh dấu tất cả đã đọc", null));
+        Long userId = currentUserId();
+        notificationRepository.markAllReadByRecipientId(userId);
+        notificationStreamService.publishUnreadCount(userId);
+        return ResponseEntity.ok(ApiResponse.ok("Da danh dau tat ca da doc", null));
     }
 
     private Long currentUserId() {
         return SecurityUtil.getCurrentUser()
                 .map(CustomUserDetails::getId)
-                .orElseThrow(() -> new RuntimeException("Chưa đăng nhập"));
+                .orElseThrow(() -> new RuntimeException("Chua dang nhap"));
     }
 }
