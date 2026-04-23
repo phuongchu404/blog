@@ -24,7 +24,7 @@ public class MinIOConfig {
     @Value("${minio.access.secret:Phuong1590@}")
     private String accessSecret;
 
-    @Value("${minio.endpoint:${minio.url:http://localhost:9000}}")
+    @Value("${minio.endpoint:http://minio:9000}")
     private String minioEndpoint;
 
     @Value("${minio.bucket-private:private-bucket}")

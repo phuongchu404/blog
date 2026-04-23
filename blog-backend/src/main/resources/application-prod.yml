@@ -15,7 +15,7 @@ application:
       # QUAN TRONG: Dat secret la chuoi Base64 it nhat 32 bytes (256-bit) de dung voi HMAC-SHA256+
       # Tao bang lenh: openssl rand -base64 32
 #      secret: jwt-secret-key-which-is-at-least-256-bits-long-and-base64-encoded
-      secret:
+      secret: ${APPLICATION_SECURITY_JWT_SECRET}
       token-validity-in-seconds: 3600
       token-validity-in-seconds-for-remember-me: 2592000
       token-validity-in-seconds-for-refresh: 604800
@@ -36,11 +36,11 @@ spring:
 
   data:
     redis:
-      host: redis
-      port: 6379
+      host: ${SPRING_DATA_REDIS_HOST:redis}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
 
   kafka:
-    bootstrap-servers: kafka:29092
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:kafka:29092}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
@@ -53,7 +53,7 @@ spring:
         spring.json.trusted.packages: "*"
 
   elasticsearch:
-    uris: http://elasticsearch:9200
+    uris: ${SPRING_ELASTICSEARCH_URIS:http://elasticsearch:9200}
     connection-timeout: 3s
     socket-timeout: 30s
   datasource:
@@ -61,9 +61,9 @@ spring:
 #    url: jdbc:mysql://localhost:3307/blog
 #    username: root
 #    password: 123456
-    url: jdbc:mysql://mysql:3306/blog
-    username: phuongchu
-    password: Phuong1590@
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/blog}
+    username: ${SPRING_DATASOURCE_USERNAME:phuongchu}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: none
@@ -87,8 +87,8 @@ spring:
       client:
         registration:
             google:
-              client-id:
-              client-secret:
+              client-id: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID:}
+              client-secret: ${SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET:}
               redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
               scope:
                 - email
@@ -114,10 +114,10 @@ spring:
             user-info-uri: https://graph.facebook.com/v3.0/me?fields=id,first_name,middle_name,last_name,name,email,verified,is_verified,picture.width(250).height(250)
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: phuongchu404@gmail.com
-    password: oftc zykk zprw ivwi
+    host: ${SPRING_MAIL_HOST:smtp.gmail.com}
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -128,15 +128,15 @@ spring:
         debug: false
 
 app:
-  base-url: https://api.phuongcm.com
-  public-url: https://phuongcm.com
+  base-url: ${APP_BASE_URL:https://api.phuongcm.com}
+  public-url: ${APP_PUBLIC_URL:https://phuongcm.com}
 
 minio:
-    endpoint: http://minio:9000
-    public-url: https://media.phuongcm.com
+    endpoint: ${MINIO_ENDPOINT:http://minio:9000}
+    public-url: ${MINIO_PUBLIC_URL:https://media.phuongcm.com}
     access:
-        name: phuongchu404
-        secret: Phuong1590@
-    bucket-private: private-bucket
-    bucket-public: public-bucket
-    bucket-public-policy: public-policy.json
+        name: ${MINIO_ACCESS_NAME:}
+        secret: ${MINIO_ACCESS_SECRET:}
+    bucket-private: ${MINIO_BUCKET_PRIVATE:private-bucket}
+    bucket-public: ${MINIO_BUCKET_PUBLIC:public-bucket}
+    bucket-public-policy: ${MINIO_BUCKET_PUBLIC_POLICY:public-policy.json}

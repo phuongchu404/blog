@@ -12,8 +12,41 @@ services:
     restart: unless-stopped
     ports:
       - "8055:8055"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     environment:
       JAVA_OPTS: "-Xms256m -Xmx512m"
+      SPRING_PROFILES_ACTIVE: prod
+
+      SPRING_DATASOURCE_URL: "jdbc:mysql://host.docker.internal:3306/blog?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Bangkok"
+      SPRING_DATASOURCE_USERNAME: phuongchu
+      SPRING_DATASOURCE_PASSWORD: "Phuong1590@"
+
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_ELASTICSEARCH_URIS: http://elasticsearch:9200
+
+      APPLICATION_SECURITY_JWT_SECRET: ""
+
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_ID: ""
+      SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_GOOGLE_CLIENT_SECRET: ""
+
+      SPRING_MAIL_HOST: smtp.gmail.com
+      SPRING_MAIL_PORT: 587
+      SPRING_MAIL_USERNAME: phuongchu404@gmail.com
+      SPRING_MAIL_PASSWORD: "oftc zykk zprw ivwi"
+
+      APP_BASE_URL: https://api.phuongcm.com
+      APP_PUBLIC_URL: https://phuongcm.com
+
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_PUBLIC_URL: https://media.phuongcm.com
+      MINIO_ACCESS_NAME: phuongchu404
+      MINIO_ACCESS_SECRET: "Phuong1590@"
+      MINIO_BUCKET_PRIVATE: private-bucket
+      MINIO_BUCKET_PUBLIC: public-bucket
+      MINIO_BUCKET_PUBLIC_POLICY: public-policy.json
     volumes:
       - /opt/blog/blog-backend/config:/app/config
       - /opt/blog/blog-backend/logs:/app/logs
